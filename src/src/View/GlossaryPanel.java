@@ -8,15 +8,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
-
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -27,7 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
-
+import javax.swing.filechooser.FileNameExtensionFilter;
 import Controller.Controller;
 import Model.Term;
 import net.miginfocom.swing.MigLayout;
@@ -58,6 +57,8 @@ public class GlossaryPanel extends JPanel
 	JScrollPane termScrollPane;
 	JScrollPane termDetailsScrollPane;
 	ControlPanel cp;
+	JFileChooser glossaryOpener;
+	FileNameExtensionFilter filter;
 		/**
 		 * MenuBar
 		 */
@@ -65,7 +66,9 @@ public class GlossaryPanel extends JPanel
 		JMenu fileMenu;
 		JMenu editMenu;
 		JMenu aboutMenu;
+		JMenuItem newItem;
 		JMenuItem saveItem;
+		JMenuItem saveAsItem;
 		JMenuItem openItem;
 		JMenuItem quitItem;
 		JMenuItem undoItem;
@@ -95,12 +98,17 @@ public class GlossaryPanel extends JPanel
 		termDetailsArea = new JTextArea();
 		termPanel = new JPanel();
 		
+		glossaryOpener = new JFileChooser();
+		filter = new FileNameExtensionFilter("Glossary File", "gl");
+		
 		//MenuBar
 		mb = new JMenuBar();
 		fileMenu = new JMenu("File");
 		editMenu = new JMenu("Edit");
 		aboutMenu = new JMenu("About");
+		newItem = new JMenuItem("New");
 		saveItem = new JMenuItem("Save");
+		saveAsItem = new JMenuItem("Save As");
 		openItem = new JMenuItem("Open");
 		quitItem= new JMenuItem("Quit");
 		undoItem= new JMenuItem("Undo");
@@ -139,8 +147,10 @@ public class GlossaryPanel extends JPanel
 		mb.add(fileMenu);
 		mb.add(editMenu);
 		mb.add(aboutMenu);
+		fileMenu.add(newItem);
 		fileMenu.add(openItem);
 		fileMenu.add(saveItem);
+		fileMenu.add(saveAsItem);
 		fileMenu.add(quitItem);
 		editMenu.add(undoItem);
 		editMenu.add(redoItem);
@@ -149,17 +159,26 @@ public class GlossaryPanel extends JPanel
 		editMenu.add(pasteItem);
 		aboutMenu.add(aboutItem);
 		aboutMenu.add(helpItem);
+		glossaryOpener.setFileFilter(filter);
 		getGlossaryFrame().setJMenuBar(mb);
 		this.revalidate();
 	}
 	
 	private void setupGlossaryPanelListeners()
 	{
+		newItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				showNewGlossaryDialog();
+			}
+		});
+		
 		openItem.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				controller.open("C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\Copy of glossary.gl");
+				showGlossaryOpenDialog();
 			}
 		});
 		
@@ -168,6 +187,14 @@ public class GlossaryPanel extends JPanel
 			public void actionPerformed(ActionEvent e)
 			{
 				controller.save();
+			}
+		});
+		
+		saveAsItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				showGlossarySaveAsDialog();
 			}
 		});
 		
@@ -362,6 +389,8 @@ public class GlossaryPanel extends JPanel
 	private void displayTermDefinition(String key)
 	{
 		termDetailsArea.setText(" "+key+":\n\n\t"+controller.fetchTermForKey(key).getDefinition());
+		this.repaint();
+		this.revalidate();
 	}
 	
 	private int getGlossarySize()
@@ -381,10 +410,11 @@ public class GlossaryPanel extends JPanel
 	}
 	
 	public void updateWithNewTerm(String key){
-		System.out.println("Test");
 		displayKey(key);
 		termPanel.repaint();
 		termPanel.revalidate();
+		displayTermDefinition(key);
+					
 	}
 	
 	/**
@@ -558,5 +588,41 @@ public class GlossaryPanel extends JPanel
 	private GlossaryFrame getGlossaryFrame()
 	{
 		return glossaryFrame;
+	}
+	
+	
+	private void showNewGlossaryDialog()
+	{
+		controller.newGlossary();
+	}
+	private void showGlossaryOpenDialog()
+	{
+		if (glossaryOpener.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+		{
+			if(!glossaryOpener.getSelectedFile().exists())
+			{
+				JOptionPane.showMessageDialog(this, "File does not exist");
+				return;
+			}
+			controller.open(glossaryOpener.getSelectedFile().getAbsolutePath());
+		}	
+	}
+	
+	private void showGlossarySaveAsDialog()
+	{
+		if (glossaryOpener.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+		{
+			if(glossaryOpener.getSelectedFile().exists())
+			{
+				if(JOptionPane.showConfirmDialog(this, "This file already exists.\nOverwrite?")!=JOptionPane.YES_OPTION)
+					return;
+			}
+			String save = glossaryOpener.getSelectedFile().getAbsolutePath();
+			if(!save.substring(save.length()-3, save.length()-1).equals(".gl"))
+			{
+				save+=".gl";
+			}
+			controller.saveAs(save);
+		}	
 	}
 }

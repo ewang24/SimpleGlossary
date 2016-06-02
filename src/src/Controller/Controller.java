@@ -24,6 +24,7 @@ public class Controller
 	private GlossaryFrame gf;
 	private File glossaryFileToLoad;
 	private boolean autoload = true;
+	private String fileName;
 	private final String AUTOLOAD_PATH = "C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\glossary.gl";
 
 	public Controller()
@@ -66,7 +67,8 @@ public class Controller
 							termList[i].length())));
 		}
 
-		gf.setTitle(glossaryFileToLoad.getName());
+		fileName = glossaryFileToLoad.getName();
+		gf.setTitle(fileName);
 		gf.displayGlossaryKeys();
 	}
 
@@ -117,7 +119,7 @@ public class Controller
 	{
 		boolean success = glossary.addUnsavedTerm(key, term);
 		if (success)
-			gf.setTitle("*" + glossaryFileToLoad.getName());
+			gf.setTitle("*" + fileName);
 		return success;
 	}
 
@@ -132,7 +134,7 @@ public class Controller
 			saveWriter.flush();
 			saveWriter.close();
 			glossary.clearDirtyList();
-			gf.setTitle(glossaryFileToLoad.getName());
+			refreshTitle();
 		}
 		catch (IOException e)
 		{
@@ -141,11 +143,51 @@ public class Controller
 		}
 	}
 
+	/**
+	 * Moves the file reference to a new location and proceeds to save there
+	 * @param location: the new location of the file
+	 */
+	public void saveAs(String location)
+	{
+		glossaryFileToLoad = new File(location);
+		fileName = glossaryFileToLoad.getName();
+		refreshTitle();
+		save();
+	}
 	public void open(String location)
+	{
+		clearEverything();
+		load(location);
+	}
+	
+	/**
+	 * @return: returns true if all data is saved and okay to dump, false otherwise
+	 */
+	public void newGlossary()
+	{
+		if(glossary.isDirty())
+		{
+			if(JOptionPane.showConfirmDialog(gf, "You have unsaved data.\nIs it okay to discard it?")!=JOptionPane.YES_OPTION)
+				return;
+		}
+		clearEverything();
+		fileName = "New Glossary";
+		refreshTitle();
+	}
+	
+	private void clearEverything()
 	{
 		glossary.clearGlossary();
 		gf.clearAllForOpen();
-		load(location);
 	}
 
+	public boolean isEmpty()
+	{
+		return glossary.getSize()==0;
+	}
+	
+	private void refreshTitle()
+	{
+		gf.setTitle(fileName);
+	}
 }
