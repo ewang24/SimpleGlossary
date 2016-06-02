@@ -143,6 +143,7 @@ public class Controller
 
 	public void open(String location)
 	{
+		glossary.clearGlossary();
 		gf.clearAllForOpen();
 		load(location);
 	}
