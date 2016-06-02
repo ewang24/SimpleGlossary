@@ -47,13 +47,16 @@ public class GlossaryFrame extends JFrame
 		    @Override
 		    public void windowClosing(WindowEvent windowEvent) 
 		    {
-		          if (JOptionPane.showConfirmDialog(null, "Do you really want to exit the program?", "Exit?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) 
-		        	  System.exit(0);
+		         exit();
 		    }
 		});
 		
 	}
 	
+	private void exit()
+	{
+		controller.exit();
+	}
 	public void displayGlossaryKeys()
 	{
 		glossaryPanel.displaySortedKeys(controller.getGlossaryKeys());

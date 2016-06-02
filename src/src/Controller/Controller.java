@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import javax.swing.JOptionPane;
+
 import Model.Glossary;
 import Model.Term;
 import View.GlossaryFrame;
@@ -20,6 +22,7 @@ public class Controller
 	{
 		glossary = new Glossary();
 		gf = new GlossaryFrame(this);
+		
 		load();
 		gf.displayGlossaryKeys();
 	}
@@ -43,7 +46,7 @@ public class Controller
 		
 		for(int i = 0; i < termList.length; i++)
 		{
-			glossary.addTerm(termList[i].substring(0, termList[i].indexOf(":::")), termList[i].substring(termList[i].indexOf(":::")+3, termList[i].length()));
+			glossary.addTerm(termList[i].substring(0, termList[i].indexOf(":::")), new Term(termList[i].substring(termList[i].indexOf(":::")+3, termList[i].length())));
 		}
 		
 		gf.setTitle(glossaryFileToLoad.getName());
@@ -63,4 +66,30 @@ public class Controller
 	{
 		return glossary.getSize();
 	}
+	
+	public void exit()
+	{
+		if(glossary.isDirty())
+		{
+			if (JOptionPane.showConfirmDialog(null, "You have unsaved data.\nDo you really want to exit the program?", "Exit?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) 
+		       	  System.exit(0);
+			return;
+		}
+		else
+		{
+			if (JOptionPane.showConfirmDialog(null, "Do you really want to exit the program?", "Exit?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) 
+				System.exit(0);			
+		}
+	}
+	
+	/**
+	 * @param key to added
+	 * @param term: mapped to by key
+	 * @return true if entry was sucessfully added. False otherwise.
+	 */
+	public boolean newEntry(String key, Term term)
+	{
+		return glossary.addUnsavedTerm(key, term);
+	}
+	
 }

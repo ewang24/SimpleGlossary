@@ -4,23 +4,40 @@ Evan Wang
 
 package Model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
 public class Glossary
 {
 	HashMap<String, Term> glossary;
-	private int size = 0;
+	ArrayList<String> newKeys;
 
 	public Glossary()
 	{
 		glossary = new HashMap<String, Term>();
+		newKeys = new ArrayList<String>();
 	}
 
-	public void addTerm(String key, String definition)
+	/**
+	 * @param key to added
+	 * @param definition: mapped to by key
+	 * @return true if the entry was sucessfully added. False if the definition is already in the glossary.
+	 */
+	public boolean addUnsavedTerm(String key, Term definition)
 	{
-		size++;
-		glossary.put(key, new Term(definition));
+		if(!glossary.containsKey(key))
+		{
+			newKeys.add(key);
+			addTerm(key,definition);
+			return true;
+		}
+		return false;
+	}
+	
+	public void addTerm(String key, Term definition)
+	{
+		glossary.put(key, definition);
 	}
 
 	/**
@@ -30,9 +47,7 @@ public class Glossary
 	 */
 	public Term removeByKey(String key)
 	{
-		size--;
 		return glossary.remove(key);
-
 	}
 
 	public Term get(String key)
@@ -66,7 +81,22 @@ public class Glossary
 
 	public int getSize()
 	{
-		System.out.println(size);
-		return size;
+		return glossary.size();
+	}
+	
+	/**
+	 * @return true if the glossary is dirty (has unsaved data)
+	 */
+	public boolean isDirty()
+	{
+		return !newKeys.isEmpty();
+	}
+	
+	/**
+	 * @return true if all of the glossary's data has been saved.
+	 */
+	public boolean isClean()
+	{
+		return !isDirty();
 	}
 }
