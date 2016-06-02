@@ -159,7 +159,7 @@ public class GlossaryPanel extends JPanel
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				JOptionPane.showMessageDialog(null, "Open");
+				controller.open("C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\Copy of glossary.gl");
 			}
 		});
 		
@@ -175,7 +175,6 @@ public class GlossaryPanel extends JPanel
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-//				JOptionPane.showMessageDialog(null, "Quit");
 				WindowEvent closingEvent = new WindowEvent(getGlossaryFrame(), WindowEvent.WINDOW_CLOSING);
 				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(closingEvent);
 			}

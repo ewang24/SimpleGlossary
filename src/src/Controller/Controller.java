@@ -23,20 +23,23 @@ public class Controller
 	private Glossary glossary;
 	private GlossaryFrame gf;
 	private File glossaryFileToLoad;
+	private boolean autoload = true;
+	private final String AUTOLOAD_PATH = "C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\glossary.gl";
 
 	public Controller()
 	{
 		glossary = new Glossary();
 		gf = new GlossaryFrame(this);
 
-		load();
-		gf.displayGlossaryKeys();
+		if (autoload)
+		{
+			load(AUTOLOAD_PATH);
+		}
 	}
 
-	private void load()
+	private void load(String location)
 	{
-		glossaryFileToLoad = new File(
-				"C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\glossary.gl");
+		glossaryFileToLoad = new File(location);
 		String rawTermString = "";
 		try
 		{
@@ -64,6 +67,7 @@ public class Controller
 		}
 
 		gf.setTitle(glossaryFileToLoad.getName());
+		gf.displayGlossaryKeys();
 	}
 
 	public String[] getGlossaryKeys()
@@ -104,7 +108,7 @@ public class Controller
 
 	/**
 	 * @param key
-	 *            to added
+	 *            be to added
 	 * @param term
 	 *            : mapped to by key
 	 * @return true if entry was sucessfully added. False otherwise.
@@ -135,6 +139,12 @@ public class Controller
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public void open(String location)
+	{
+		gf.clearAllForOpen();
+		load(location);
 	}
 
 }

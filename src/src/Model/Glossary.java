@@ -118,4 +118,10 @@ public class Glossary
 	{
 		newKeys.clear();
 	}
+	
+	public void clearGlossary()
+	{
+		clearDirtyList();
+		glossary.clear();
+	}
 }

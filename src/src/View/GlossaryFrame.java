@@ -62,4 +62,11 @@ public class GlossaryFrame extends JFrame
 		glossaryPanel.displaySortedKeys(controller.getGlossaryKeys());
 	}
 	
+	public void clearAllForOpen()
+	{
+		glossaryPanel = new GlossaryPanel(controller, this);
+		this.setContentPane(glossaryPanel);
+		this.repaint();
+		this.revalidate();
+	}
 }
