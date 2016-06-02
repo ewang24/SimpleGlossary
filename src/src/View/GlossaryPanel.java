@@ -9,11 +9,14 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 
 import Controller.Controller;
 import Model.Glossary;
@@ -24,11 +27,14 @@ public class GlossaryPanel extends JPanel
 	Controller controller;
 	JPanel termPanel;
 	JTextArea termDetailsArea;
-	char[] alph = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i','j', 'k', 'l', 'm',
-			'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
-
+	char[] alph = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+			'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',
+			'z' };
+	JScrollPane termScrollPane;
+	
 	GlossaryPanel(Controller controller)
 	{
+		
 		this.controller = controller;
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.setBackground(new Color(255, 255, 255));
@@ -37,9 +43,11 @@ public class GlossaryPanel extends JPanel
 		termDetailsArea.setText("Test");
 		termPanel = new JPanel();
 		termPanel.setLayout(new MigLayout("fillx"));
-		// termPanel.setPreferredSize(new Dimension(300,300));
 		termPanel.setBackground(new Color(236, 233, 216));
-		this.add(termPanel);
+		termScrollPane = new JScrollPane(termPanel);
+		termScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		termScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		this.add(termScrollPane);
 		this.add(termDetailsArea);
 		this.add(new ControlPanel());
 
@@ -81,27 +89,18 @@ public class GlossaryPanel extends JPanel
 
 	public void displaySortedKeys(String[] keys)
 	{
-
-		for(int i = 0; i < keys.length;i++)
-		{
-			System.out.println(keys[i]);
-		}
 		int currLetter = 0;
-//		displayLetterMarker(alph[currLetter]);
-		boolean addMarker = false;
 
 		for (int i = 0; i < keys.length; i++)
 		{
-			while (alph[currLetter] != Character.toLowerCase(keys[i].charAt(0)))
+			if (alph[currLetter] != Character.toLowerCase(keys[i].charAt(0)))
 			{
-//				System.out.println(alph[currLetter]+" "+keys[i].charAt(0));
-				addMarker = true;
-				currLetter++;
-			}
-			if (addMarker)
-			{
+				while (alph[currLetter] != Character.toLowerCase(keys[i].charAt(0)))
+				{
+					currLetter++;
+				}
+
 				displayLetterMarker(alph[currLetter]);
-				addMarker = false;
 			}
 
 			displayKey(keys[i]);
@@ -118,17 +117,21 @@ public class GlossaryPanel extends JPanel
 
 	private void displayKey(final String key)
 	{
-		JButton j = new JButton(key);
-		j.addActionListener(new ActionListener()
+		JButton newTermButton = new JButton(key);
+		newTermButton.setHorizontalAlignment(SwingConstants.LEFT);
+		newTermButton.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		newTermButton.setBorderPainted(false);
+		newTermButton.setContentAreaFilled(false);
+		newTermButton.setFocusPainted(false);
+		
+		newTermButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				System.out.println(key);
-				termDetailsArea.setText(controller.fetchTermForKey(key)
-						.getDefinition());
+				termDetailsArea.setText(controller.fetchTermForKey(key).getDefinition());
 			}
 		});
 
-		termPanel.add(j, "wrap,grow");
+		termPanel.add(newTermButton, "wrap,grow");
 	}
 }
