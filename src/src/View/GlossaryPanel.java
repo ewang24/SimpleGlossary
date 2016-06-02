@@ -27,27 +27,52 @@ import net.miginfocom.swing.MigLayout;
 
 public class GlossaryPanel extends JPanel
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1627390830118627789L; 
+	
+	/*
+	 * Data variable
+	 */
 	Controller controller;
-	JPanel termPanel;
-	JTextArea termDetailsArea;
 	char[] alph = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
 			'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',
 			'z' };
+	int count=0;
+	
+	/*
+	 * Components
+	 */
+	JPanel termPanel;
+	JTextArea termDetailsArea;
 	JScrollPane termScrollPane;
 	JScrollPane termDetailsScrollPane;
+	ControlPanel cp;
+	
+	/*
+	 * finals
+	 */
 	final Dimension TERM_DETAILS_AREA_MINIMUM_SIZE = new Dimension(300,124);
 	final int SCROLL_INCREMENT = 16;
 	
 	GlossaryPanel(Controller controller)
 	{
 		this.controller = controller;
+		cp = new ControlPanel();
+		termDetailsArea = new JTextArea();
+		termPanel = new JPanel();
+		
+		setupLayout();
+	}
+
+	private void setupLayout()
+	{
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.setBackground(new Color(255, 255, 255));
-		termDetailsArea = new JTextArea();
 		termDetailsArea.setEditable(false);
 		termDetailsArea.setText("Test");
 		termDetailsArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-		termPanel = new JPanel();
 		termPanel.setLayout(new MigLayout("fillx"));
 		termPanel.setBackground(new Color(236, 233, 216));
 		termScrollPane = new JScrollPane(termPanel);
@@ -58,32 +83,49 @@ public class GlossaryPanel extends JPanel
 		termDetailsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.add(termScrollPane);
 		this.add(termDetailsScrollPane);
-		this.add(new ControlPanel());
+		this.add(cp);
+		cp.updateSize();
 		termDetailsScrollPane.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
 		termScrollPane.getVerticalScrollBar().setUnitIncrement(SCROLL_INCREMENT);
 		this.revalidate();
 	}
-
+		
 	private class ControlPanel extends JPanel
 	{
-		private static final long serialVersionUID = 1L;
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 8258782670474633839L;
 		
-		JButton newTerm;
-		JButton removeTerm;
+		private JButton newTerm;
+		private JButton removeTerm;
+		private JLabel countLabel;
 
 		ControlPanel()
 		{
-			this.setBackground(new Color(250, 255, 255));
 			newTerm = new JButton("New Term");
 			removeTerm = new JButton("Remove Term");
+			countLabel = new JLabel("Entries: ");
+			
+			setupLayout();
+			setupListeners();
+		}
+		
+		private void setupLayout()
+		{
+			this.setBackground(new Color(250, 255, 255));
+			this.add(countLabel);
 			this.add(newTerm);
-			this.add(removeTerm);
-
+			this.add(removeTerm);	
+		}
+		
+		private void setupListeners()
+		{
 			newTerm.addActionListener(new ActionListener()
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-
+					addTerm();
 				}
 			});
 
@@ -91,10 +133,14 @@ public class GlossaryPanel extends JPanel
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-
+					removeTerm(null);
 				}
 			});
-
+		}
+		
+		public void updateSize()
+		{
+			countLabel.setText("Entries: "+getGlossarySize());
 		}
 	}
 
@@ -140,7 +186,7 @@ public class GlossaryPanel extends JPanel
 		newTermButton.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		newTermButton.setBorderPainted(false);
 		newTermButton.setContentAreaFilled(false);
-		newTermButton.setFocusPainted(true);
+		newTermButton.setFocusPainted(false);
 		
 		newTermButton.addActionListener(new ActionListener()
 		{
@@ -155,5 +201,21 @@ public class GlossaryPanel extends JPanel
 	
 	private void displayTermDefinition(String key){
 		termDetailsArea.setText(" "+key+":\n\n\t"+controller.fetchTermForKey(key).getDefinition());
+	}
+	
+	private int getGlossarySize()
+	{
+		System.out.println(controller.glossarySize());
+		return controller.glossarySize();	
+	}
+	
+	private void removeTerm(String key)
+	{
+		
+	}
+	
+	private void addTerm()
+	{
+		
 	}
 }

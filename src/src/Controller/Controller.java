@@ -59,4 +59,8 @@ public class Controller
 		return glossary.get(key);
 	}
 	
+	public int glossarySize()
+	{
+		return glossary.getSize();
+	}
 }
