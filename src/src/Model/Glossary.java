@@ -6,6 +6,8 @@ package Model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 
 public class Glossary
@@ -64,7 +66,7 @@ public class Glossary
 			newS[i] = (String) s[i];
 		}
 
-		java.util.Arrays.sort(newS);
+		java.util.Arrays.sort(newS,String.CASE_INSENSITIVE_ORDER);
 		return newS;
 	}
 
@@ -76,7 +78,19 @@ public class Glossary
 	@Override
 	public String toString()
 	{
-		return glossary.toString();
+		
+		String toStringString="";
+		
+		Set<Entry<String,Term>> gs = glossary.entrySet();
+		Iterator<Entry<String, Term>> i = gs.iterator();
+		
+		while(i.hasNext())
+		{
+			Entry<String, Term> e = i.next();
+			toStringString+= e.getKey()+":::"+e.getValue().getDefinition()+"\r\n";
+		}
+		
+		return toStringString;
 	}
 
 	public int getSize()
@@ -98,5 +112,10 @@ public class Glossary
 	public boolean isClean()
 	{
 		return !isDirty();
+	}
+	
+	public void clearDirtyList()
+	{
+		newKeys.clear();
 	}
 }

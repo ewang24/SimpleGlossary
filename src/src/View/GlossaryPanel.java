@@ -7,8 +7,11 @@ package View;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
@@ -16,6 +19,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -46,12 +52,33 @@ public class GlossaryPanel extends JPanel
 	/*
 	 * Components
 	 */
+	GlossaryFrame glossaryFrame;//Reference to parent
 	JPanel termPanel;
 	JTextArea termDetailsArea;
 	JScrollPane termScrollPane;
 	JScrollPane termDetailsScrollPane;
 	ControlPanel cp;
-	
+		/**
+		 * MenuBar
+		 */
+		JMenuBar mb;
+		JMenu fileMenu;
+		JMenu editMenu;
+		JMenu aboutMenu;
+		JMenuItem saveItem;
+		JMenuItem openItem;
+		JMenuItem quitItem;
+		JMenuItem undoItem;
+		JMenuItem redoItem;
+		JMenuItem cutItem;
+		JMenuItem copyItem;
+		JMenuItem pasteItem;
+		JMenuItem aboutItem;
+		JMenuItem helpItem;
+		/**
+		 * MenuBar
+		 */
+		
 	/*
 	 * finals
 	 */
@@ -59,18 +86,37 @@ public class GlossaryPanel extends JPanel
 	final int SCROLL_INCREMENT = 16;
 	final Color LIGHT_GREY_COLOR = new Color(236, 233, 216);
 	
-	GlossaryPanel(Controller controller)
+	GlossaryPanel(Controller controller,GlossaryFrame gf)
 	{
+		this.glossaryFrame = gf;
 		this.controller = controller;
 		buttonMap = new HashMap<String,JButton>();
 		cp = new ControlPanel();
 		termDetailsArea = new JTextArea();
 		termPanel = new JPanel();
 		
-		setupLayout();
+		//MenuBar
+		mb = new JMenuBar();
+		fileMenu = new JMenu("File");
+		editMenu = new JMenu("Edit");
+		aboutMenu = new JMenu("About");
+		saveItem = new JMenuItem("Save");
+		openItem = new JMenuItem("Open");
+		quitItem= new JMenuItem("Quit");
+		undoItem= new JMenuItem("Undo");
+		redoItem= new JMenuItem("Redo");
+		cutItem= new JMenuItem("Cut");
+		copyItem= new JMenuItem("Copy");
+		pasteItem= new JMenuItem("Paste");
+		aboutItem= new JMenuItem("About");
+		helpItem= new JMenuItem("Help");
+		//MenuBar
+		
+		setupGlossaryPanelLayout();
+		setupGlossaryPanelListeners();
 	}
 
-	private void setupLayout()
+	private void setupGlossaryPanelLayout()
 	{
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.setBackground(new Color(255, 255, 255));
@@ -85,12 +131,111 @@ public class GlossaryPanel extends JPanel
 		termDetailsScrollPane = new JScrollPane(termDetailsArea);
 		termDetailsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		termDetailsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		termDetailsScrollPane.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
+		termScrollPane.getVerticalScrollBar().setUnitIncrement(SCROLL_INCREMENT);
 		this.add(termScrollPane);
 		this.add(termDetailsScrollPane);
 		this.add(cp);
-		termDetailsScrollPane.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
-		termScrollPane.getVerticalScrollBar().setUnitIncrement(SCROLL_INCREMENT);
+		mb.add(fileMenu);
+		mb.add(editMenu);
+		mb.add(aboutMenu);
+		fileMenu.add(openItem);
+		fileMenu.add(saveItem);
+		fileMenu.add(quitItem);
+		editMenu.add(undoItem);
+		editMenu.add(redoItem);
+		editMenu.add(cutItem);
+		editMenu.add(copyItem);
+		editMenu.add(pasteItem);
+		aboutMenu.add(aboutItem);
+		aboutMenu.add(helpItem);
+		getGlossaryFrame().setJMenuBar(mb);
 		this.revalidate();
+	}
+	
+	private void setupGlossaryPanelListeners()
+	{
+		openItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				JOptionPane.showMessageDialog(null, "Open");
+			}
+		});
+		
+		saveItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				controller.save();
+			}
+		});
+		
+		quitItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+//				JOptionPane.showMessageDialog(null, "Quit");
+				WindowEvent closingEvent = new WindowEvent(getGlossaryFrame(), WindowEvent.WINDOW_CLOSING);
+				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(closingEvent);
+			}
+		});
+		
+		undoItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				JOptionPane.showMessageDialog(null, "Undo");
+			}
+		});
+		
+		redoItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				JOptionPane.showMessageDialog(null, "Redo");
+			}
+		});
+		
+		cutItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				JOptionPane.showMessageDialog(null, "Cut");
+			}
+		});
+		
+		copyItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				JOptionPane.showMessageDialog(null, "Copy");
+			}
+		});
+		
+		pasteItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				JOptionPane.showMessageDialog(null, "Paste");
+			}
+		});
+		
+		aboutItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				JOptionPane.showMessageDialog(null, "About:\nThis is a glossary program\nGitHub.com\\ewang24");
+			}
+		});
+		
+		helpItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				JOptionPane.showMessageDialog(null, "Help");
+			}
+		});
 	}
 		
 	private class ControlPanel extends JPanel
@@ -111,7 +256,7 @@ public class GlossaryPanel extends JPanel
 			countLabel = new JLabel("Entries: ");
 			
 			setupLayout();
-			setupListeners();
+			setupControlPanelListeners();
 		}
 		
 		private void setupLayout()
@@ -122,7 +267,7 @@ public class GlossaryPanel extends JPanel
 			this.add(removeTerm);	
 		}
 		
-		private void setupListeners()
+		private void setupControlPanelListeners()
 		{
 			newTerm.addActionListener(new ActionListener()
 			{
@@ -139,6 +284,8 @@ public class GlossaryPanel extends JPanel
 					removeTerm(null);
 				}
 			});
+			
+			
 		}
 		
 		public void updateSize()
@@ -149,6 +296,10 @@ public class GlossaryPanel extends JPanel
 
 	public void displaySortedKeys(String[] keys)
 	{
+		for(int i = 0; i < keys.length; i ++)
+		{
+			System.out.println(keys[i]);
+		}
 		int currLetter = 0;
 
 		if (alph[currLetter] == Character.toLowerCase(keys[0].charAt(0)))
@@ -209,9 +360,8 @@ public class GlossaryPanel extends JPanel
 		buttonMap.put(key, newTermButton);
 	}
 	
-	private void displayTermDefinition(String key){
-		System.out.println(controller);
-		System.out.println(controller.fetchTermForKey(key));
+	private void displayTermDefinition(String key)
+	{
 		termDetailsArea.setText(" "+key+":\n\n\t"+controller.fetchTermForKey(key).getDefinition());
 	}
 	
@@ -405,5 +555,9 @@ public class GlossaryPanel extends JPanel
 				return false;
 			}
 		}
+	}
+	private GlossaryFrame getGlossaryFrame()
+	{
+		return glossaryFrame;
 	}
 }

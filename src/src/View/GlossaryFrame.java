@@ -30,7 +30,7 @@ public class GlossaryFrame extends JFrame
 			
 		}
 		
-		glossaryPanel = new GlossaryPanel(controller);
+		glossaryPanel = new GlossaryPanel(controller,this);
 		this.controller = controller;
 		this.setTitle("SimpleGlossary");
 		this.setSize(PREFERRED_SIZE);

@@ -1,11 +1,15 @@
 /**
 Evan Wang
-*/
+ */
 
 package Controller;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Scanner;
 
 import javax.swing.JOptionPane;
@@ -16,80 +20,121 @@ import View.GlossaryFrame;
 
 public class Controller
 {
-	Glossary glossary;
-	GlossaryFrame gf;
+	private Glossary glossary;
+	private GlossaryFrame gf;
+	private File glossaryFileToLoad;
+
 	public Controller()
 	{
 		glossary = new Glossary();
 		gf = new GlossaryFrame(this);
-		
+
 		load();
 		gf.displayGlossaryKeys();
 	}
-	
+
 	private void load()
 	{
-		File glossaryFileToLoad = new File("C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\glossary.gl");
+		glossaryFileToLoad = new File(
+				"C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\glossary.gl");
 		String rawTermString = "";
 		try
 		{
 			Scanner termReader = new Scanner(glossaryFileToLoad);
-			while(termReader.hasNextLine())
+			while (termReader.hasNextLine())
 			{
-				rawTermString += termReader.nextLine()+"\n";
+				rawTermString += termReader.nextLine() + "\n";
 			}
 			termReader.close();
 		}
-		catch (FileNotFoundException e){e.printStackTrace();}
-		
-		String [] termList = rawTermString.split("\n");
-		
-		for(int i = 0; i < termList.length; i++)
+		catch (FileNotFoundException e)
 		{
-			glossary.addTerm(termList[i].substring(0, termList[i].indexOf(":::")), new Term(termList[i].substring(termList[i].indexOf(":::")+3, termList[i].length())));
+			e.printStackTrace();
 		}
-		
+
+		String[] termList = rawTermString.split("\n");
+
+		for (int i = 0; i < termList.length; i++)
+		{
+			glossary.addTerm(
+					termList[i].substring(0, termList[i].indexOf(":::")),
+					new Term(termList[i].substring(
+							termList[i].indexOf(":::") + 3,
+							termList[i].length())));
+		}
+
 		gf.setTitle(glossaryFileToLoad.getName());
 	}
-	
+
 	public String[] getGlossaryKeys()
 	{
 		return glossary.getKeys();
 	}
-	
+
 	public Term fetchTermForKey(String key)
 	{
 		return glossary.get(key);
 	}
-	
+
 	public int glossarySize()
 	{
 		return glossary.getSize();
 	}
-	
+
 	public void exit()
 	{
-		if(glossary.isDirty())
+		if (glossary.isDirty())
 		{
-			if (JOptionPane.showConfirmDialog(null, "You have unsaved data.\nDo you really want to exit the program?", "Exit?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) 
-		       	  System.exit(0);
+			if (JOptionPane
+					.showConfirmDialog(
+							null,
+							"You have unsaved data.\nDo you really want to exit the program?",
+							"Exit?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+				System.exit(0);
 			return;
 		}
 		else
 		{
-			if (JOptionPane.showConfirmDialog(null, "Do you really want to exit the program?", "Exit?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) 
-				System.exit(0);			
+			if (JOptionPane.showConfirmDialog(null,
+					"Do you really want to exit the program?", "Exit?",
+					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+				System.exit(0);
 		}
 	}
-	
+
 	/**
-	 * @param key to added
-	 * @param term: mapped to by key
+	 * @param key
+	 *            to added
+	 * @param term
+	 *            : mapped to by key
 	 * @return true if entry was sucessfully added. False otherwise.
 	 */
 	public boolean newEntry(String key, Term term)
 	{
-		return glossary.addUnsavedTerm(key, term);
+		boolean success = glossary.addUnsavedTerm(key, term);
+		if (success)
+			gf.setTitle("*" + glossaryFileToLoad.getName());
+		return success;
 	}
-	
+
+	public void save()
+	{
+		String toString = glossary.toString();
+		try
+		{
+			PrintWriter saveWriter = new PrintWriter(new BufferedWriter(
+					new FileWriter(glossaryFileToLoad, false)));
+			saveWriter.print(toString);
+			saveWriter.flush();
+			saveWriter.close();
+			glossary.clearDirtyList();
+			gf.setTitle(glossaryFileToLoad.getName());
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 }
