@@ -6,6 +6,7 @@ package View;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -17,6 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 
 import Controller.Controller;
 import Model.Glossary;
@@ -31,16 +34,18 @@ public class GlossaryPanel extends JPanel
 			'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',
 			'z' };
 	JScrollPane termScrollPane;
+	final Dimension TERM_DETAILS_AREA_MINIMUM_SIZE = new Dimension(300,124);
 	
 	GlossaryPanel(Controller controller)
 	{
-		
 		this.controller = controller;
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.setBackground(new Color(255, 255, 255));
 		termDetailsArea = new JTextArea();
 		termDetailsArea.setEditable(false);
 		termDetailsArea.setText("Test");
+		termDetailsArea.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
+		termDetailsArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		termPanel = new JPanel();
 		termPanel.setLayout(new MigLayout("fillx"));
 		termPanel.setBackground(new Color(236, 233, 216));
@@ -91,6 +96,10 @@ public class GlossaryPanel extends JPanel
 	{
 		int currLetter = 0;
 
+		if (alph[currLetter] == Character.toLowerCase(keys[0].charAt(0)))
+			displayLetterMarker(alph[currLetter]);
+			
+		
 		for (int i = 0; i < keys.length; i++)
 		{
 			if (alph[currLetter] != Character.toLowerCase(keys[i].charAt(0)))
@@ -106,23 +115,27 @@ public class GlossaryPanel extends JPanel
 			displayKey(keys[i]);
 		}
 
+		termDetailsArea.setText(controller.fetchTermForKey(keys[0]).getDefinition());
 		this.repaint();
 		this.revalidate();
 	}
 
 	private void displayLetterMarker(char c)
 	{
-		termPanel.add(new JLabel(Character.toUpperCase(c) + ":"), "wrap,push");
+		JLabel j = new JLabel("\n"+Character.toUpperCase(c) + ":");
+		j.setFont(new Font(j.getFont().getFontName(),j.getFont().BOLD,j.getFont().getSize()));
+		termPanel.add(j, "wrap,push");
 	}
 
 	private void displayKey(final String key)
 	{
 		JButton newTermButton = new JButton(key);
+		
 		newTermButton.setHorizontalAlignment(SwingConstants.LEFT);
 		newTermButton.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		newTermButton.setBorderPainted(false);
 		newTermButton.setContentAreaFilled(false);
-		newTermButton.setFocusPainted(false);
+		newTermButton.setFocusPainted(true);
 		
 		newTermButton.addActionListener(new ActionListener()
 		{

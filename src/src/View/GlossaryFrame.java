@@ -18,6 +18,7 @@ public class GlossaryFrame extends JFrame
 {
 	Controller controller;
 	GlossaryPanel glossaryPanel;
+	final Dimension PREFERRED_SIZE = new Dimension(300,500); 
 	public GlossaryFrame(Controller controller)
 	{
 		try
@@ -32,7 +33,8 @@ public class GlossaryFrame extends JFrame
 		glossaryPanel = new GlossaryPanel(controller);
 		this.controller = controller;
 		this.setTitle("SimpleGlossary");
-		this.setSize(new Dimension(300,500));
+		this.setSize(PREFERRED_SIZE);
+		this.setMinimumSize(PREFERRED_SIZE);
 		this.setContentPane(glossaryPanel);
 		this.setVisible(true);
 		
@@ -55,7 +57,6 @@ public class GlossaryFrame extends JFrame
 	public void displayGlossaryKeys()
 	{
 		glossaryPanel.displaySortedKeys(controller.getGlossaryKeys());
-		
 	}
 	
 }

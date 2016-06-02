@@ -15,37 +15,38 @@ import View.GlossaryFrame;
 public class Controller
 {
 	Glossary glossary;
+	GlossaryFrame gf;
 	public Controller()
 	{
 		glossary = new Glossary();
+		gf = new GlossaryFrame(this);
 		load();
-		GlossaryFrame gf = new GlossaryFrame(this);
 		gf.displayGlossaryKeys();
 	}
 	
 	private void load()
 	{
-		File f = new File("C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\glossary.gl");
-		String s = "";
+		File glossaryFileToLoad = new File("C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\glossary.gl");
+		String rawTermString = "";
 		try
 		{
-			Scanner sc = new Scanner(f);
-			while(sc.hasNextLine())
+			Scanner termReader = new Scanner(glossaryFileToLoad);
+			while(termReader.hasNextLine())
 			{
-				s += sc.nextLine()+"\n";
+				rawTermString += termReader.nextLine()+"\n";
 			}
-			System.out.println(s);
+			termReader.close();
 		}
 		catch (FileNotFoundException e){e.printStackTrace();}
 		
-		String [] a = s.split("\n");
+		String [] termList = rawTermString.split("\n");
 		
-		for(int i = 0; i < a.length; i++)
+		for(int i = 0; i < termList.length; i++)
 		{
-			glossary.addTerm(a[i].substring(0, a[i].indexOf(":::")), a[i].substring(a[i].indexOf(":::")+3, a[i].length()));
+			glossary.addTerm(termList[i].substring(0, termList[i].indexOf(":::")), termList[i].substring(termList[i].indexOf(":::")+3, termList[i].length()));
 		}
 		
-		
+		gf.setTitle(glossaryFileToLoad.getName());
 	}
 	
 	public String[] getGlossaryKeys()
