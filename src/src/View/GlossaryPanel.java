@@ -24,7 +24,8 @@ public class GlossaryPanel extends JPanel
 	Controller controller;
 	JPanel termPanel;
 	JTextArea termDetailsArea;
-	char [] alph = {'a','b','c','d','e','f','g','h','i','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
+	char[] alph = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i','j', 'k', 'l', 'm',
+			'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
 
 	GlossaryPanel(Controller controller)
 	{
@@ -35,8 +36,8 @@ public class GlossaryPanel extends JPanel
 		termDetailsArea.setEditable(false);
 		termDetailsArea.setText("Test");
 		termPanel = new JPanel();
-		termPanel.setLayout(new MigLayout("fill"));
-		termPanel.setPreferredSize(new Dimension(300,300));
+		termPanel.setLayout(new MigLayout("fillx"));
+		// termPanel.setPreferredSize(new Dimension(300,300));
 		termPanel.setBackground(new Color(236, 233, 216));
 		this.add(termPanel);
 		this.add(termDetailsArea);
@@ -77,20 +78,45 @@ public class GlossaryPanel extends JPanel
 
 		}
 	}
-	
-	public void displaySortedKeys(String [] keys)
+
+	public void displaySortedKeys(String[] keys)
 	{
-		int currLetter = 0;
+
 		for(int i = 0; i < keys.length;i++)
 		{
+			System.out.println(keys[i]);
+		}
+		int currLetter = 0;
+//		displayLetterMarker(alph[currLetter]);
+		boolean addMarker = false;
+
+		for (int i = 0; i < keys.length; i++)
+		{
+			while (alph[currLetter] != Character.toLowerCase(keys[i].charAt(0)))
+			{
+//				System.out.println(alph[currLetter]+" "+keys[i].charAt(0));
+				addMarker = true;
+				currLetter++;
+			}
+			if (addMarker)
+			{
+				displayLetterMarker(alph[currLetter]);
+				addMarker = false;
+			}
+
 			displayKey(keys[i]);
 		}
-		
+
 		this.repaint();
 		this.revalidate();
 	}
-	
-	public void displayKey(final String key)
+
+	private void displayLetterMarker(char c)
+	{
+		termPanel.add(new JLabel(Character.toUpperCase(c) + ":"), "wrap,push");
+	}
+
+	private void displayKey(final String key)
 	{
 		JButton j = new JButton(key);
 		j.addActionListener(new ActionListener()
@@ -98,11 +124,11 @@ public class GlossaryPanel extends JPanel
 			public void actionPerformed(ActionEvent e)
 			{
 				System.out.println(key);
-				termDetailsArea.setText(controller.fetchTermForKey(key).getDefinition());
+				termDetailsArea.setText(controller.fetchTermForKey(key)
+						.getDefinition());
 			}
 		});
 
-		
-		termPanel.add(j,"wrap");
+		termPanel.add(j, "wrap,grow");
 	}
 }

@@ -45,7 +45,7 @@ public class Glossary
 			System.out.println(newS[i]);
 		}
 		
-		java.util.Arrays.sort(s);
+		java.util.Arrays.sort(newS);
 		return newS;
 	}
 	
