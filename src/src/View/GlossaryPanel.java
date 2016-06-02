@@ -34,7 +34,9 @@ public class GlossaryPanel extends JPanel
 			'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',
 			'z' };
 	JScrollPane termScrollPane;
+	JScrollPane termDetailsScrollPane;
 	final Dimension TERM_DETAILS_AREA_MINIMUM_SIZE = new Dimension(300,124);
+	final int SCROLL_INCREMENT = 16;
 	
 	GlossaryPanel(Controller controller)
 	{
@@ -44,7 +46,6 @@ public class GlossaryPanel extends JPanel
 		termDetailsArea = new JTextArea();
 		termDetailsArea.setEditable(false);
 		termDetailsArea.setText("Test");
-		termDetailsArea.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
 		termDetailsArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		termPanel = new JPanel();
 		termPanel.setLayout(new MigLayout("fillx"));
@@ -52,16 +53,21 @@ public class GlossaryPanel extends JPanel
 		termScrollPane = new JScrollPane(termPanel);
 		termScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		termScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		termDetailsScrollPane = new JScrollPane(termDetailsArea);
+		termDetailsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		termDetailsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.add(termScrollPane);
-		this.add(termDetailsArea);
+		this.add(termDetailsScrollPane);
 		this.add(new ControlPanel());
-
+		termDetailsScrollPane.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
+		termScrollPane.getVerticalScrollBar().setUnitIncrement(SCROLL_INCREMENT);
 		this.revalidate();
 	}
 
 	private class ControlPanel extends JPanel
 	{
-
+		private static final long serialVersionUID = 1L;
+		
 		JButton newTerm;
 		JButton removeTerm;
 
@@ -98,7 +104,6 @@ public class GlossaryPanel extends JPanel
 
 		if (alph[currLetter] == Character.toLowerCase(keys[0].charAt(0)))
 			displayLetterMarker(alph[currLetter]);
-			
 		
 		for (int i = 0; i < keys.length; i++)
 		{
@@ -115,7 +120,7 @@ public class GlossaryPanel extends JPanel
 			displayKey(keys[i]);
 		}
 
-		termDetailsArea.setText(controller.fetchTermForKey(keys[0]).getDefinition());
+		displayTermDefinition(keys[0]);
 		this.repaint();
 		this.revalidate();
 	}
@@ -141,10 +146,14 @@ public class GlossaryPanel extends JPanel
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				termDetailsArea.setText(controller.fetchTermForKey(key).getDefinition());
+				displayTermDefinition(key);
 			}
 		});
 
 		termPanel.add(newTermButton, "wrap,grow");
+	}
+	
+	private void displayTermDefinition(String key){
+		termDetailsArea.setText(" "+key+":\n\n\t"+controller.fetchTermForKey(key).getDefinition());
 	}
 }
