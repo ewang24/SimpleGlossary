@@ -13,12 +13,12 @@ import java.util.Set;
 public class Glossary
 {
 	HashMap<String, Term> glossary;
-	ArrayList<String> newKeys;
+	ArrayList<String> modifiedKeys;
 
 	public Glossary()
 	{
 		glossary = new HashMap<String, Term>();
-		newKeys = new ArrayList<String>();
+		modifiedKeys = new ArrayList<String>();
 	}
 
 	/**
@@ -30,7 +30,7 @@ public class Glossary
 	{
 		if(!glossary.containsKey(key))
 		{
-			newKeys.add(key);
+			modifiedKeys.add(key);
 			addTerm(key,definition);
 			return true;
 		}
@@ -103,7 +103,7 @@ public class Glossary
 	 */
 	public boolean isDirty()
 	{
-		return !newKeys.isEmpty();
+		return !modifiedKeys.isEmpty();
 	}
 	
 	/**
@@ -116,7 +116,7 @@ public class Glossary
 	
 	public void clearDirtyList()
 	{
-		newKeys.clear();
+		modifiedKeys.clear();
 	}
 	
 	public void clearGlossary()

@@ -129,7 +129,7 @@ public class GlossaryPanel extends JPanel
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.setBackground(new Color(255, 255, 255));
 		termDetailsArea.setEditable(false);
-		termDetailsArea.setText("Test");
+		termDetailsArea.setText("");
 		termDetailsArea.setBorder(BorderFactory
 				.createLineBorder(Color.BLACK, 1));
 		termPanel.setLayout(new MigLayout("fillx"));
@@ -145,8 +145,8 @@ public class GlossaryPanel extends JPanel
 		termDetailsScrollPane
 				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		termDetailsScrollPane.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
-		termScrollPane.setMinimumSize(new Dimension(300, 500));
-		cp.setMinimumSize(new Dimension(300, 50));
+//		termScrollPane.setMinimumSize(new Dimension(300, 500));
+		cp.setMinimumSize(new Dimension(300, 30));
 		termScrollPane.getVerticalScrollBar()
 				.setUnitIncrement(SCROLL_INCREMENT);
 		this.add(termScrollPane);
@@ -292,8 +292,8 @@ public class GlossaryPanel extends JPanel
 
 		public ControlPanel()
 		{
-			newTerm = new JButton("New Term");
-			removeTerm = new JButton("Remove Term");
+			newTerm = new JButton("+");
+			removeTerm = new JButton("-");
 			countLabel = new JLabel("Entries: ");
 
 			setupLayout();
@@ -302,6 +302,8 @@ public class GlossaryPanel extends JPanel
 
 		private void setupLayout()
 		{
+			newTerm.setToolTipText("Add New Term");
+			removeTerm.setToolTipText("Remove Term");
 			this.setBackground(new Color(250, 255, 255));
 			this.add(countLabel);
 			this.add(newTerm);
@@ -322,7 +324,7 @@ public class GlossaryPanel extends JPanel
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-					removeTerm(null);
+					removeTerm();
 				}
 			});
 
@@ -391,6 +393,14 @@ public class GlossaryPanel extends JPanel
 		newTermButton.setContentAreaFilled(false);
 		newTermButton.setFocusPainted(false);
 
+		newTermButton.addMouseListener(new java.awt.event.MouseAdapter() {
+		    public void mouseClicked(java.awt.event.MouseEvent evt) {
+		    	if(evt.getButton()==java.awt.event.MouseEvent.BUTTON3)
+		    	{
+		    		System.out.println("Got right click");
+		    	}
+		    }
+		});
 		newTermButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -417,9 +427,14 @@ public class GlossaryPanel extends JPanel
 		return controller.glossarySize();
 	}
 
-	private void removeTerm(String key)
+	private void removeTerm()
 	{
-
+		String r = JOptionPane.showInputDialog("What term do you want to remove?");
+		if(!controller.remove(r))
+		{
+			JOptionPane.showMessageDialog(null, "Term does not exist!");
+		}
+		updateTermDisplay();
 	}
 
 	private void addTerm()
@@ -430,12 +445,18 @@ public class GlossaryPanel extends JPanel
 
 	public void updateWithNewTerm(String key)
 	{
+		updateTermDisplay();
+		displayTermDefinition(key);
+		
+
+	}
+	
+	public void updateTermDisplay()
+	{
 		termPanel.removeAll();
 		displaySortedKeys(controller.getGlossaryKeys());
-		displayTermDefinition(key);
 		termPanel.repaint();
 		termPanel.revalidate();
-
 	}
 
 	/**
@@ -470,7 +491,6 @@ public class GlossaryPanel extends JPanel
 			this.setTitle("New Term");
 			this.setLocationRelativeTo(gp);
 			this.setVisible(true);
-
 			this.setContentPane(newPanel);
 
 		}
@@ -516,26 +536,7 @@ public class GlossaryPanel extends JPanel
 			{
 				this.setBackground(LIGHT_GREY_COLOR);
 				this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-				newKeyDetailsPane = new JScrollPane(newKeyDetailsArea);
-				;
-				;
-				;
-				;
-				;
-				;
-				;
-				;
-				;
-				;
-				;
-				;
-				;
-				;
-				;
-				;
-				;
-				;
-				;
+				newKeyDetailsPane = new JScrollPane(newKeyDetailsArea);				
 				newKeyPane
 						.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 				newKeyPane

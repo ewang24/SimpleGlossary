@@ -25,7 +25,7 @@ public class Controller
 	private File glossaryFileToUse;
 	private boolean autoLoad = true;
 	private String fileName;
-	private final String AUTOLOAD_PATH = "C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\glossary.gl";
+	private final String AUTOLOAD_PATH = "C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\big.gl";
 	private boolean newFile = true;
 
 	public Controller()
@@ -204,5 +204,13 @@ public class Controller
 	public boolean isNewFile()
 	{
 		return newFile;
+	}
+	/**
+	 * @param key to remove
+	 * @return true if the entry was sucessfully removed
+	 */
+	public boolean remove(String key)
+	{
+		return !glossary.removeByKey(key).equals(null);
 	}
 }
