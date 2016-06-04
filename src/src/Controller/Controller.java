@@ -22,17 +22,18 @@ public class Controller
 {
 	private Glossary glossary;
 	private GlossaryFrame gf;
-	private File glossaryFileToLoad;
-	private boolean autoload = true;
+	private File glossaryFileToUse;
+	private boolean autoLoad = true;
 	private String fileName;
 	private final String AUTOLOAD_PATH = "C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\glossary.gl";
+	private boolean newFile = true;
 
 	public Controller()
 	{
 		glossary = new Glossary();
 		gf = new GlossaryFrame(this);
 
-		if (autoload)
+		if (autoLoad)
 		{
 			load(AUTOLOAD_PATH);
 		}
@@ -40,11 +41,11 @@ public class Controller
 
 	private void load(String location)
 	{
-		glossaryFileToLoad = new File(location);
+		glossaryFileToUse = new File(location);
 		String rawTermString = "";
 		try
 		{
-			Scanner termReader = new Scanner(glossaryFileToLoad);
+			Scanner termReader = new Scanner(glossaryFileToUse);
 			while (termReader.hasNextLine())
 			{
 				rawTermString += termReader.nextLine() + "\n";
@@ -67,7 +68,7 @@ public class Controller
 							termList[i].length())));
 		}
 
-		fileName = glossaryFileToLoad.getName();
+		fileName = glossaryFileToUse.getName();
 		gf.setTitle(fileName);
 		gf.displayGlossaryKeys();
 	}
@@ -123,13 +124,16 @@ public class Controller
 		return success;
 	}
 
+	/**
+	 * Save the glossary to the file specified by glossaryFileToUse
+	 */
 	public void save()
 	{
 		String toString = glossary.toString();
 		try
 		{
 			PrintWriter saveWriter = new PrintWriter(new BufferedWriter(
-					new FileWriter(glossaryFileToLoad, false)));
+					new FileWriter(glossaryFileToUse, false)));
 			saveWriter.print(toString);
 			saveWriter.flush();
 			saveWriter.close();
@@ -149,8 +153,9 @@ public class Controller
 	 */
 	public void saveAs(String location)
 	{
-		glossaryFileToLoad = new File(location);
-		fileName = glossaryFileToLoad.getName();
+		newFile = false;
+		glossaryFileToUse = new File(location);
+		fileName = glossaryFileToUse.getName();
 		refreshTitle();
 		save();
 	}
@@ -161,7 +166,7 @@ public class Controller
 	}
 	
 	/**
-	 * @return: returns true if all data is saved and okay to dump, false otherwise
+	 * Creates a new glossary
 	 */
 	public void newGlossary()
 	{
@@ -170,6 +175,8 @@ public class Controller
 			if(JOptionPane.showConfirmDialog(gf, "You have unsaved data.\nIs it okay to discard it?")!=JOptionPane.YES_OPTION)
 				return;
 		}
+		
+		newFile = true;
 		clearEverything();
 		fileName = "New Glossary";
 		refreshTitle();
@@ -189,5 +196,13 @@ public class Controller
 	private void refreshTitle()
 	{
 		gf.setTitle(fileName);
+	}
+	
+	/**
+	 * @return true if the file is a new file that does not have a file location yet
+	 */
+	public boolean isNewFile()
+	{
+		return newFile;
 	}
 }
