@@ -37,7 +37,8 @@ public class GlossaryPanel extends JPanel
 	 * 
 	 */
 	private static final long serialVersionUID = 1627390830118627789L;
-
+	
+	
 	/*
 	 * Data variable
 	 */
