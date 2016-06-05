@@ -4,6 +4,8 @@ Evan Wang
 
 package Controller;
 
+import java.util.ArrayList;
+
 import javax.swing.UIManager;
 
 import Model.UnicodeModeler;
@@ -26,6 +28,12 @@ public class DataGenerator
 //		System.out.println(Integer.parseInt("00F0",16));
 		UnicodeModeler u = new UnicodeModeler();
 		SpecialCharacterChooser s = new SpecialCharacterChooser(u);
+		ArrayList<Integer> a = u.getAllCodes();
+		for(int _: a)
+		{
+			System.out.println(Character.getName(_));
+		}
+		
 //		for(int i = 0; i < 3000; i++)
 //			System.out.println("entry"+i+":::"+i);
 //		System.out.println(Character.getName(0101)+" "+Character.getType(0101)+" "+Character.getNumericValue(0101));

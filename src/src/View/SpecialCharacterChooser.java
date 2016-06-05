@@ -5,6 +5,7 @@ Evan Wang
 package View;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -25,6 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.text.JTextComponent;
 
 import net.miginfocom.swing.MigLayout;
 import Model.UnicodeModeler;
@@ -37,6 +39,7 @@ public class SpecialCharacterChooser extends JFrame
 	 */
 	private static final long serialVersionUID = 1668531250025520362L;
 	
+	Component focused;
 	UnicodeModeler u;
 	CharacterPanel characterPanel;
 	Font font = new Font(null);
@@ -52,7 +55,7 @@ public class SpecialCharacterChooser extends JFrame
 		characterPanel = new CharacterPanel();
 		this.setSize(new Dimension(400,300));
 		this.setPreferredSize(new Dimension(400,300));
-		this.setVisible(true);
+		this.setVisible(false);
 		this.setResizable(false);
 		
 		this.setContentPane(characterPanel);
@@ -157,7 +160,7 @@ public class SpecialCharacterChooser extends JFrame
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-					
+					append(selected);
 				}
 			});
 			
@@ -226,8 +229,10 @@ public class SpecialCharacterChooser extends JFrame
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-					System.out.println(newCharacterButton.getCharacter());
+					System.out.println(newCharacterButton.getCharacterAsString());
 					current.setText("Insert: "+newCharacterButton.getCharacterAsString());
+					selected = newCharacterButton.getCharacterAsString();
+					submit.setEnabled(true);
 				}
 			});
 			
@@ -279,5 +284,29 @@ public class SpecialCharacterChooser extends JFrame
 	{
 		this.setVisible(false);
 		this.dispose();
+	}
+	
+	private void append(String character)
+	{
+		if(focused == null)
+		{
+			System.err.println("No focused component!!!");
+		}
+		if(focused instanceof JTextComponent)
+		{ 
+			JTextComponent jtc = (JTextComponent) focused;
+			if(jtc.isEditable())
+			{
+				jtc.setText(jtc.getText()+character);
+				closeWindow();
+			}
+		}
+		else
+			System.err.println("Focused component does not work with text!!!");
+	}
+	
+	public void setFocused(Component focused_)
+	{
+		focused = focused_;
 	}
 }

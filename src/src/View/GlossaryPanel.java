@@ -5,13 +5,16 @@ Evan Wang
 package View;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -27,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 import Controller.Controller;
 import Model.Term;
 import net.miginfocom.swing.MigLayout;
@@ -37,15 +41,12 @@ public class GlossaryPanel extends JPanel
 	 * 
 	 */
 	private static final long serialVersionUID = 1627390830118627789L;
-	
-	
+
 	/*
 	 * Data variable
 	 */
 	Controller controller;
-	char[] alph = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
-			'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',
-			'z' };
+	char[] alph = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
 	int count = 0;
 	HashMap<String, JButton> buttonMap;
 
@@ -60,6 +61,8 @@ public class GlossaryPanel extends JPanel
 	ControlPanel cp;
 	JFileChooser glossaryOpener;
 	FileNameExtensionFilter filter;
+
+	SpecialCharacterChooser scc;
 	/**
 	 * MenuBar
 	 */
@@ -102,6 +105,8 @@ public class GlossaryPanel extends JPanel
 		glossaryOpener = new JFileChooser();
 		filter = new FileNameExtensionFilter("Glossary File", "gl");
 
+		scc = new SpecialCharacterChooser(controller.getUnicodeModeler());
+
 		// MenuBar
 		mb = new JMenuBar();
 		fileMenu = new JMenu("File");
@@ -131,25 +136,19 @@ public class GlossaryPanel extends JPanel
 		this.setBackground(new Color(255, 255, 255));
 		termDetailsArea.setEditable(false);
 		termDetailsArea.setText("");
-		termDetailsArea.setBorder(BorderFactory
-				.createLineBorder(Color.BLACK, 1));
+		termDetailsArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		termPanel.setLayout(new MigLayout("fillx"));
 		termPanel.setBackground(LIGHT_GREY_COLOR);
 		termScrollPane = new JScrollPane(termPanel);
-		termScrollPane
-				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		termScrollPane
-				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		termScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		termScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		termDetailsScrollPane = new JScrollPane(termDetailsArea);
-		termDetailsScrollPane
-				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		termDetailsScrollPane
-				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		termDetailsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		termDetailsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		termDetailsScrollPane.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
-//		termScrollPane.setMinimumSize(new Dimension(300, 500));
+		// termScrollPane.setMinimumSize(new Dimension(300, 500));
 		cp.setMinimumSize(new Dimension(300, 30));
-		termScrollPane.getVerticalScrollBar()
-				.setUnitIncrement(SCROLL_INCREMENT);
+		termScrollPane.getVerticalScrollBar().setUnitIncrement(SCROLL_INCREMENT);
 		this.add(termScrollPane);
 		this.add(termDetailsScrollPane);
 		this.add(cp);
@@ -214,10 +213,8 @@ public class GlossaryPanel extends JPanel
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				WindowEvent closingEvent = new WindowEvent(getGlossaryFrame(),
-						WindowEvent.WINDOW_CLOSING);
-				Toolkit.getDefaultToolkit().getSystemEventQueue()
-						.postEvent(closingEvent);
+				WindowEvent closingEvent = new WindowEvent(getGlossaryFrame(), WindowEvent.WINDOW_CLOSING);
+				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(closingEvent);
 			}
 		});
 
@@ -265,9 +262,7 @@ public class GlossaryPanel extends JPanel
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				JOptionPane
-						.showMessageDialog(null,
-								"About:\nThis is a glossary program\nGitHub.com\\ewang24\nThank you for your support!");
+				JOptionPane.showMessageDialog(null, "About:\nThis is a glossary program\nGitHub.com\\ewang24\nThank you for your support!");
 			}
 		});
 
@@ -345,21 +340,20 @@ public class GlossaryPanel extends JPanel
 		}
 		int currLetter = 0;
 
-		if (alph[currLetter] == Character.toLowerCase(keys[0].charAt(0)))
-			displayLetterMarker(alph[currLetter]);
+//		if (alph[currLetter] == Character.toLowerCase(keys[0].charAt(0)))
+//			displayLetterMarker(alph[currLetter]);
 
 		for (int i = 0; i < keys.length; i++)
 		{
-			if (alph[currLetter] != Character.toLowerCase(keys[i].charAt(0)))
-			{
-				while (alph[currLetter] != Character.toLowerCase(keys[i]
-						.charAt(0)))
-				{
-					currLetter++;
-				}
-
-				displayLetterMarker(alph[currLetter]);
-			}
+//			if (alph[currLetter] != Character.toLowerCase(keys[i].charAt(0)))
+//			{
+//				while (alph[currLetter] != Character.toLowerCase(keys[i].charAt(0)))
+//				{
+//					currLetter++;
+//				}
+//
+//				displayLetterMarker(alph[currLetter]);
+//			}
 
 			displayKey(keys[i]);
 		}
@@ -373,8 +367,7 @@ public class GlossaryPanel extends JPanel
 	private void displayLetterMarker(char c)
 	{
 		JLabel j = new JLabel("\n" + Character.toUpperCase(c) + ":");
-		j.setFont(new Font(j.getFont().getFontName(), j.getFont().BOLD, j
-				.getFont().getSize()));
+		j.setFont(new Font(j.getFont().getFontName(), j.getFont().BOLD, j.getFont().getSize()));
 		termPanel.add(j, "wrap,push");
 	}
 
@@ -394,13 +387,15 @@ public class GlossaryPanel extends JPanel
 		newTermButton.setContentAreaFilled(false);
 		newTermButton.setFocusPainted(false);
 
-		newTermButton.addMouseListener(new java.awt.event.MouseAdapter() {
-		    public void mouseClicked(java.awt.event.MouseEvent evt) {
-		    	if(evt.getButton()==java.awt.event.MouseEvent.BUTTON3)
-		    	{
-		    		System.out.println("Got right click");
-		    	}
-		    }
+		newTermButton.addMouseListener(new java.awt.event.MouseAdapter()
+		{
+			public void mouseClicked(java.awt.event.MouseEvent evt)
+			{
+				if (evt.getButton() == java.awt.event.MouseEvent.BUTTON3)
+				{
+					System.out.println("Got right click");
+				}
+			}
 		});
 		newTermButton.addActionListener(new ActionListener()
 		{
@@ -417,8 +412,7 @@ public class GlossaryPanel extends JPanel
 
 	private void displayTermDefinition(String key)
 	{
-		termDetailsArea.setText(" " + key + ":\n\n\t"
-				+ controller.fetchTermForKey(key).getDefinition());
+		termDetailsArea.setText(" " + key + ":\n\n\t" + controller.fetchTermForKey(key).getDefinition());
 		this.repaint();
 		this.revalidate();
 	}
@@ -431,7 +425,7 @@ public class GlossaryPanel extends JPanel
 	private void removeTerm()
 	{
 		String r = JOptionPane.showInputDialog("What term do you want to remove?");
-		if(!controller.remove(r))
+		if (!controller.remove(r))
 		{
 			JOptionPane.showMessageDialog(null, "Term does not exist!");
 		}
@@ -448,10 +442,9 @@ public class GlossaryPanel extends JPanel
 	{
 		updateTermDisplay();
 		displayTermDefinition(key);
-		
 
 	}
-	
+
 	public void updateTermDisplay()
 	{
 		termPanel.removeAll();
@@ -518,6 +511,7 @@ public class GlossaryPanel extends JPanel
 			private JPanel controlPanel;
 			private JButton submitButton;
 			private JButton cancelButton;
+			private JButton specialCharacterButton;
 
 			public NewPanel()
 			{
@@ -529,6 +523,7 @@ public class GlossaryPanel extends JPanel
 				controlPanel = new JPanel();
 				submitButton = new JButton("Create");
 				cancelButton = new JButton("Cancel");
+				specialCharacterButton = new JButton("\u03A0");
 				setupLayout();
 				setupListeners();
 			}
@@ -537,27 +532,28 @@ public class GlossaryPanel extends JPanel
 			{
 				this.setBackground(LIGHT_GREY_COLOR);
 				this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-				newKeyDetailsPane = new JScrollPane(newKeyDetailsArea);				
-				newKeyPane
-						.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-				newKeyPane
-						.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-				newKeyDetailsPane
-						.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-				newKeyDetailsPane
-						.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-				newKeyArea.setBorder(BorderFactory.createLineBorder(
-						Color.BLACK, 1));
-				newKeyDetailsArea.setBorder(BorderFactory.createLineBorder(
-						Color.BLACK, 1));
+				newKeyDetailsPane = new JScrollPane(newKeyDetailsArea);
+				newKeyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+				newKeyPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				newKeyDetailsPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+				newKeyDetailsPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				// newKeyArea.setBorder(BorderFactory.createLineBorder(Color.BLACK,
+				// 1));
+				// newKeyDetailsArea.setBorder(BorderFactory.createLineBorder(Color.BLACK,
+				// 1));
 				newKeyArea.setText("");
 				newKeyDetailsArea.setText("");
-
+				newKeyArea.requestFocusInWindow();
+				specialCharacterButton.setToolTipText("Insert Special Character");
+				specialCharacterButton.setFocusable(false);
+				submitButton.setFocusable(false);
+				cancelButton.setFocusable(false);
 				this.add(newKeyLabel);
 				this.add(newKeyPane);
 				this.add(newKeyDetailsLabel);
 				this.add(newKeyDetailsPane);
 				this.add(controlPanel);
+				controlPanel.add(specialCharacterButton);
 				controlPanel.add(submitButton);
 				controlPanel.add(cancelButton);
 			}
@@ -568,42 +564,31 @@ public class GlossaryPanel extends JPanel
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						if (newKeyArea.getText().contains(":::")
-								|| newKeyDetailsArea.getText().contains(":::"))
+						if (newKeyArea.getText().contains(":::") || newKeyDetailsArea.getText().contains(":::"))
 						{
-							JOptionPane.showMessageDialog(newPanel,
-									"Term cannot contain the sequence ':::'");
+							JOptionPane.showMessageDialog(newPanel, "Term cannot contain the sequence ':::'");
 							return;
 						}
-						if (newKeyArea.getText().equals("")
-								|| newKeyArea.getText() == null)
+						if (newKeyArea.getText().equals("") || newKeyArea.getText() == null)
 						{
-							JOptionPane.showMessageDialog(newPanel,
-									"Key cannot be blank");
+							JOptionPane.showMessageDialog(newPanel, "Key cannot be blank");
 							return;
 						}
-						if (newKeyDetailsArea.getText().equals("")
-								|| newKeyDetailsArea.getText() == null)
+						if (newKeyDetailsArea.getText().equals("") || newKeyDetailsArea.getText() == null)
 						{
-							JOptionPane.showMessageDialog(newPanel,
-									"Definition cannot be blank");
+							JOptionPane.showMessageDialog(newPanel, "Definition cannot be blank");
 							return;
 						}
-						if (newKeyArea.getText().charAt(
-								newKeyArea.getText().length() - 1) == ' ')
+						if (newKeyArea.getText().charAt(newKeyArea.getText().length() - 1) == ' ')
 						{
-							if (JOptionPane
-									.showConfirmDialog(newPanel,
-											"Trailing spaces on keys are removed.\nIs this okay?") != JOptionPane.YES_OPTION)
+							if (JOptionPane.showConfirmDialog(newPanel, "Trailing spaces on keys are removed.\nIs this okay?") != JOptionPane.YES_OPTION)
 							{
 								return;
 							}
 						}
 						if (newKeyArea.getText().charAt(0) == ' ')
 						{
-							if (JOptionPane
-									.showConfirmDialog(newPanel,
-											"Leading spaces on keys are removed.\nIs this okay?") != JOptionPane.YES_OPTION)
+							if (JOptionPane.showConfirmDialog(newPanel, "Leading spaces on keys are removed.\nIs this okay?") != JOptionPane.YES_OPTION)
 							{
 								return;
 							}
@@ -612,8 +597,7 @@ public class GlossaryPanel extends JPanel
 						if (submitData())
 							closeWindow();
 						else
-							JOptionPane.showMessageDialog(newPanel,
-									"Key is already in glossary");
+							JOptionPane.showMessageDialog(newPanel, "Key is already in glossary");
 					}
 				});
 
@@ -624,19 +608,33 @@ public class GlossaryPanel extends JPanel
 						closeWindow();
 					}
 				});
+				
+				specialCharacterButton.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent e)
+					{
+						System.out.println(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner().getClass().getName());
+						Component focused = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+						if(focused instanceof JTextArea)
+						{
+							setFocusedToFocused(focused);
+							showSpecialCharacterSelect();
+						}
+
+
+					}
+				});
 			}
 
 			private void closeWindow()
 			{
-				((NewFrame) this.getParent().getParent().getParent())
-						.exitFrame();
+				((NewFrame) this.getParent().getParent().getParent()).exitFrame();
 			}
 
 			private boolean submitData()
 			{
 				String newKey = newKeyArea.getText().trim();
-				if (controller.newEntry(newKey,
-						new Term(newKeyDetailsArea.getText())))
+				if (controller.newEntry(newKey, new Term(newKeyDetailsArea.getText())))
 				{
 					updateWithNewTerm(newKey);
 					return true;
@@ -675,17 +673,32 @@ public class GlossaryPanel extends JPanel
 		{
 			if (glossaryOpener.getSelectedFile().exists())
 			{
-				if (JOptionPane.showConfirmDialog(this,
-						"This file already exists.\nOverwrite?") != JOptionPane.YES_OPTION)
+				if (JOptionPane.showConfirmDialog(this, "This file already exists.\nOverwrite?") != JOptionPane.YES_OPTION)
 					return;
 			}
 			String save = glossaryOpener.getSelectedFile().getAbsolutePath();
-			if (!save.substring(save.length() - 3, save.length() - 1).equals(
-					".gl"))
+			if (!save.substring(save.length() - 3, save.length() - 1).equals(".gl"))
 			{
 				save += ".gl";
 			}
 			controller.saveAs(save);
 		}
+	}
+
+	/**
+	 * Show the SpecialCharacterChooser so the user can input a special character
+	 */
+	private void showSpecialCharacterSelect()
+	{
+		scc.setVisible(true);
+	}
+	
+	/**
+	 * This method is called to tell the SpecialCharacterChooser which component to append the selected special character to.
+	 * @param focused, the component that should be appended too.
+	 */
+	private void setFocusedToFocused(Component focused)
+	{
+		scc.setFocused(focused);
 	}
 }
