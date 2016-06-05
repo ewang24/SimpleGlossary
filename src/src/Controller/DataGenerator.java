@@ -22,6 +22,8 @@ public class DataGenerator
 		{
 			
 		}
+		
+//		System.out.println(Integer.parseInt("00F0",16));
 		UnicodeModeler u = new UnicodeModeler();
 		SpecialCharacterChooser s = new SpecialCharacterChooser(u);
 //		for(int i = 0; i < 3000; i++)
