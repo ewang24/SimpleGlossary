@@ -5,7 +5,7 @@ Latin Extended Additional: U+1E00-U+1EFF
 Latin Extended-A: U+0100-U+017F
 Latin Extended-B: U+0180-U+024F
 Latin Extended-C: U+2C60-U+2C7F
-Latin Extended-D: U+A720-U+A7FF
+Not Latin Extended-D: U+A720-U+A7FF, currently
 Latin-1 Supplement: u+00C0-u+00FF
  */
 
@@ -94,7 +94,7 @@ public class UnicodeModeler
 		latinBlockRanges.add(new Integer[]{lExtendedALower,lExtendedAUpper});
 		latinBlockRanges.add(new Integer[]{lExtendedBLower,lExtendedBUpper});
 		latinBlockRanges.add(new Integer[]{lExtendedCLower,lExtendedCUpper});
-		latinBlockRanges.add(new Integer[]{lExtendedDLower,lExtendedDUpper});
+//		latinBlockRanges.add(new Integer[]{lExtendedDLower,lExtendedDUpper});
 		
 	}
 	

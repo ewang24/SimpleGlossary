@@ -4,6 +4,8 @@ Evan Wang
 
 package Controller;
 
+import javax.swing.UIManager;
+
 import Model.UnicodeModeler;
 import View.SpecialCharacterChooser;
 
@@ -12,7 +14,14 @@ public class DataGenerator
 
 	public static void main(String[] args)
 	{
-		
+		try
+		{
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}
+		catch(Exception e)
+		{
+			
+		}
 		UnicodeModeler u = new UnicodeModeler();
 		SpecialCharacterChooser s = new SpecialCharacterChooser(u);
 //		for(int i = 0; i < 3000; i++)
