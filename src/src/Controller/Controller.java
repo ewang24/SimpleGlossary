@@ -4,12 +4,15 @@ Evan Wang
 
 package Controller;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -51,14 +54,17 @@ public class Controller
 		String rawTermString = "";
 		try
 		{
-			Scanner termReader = new Scanner(glossaryFileToUse);
-			while (termReader.hasNextLine())
+
+			String current = "";
+			// Scanner termReader = new Scanner(glossaryFileToUse);
+			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(glossaryFileToUse), "UTF-8"));
+			while ((current = in.readLine()) != null)
 			{
-				rawTermString += termReader.nextLine() + "\n";
+				rawTermString += current + "\n";
 			}
-			termReader.close();
+			// termReader.close();
 		}
-		catch (FileNotFoundException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -128,7 +134,8 @@ public class Controller
 		String toString = glossary.toString();
 		try
 		{
-//			PrintWriter saveWriter = new PrintWriter(new BufferedWriter(new FileWriter(glossaryFileToUse, false)));
+			// PrintWriter saveWriter = new PrintWriter(new BufferedWriter(new
+			// FileWriter(glossaryFileToUse, false)));
 
 			PrintWriter saveWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(glossaryFileToUse.getAbsolutePath()), "UTF-8"));
 
