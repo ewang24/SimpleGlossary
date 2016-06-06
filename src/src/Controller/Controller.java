@@ -30,11 +30,13 @@ public class Controller
 	private Glossary glossary;
 	private GlossaryFrame gf;
 	private File glossaryFileToUse;
-	private boolean autoLoad = true;
 	private String fileName;
 	private final String AUTOLOAD_PATH = "C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\glossary.gl";
 	private boolean newFile = true;
 	UnicodeModeler unicodeModeler;
+	
+	//Turn this to false and the program won't autoload the file at AUTOLOAD_PATH. Used for debug purposes
+	private boolean autoLoad = !true;
 
 	public Controller()
 	{
@@ -44,7 +46,7 @@ public class Controller
 
 		if (autoLoad)
 		{
-			load(AUTOLOAD_PATH);
+			open(AUTOLOAD_PATH);
 		}
 	}
 

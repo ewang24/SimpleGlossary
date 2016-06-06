@@ -64,8 +64,7 @@ public class GlossaryFrame extends JFrame
 	
 	public void clearAllForOpen()
 	{
-		glossaryPanel = new GlossaryPanel(controller, this);
-		this.setContentPane(glossaryPanel);
+		glossaryPanel.clearAllForOpen();
 		this.repaint();
 		this.revalidate();
 	}

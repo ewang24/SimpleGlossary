@@ -58,7 +58,7 @@ public class GlossaryPanel extends JPanel
 	JTextArea termDetailsArea;
 	JScrollPane termScrollPane;
 	JScrollPane termDetailsScrollPane;
-	ControlPanel cp;
+	ControlPanel mainControlPanel;
 	JFileChooser glossaryOpener;
 	FileNameExtensionFilter filter;
 
@@ -98,7 +98,7 @@ public class GlossaryPanel extends JPanel
 		this.glossaryFrame = gf;
 		this.controller = controller;
 		buttonMap = new HashMap<String, JButton>();
-		cp = new ControlPanel();
+		mainControlPanel = new ControlPanel();
 		termDetailsArea = new JTextArea();
 		termPanel = new JPanel();
 
@@ -146,12 +146,14 @@ public class GlossaryPanel extends JPanel
 		termDetailsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		termDetailsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		termDetailsScrollPane.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
-		// termScrollPane.setMinimumSize(new Dimension(300, 500));
-		cp.setMinimumSize(new Dimension(300, 30));
+		mainControlPanel.setMinimumSize(new Dimension(300, 30));
+		mainControlPanel.setMaximumSize(new Dimension(300, 30));
 		termScrollPane.getVerticalScrollBar().setUnitIncrement(SCROLL_INCREMENT);
+		termPanel.add(new JLabel("Welcome to SimpleGlossary!"),"wrap");
+		termPanel.add(new JLabel("Add terms to get started, or load an old glossary"),"wrap");
 		this.add(termScrollPane);
 		this.add(termDetailsScrollPane);
-		this.add(cp);
+		this.add(mainControlPanel);
 		mb.add(fileMenu);
 		mb.add(editMenu);
 		mb.add(aboutMenu);
@@ -332,13 +334,13 @@ public class GlossaryPanel extends JPanel
 		}
 	}
 
+	/**
+	 * Display all the terms in a glossary
+	 * @param keys, the list of keys in the glossary
+	 */
 	public void displaySortedKeys(String[] keys)
 	{
 		boolean reachedEnd = false;
-//		for (int i = 0; i < keys.length; i++)
-//		{
-//			System.out.println(keys[i]);
-//		}
 		
 		int currLetter = 0;
 
@@ -367,19 +369,27 @@ public class GlossaryPanel extends JPanel
 		}
 
 		displayTermDefinition(keys[0]);
-		cp.updateSize();
+		mainControlPanel.updateSize();
 		this.repaint();
 		this.revalidate();
 	}
 
+	/**
+	 * Display a marker with one letter
+	 * @param c, the character to display
+	 */
 	private void displayLetterMarker(char c)
 	{
-		displayMarker("\n" + Character.toUpperCase(c) + ":");
+		displayMarker("\n" + Character.toUpperCase(c));
 	}
 
+	/**
+	 * Display a marker to separate an alphabetically sorted list
+	 * @param marker, the text for the marker
+	 */
 	private void displayMarker(String marker)
 	{
-		JLabel j = new JLabel(marker);
+		JLabel j = new JLabel(marker + ":");
 		j.setFont(new Font(j.getFont().getFontName(), j.getFont().BOLD, j.getFont().getSize()));
 		termPanel.add(j, "wrap,push");
 	}
@@ -716,5 +726,12 @@ public class GlossaryPanel extends JPanel
 	private void setFocusedToFocused(Component focused)
 	{
 		scc.setFocused(focused);
+	}
+	
+	public void clearAllForOpen()
+	{
+		termPanel.removeAll();
+		termDetailsArea.setText("");
+		mainControlPanel.updateSize();
 	}
 }
