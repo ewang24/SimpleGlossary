@@ -11,7 +11,9 @@ Latin-1 Supplement: u+00C0-u+00FF
 
 package Model;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import Controller.diacritic;
@@ -44,131 +46,177 @@ public class UnicodeModeler
 	final String largeHCircumflex = "\u0124";
 	final String smallNTilde = "\u00F1";
 	final String largeNTilde = "\u00D1";
-	
+
 	/**
 	 * Currently supported blocks of unicode characters
 	 */
 	private final int lExtendedAddLower = 0x1e00;
 	private final int lExtendedAddUpper = 0x1eff;
-	
+
 	private final int lExtendedALower = 0x0100;
 	private final int lExtendedAUpper = 0x017F;
-	
+
 	private final int lExtendedBLower = 0x0180;
 	private final int lExtendedBUpper = 0x024F;
-	
+
 	private final int lExtendedCLower = 0x2C60;
 	private final int lExtendedCUpper = 0x2C7F;
-	
+
 	private final int lExtendedDLower = 0xA720;
 	private final int lExtendedDUpper = 0xA7FF;
 	/**
 	 * 
 	 */
-	
+
+	/**
+	 * Data
+	 */
 	ArrayList<Integer[]> latinBlockRanges;
 	ArrayList<Integer> latinBlockCodes;
 	HashMap<String, String> unicodeCharsFavorites;
+	char[] alphabet;
 
-	public UnicodeModeler(String [] favorites)
+	public UnicodeModeler(String[] favorites)
 	{
-		
+
 	}
-	
+
 	public UnicodeModeler()
 	{
+
+		alphabet = new char[26];
+
 		latinBlockRanges = new ArrayList<Integer[]>();
 		latinBlockCodes = new ArrayList<Integer>();
 		unicodeCharsFavorites = new HashMap<String, String>();
-		
+
 		createBlocks();
 		loadLatinBlocks();
+		loadAlphabet();
 	}
 
 	/**
-	 * Set up the ranges for the unicode characters supported and store them in a list of pairs. The first number in the pair is the lower bound and the second number is the upper bound
+	 * From http://stackoverflow.com/questions/17575840/better-way-to-generate-
+	 * array-of-all-letters-in-the-alphabet/27735081#27735081
+	 */
+	private void loadAlphabet()
+	{
+		int k = 0;
+		for (int i = 0; i < 26; i++)
+		{
+			alphabet[i] = (char) (97 + (k++));
+		}
+	}
+
+	/**
+	 * Set up the ranges for the unicode characters supported and store them in
+	 * a list of pairs. The first number in the pair is the lower bound and the
+	 * second number is the upper bound
 	 */
 	private void createBlocks()
 	{
-		latinBlockRanges.add(new Integer[]{lExtendedAddLower,lExtendedAddUpper});
-		latinBlockRanges.add(new Integer[]{lExtendedALower,lExtendedAUpper});
-		latinBlockRanges.add(new Integer[]{lExtendedBLower,lExtendedBUpper});
-		latinBlockRanges.add(new Integer[]{lExtendedCLower,lExtendedCUpper});
-//		latinBlockRanges.add(new Integer[]{lExtendedDLower,lExtendedDUpper});
-		
+		latinBlockRanges.add(new Integer[] { lExtendedAddLower, lExtendedAddUpper });
+		latinBlockRanges.add(new Integer[] { lExtendedALower, lExtendedAUpper });
+		latinBlockRanges.add(new Integer[] { lExtendedBLower, lExtendedBUpper });
+		latinBlockRanges.add(new Integer[] { lExtendedCLower, lExtendedCUpper });
+		// latinBlockRanges.add(new Integer[]{lExtendedDLower,lExtendedDUpper});
+
 	}
-	
+
 	private void loadLatinBlocks()
 	{
-		for(Integer[] e :latinBlockRanges)
+		for (Integer[] e : latinBlockRanges)
 		{
-			for(int i = e[0];i<=e[1];i++)
+			for (int i = e[0]; i <= e[1]; i++)
 			{
-//				String s = Integer.toHexString(i);
-//				System.out.println(s);
+				// String s = Integer.toHexString(i);
+				// System.out.println(s);
 				latinBlockCodes.add(i);
 			}
 		}
 	}
-	
-	public String getUnicodeCharacter(charCase case_, char base,diacritic modifier)
+
+	public String getUnicodeCharacter(charCase case_, char base, diacritic modifier)
 	{
 		return unicodeCharsFavorites.get(case_.toString() + base + modifier.toString());
 	}
 
-	public void addUnicodeCharacter(charCase case_, char base,diacritic modifier, String code)
+	public void addUnicodeCharacter(charCase case_, char base, diacritic modifier, String code)
 	{
 		if (code.charAt(0) != '\\' && code.charAt(1) != 'u')
 		{
-			code = "\\u"+code;
+			code = "\\u" + code;
 		}
-		else if(code.charAt(0)!='\\'||code.charAt(1)!='u')
+		else if (code.charAt(0) != '\\' || code.charAt(1) != 'u')
 		{
 			System.err.println("Error");
 		}
-		
+
 		unicodeCharsFavorites.put(case_.toString() + base + modifier.toString(), code);
 	}
-	
+
 	public String[] allDescriptors()
-	{ 
+	{
 		return unicodeCharsFavorites.keySet().toArray(new String[unicodeCharsFavorites.size()]);
 	}
-	
+
 	public String[] allCodes()
-	{ 
+	{
 		return unicodeCharsFavorites.values().toArray(new String[unicodeCharsFavorites.size()]);
 	}
-	
+
 	public ArrayList<Integer> getAllCodes()
 	{
 		return latinBlockCodes;
 	}
+
+	public String getBaseCharacterString(String character)
+	{
+		String n = Normalizer.normalize(character, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+		System.out.println(Integer.toHexString((int) n.charAt(0)));
+		return n;
+	}
+
+	private class UnicodeStringComparator implements Comparator<String>
+	{
+
+		@Override
+		public int compare(String o1, String o2)
+		{	
+				return getBaseCharacterString(o1).toLowerCase().compareTo(getBaseCharacterString(o2).toLowerCase());
+		}
+		
+	}
 	
-//	private class namedArray<T>
-//	{
-//		T[] t;
-//		String name;
-//		
-//		public namedArray(int size, String name)
-//		{
-//			this.name = name;
-//			t = (T[]) new Object[size];
-//		}
-//		
-//		public T get(int index)
-//		{
-//			return t[index];
-//		}
-//		
-//		public void set(int index, T value)
-//		{
-//			t[index] = value;
-//		}
-//		
-//		public String getName()
-//		{
-//			return name;
-//		}
-//	}
+	public UnicodeStringComparator getUnicodeStringComparator()
+	{
+		return new UnicodeStringComparator();
+	}
+	
+	// private class namedArray<T>
+	// {
+	// T[] t;
+	// String name;
+	//
+	// public namedArray(int size, String name)
+	// {
+	// this.name = name;
+	// t = (T[]) new Object[size];
+	// }
+	//
+	// public T get(int index)
+	// {
+	// return t[index];
+	// }
+	//
+	// public void set(int index, T value)
+	// {
+	// t[index] = value;
+	// }
+	//
+	// public String getName()
+	// {
+	// return name;
+	// }
+	// }
 }

@@ -5,6 +5,7 @@ Evan Wang
 package Model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -57,7 +58,7 @@ public class Glossary
 		return glossary.get(key);
 	}
 
-	public String[] getKeys()
+	public String[] getKeys(Comparator comparator)
 	{
 		Object[] s = glossary.keySet().toArray();
 		String[] newS = new String[s.length];
@@ -66,7 +67,7 @@ public class Glossary
 			newS[i] = (String) s[i];
 		}
 
-		java.util.Arrays.sort(newS,String.CASE_INSENSITIVE_ORDER);
+		java.util.Arrays.sort(newS,comparator);
 		return newS;
 	}
 

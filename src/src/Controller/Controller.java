@@ -55,14 +55,14 @@ public class Controller
 		try
 		{
 
-			String current = "";
+			String currentString = "";
 			// Scanner termReader = new Scanner(glossaryFileToUse);
-			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(glossaryFileToUse), "UTF-8"));
-			while ((current = in.readLine()) != null)
+			BufferedReader termReader = new BufferedReader(new InputStreamReader(new FileInputStream(glossaryFileToUse), "UTF-8"));
+			while ((currentString = termReader.readLine()) != null)
 			{
-				rawTermString += current + "\n";
+				rawTermString += currentString + "\n";
 			}
-			// termReader.close();
+			 termReader.close();
 		}
 		catch (Exception e)
 		{
@@ -83,7 +83,7 @@ public class Controller
 
 	public String[] getGlossaryKeys()
 	{
-		return glossary.getKeys();
+		return glossary.getKeys(unicodeModeler.getUnicodeStringComparator());
 	}
 
 	public Term fetchTermForKey(String key)

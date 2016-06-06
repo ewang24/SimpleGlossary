@@ -334,26 +334,34 @@ public class GlossaryPanel extends JPanel
 
 	public void displaySortedKeys(String[] keys)
 	{
-		for (int i = 0; i < keys.length; i++)
-		{
-			System.out.println(keys[i]);
-		}
+		boolean reachedEnd = false;
+//		for (int i = 0; i < keys.length; i++)
+//		{
+//			System.out.println(keys[i]);
+//		}
+		
 		int currLetter = 0;
 
-//		if (alph[currLetter] == Character.toLowerCase(keys[0].charAt(0)))
-//			displayLetterMarker(alph[currLetter]);
+		if (alph[currLetter] == Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[0]).charAt(0)))
+			displayLetterMarker(alph[currLetter]);
 
 		for (int i = 0; i < keys.length; i++)
 		{
-//			if (alph[currLetter] != Character.toLowerCase(keys[i].charAt(0)))
-//			{
-//				while (alph[currLetter] != Character.toLowerCase(keys[i].charAt(0)))
-//				{
-//					currLetter++;
-//				}
-//
-//				displayLetterMarker(alph[currLetter]);
-//			}
+			if (!reachedEnd && alph[currLetter] != Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[i]).charAt(0)))
+			{
+				while (!reachedEnd && alph[currLetter] != Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[i]).charAt(0)))
+				{
+					currLetter++;
+					if (currLetter >= alph.length)
+					{
+						reachedEnd = true;
+						displayMarker("Other");
+					}
+				}
+
+				if (!reachedEnd)
+					displayLetterMarker(alph[currLetter]);
+			}
 
 			displayKey(keys[i]);
 		}
@@ -366,7 +374,12 @@ public class GlossaryPanel extends JPanel
 
 	private void displayLetterMarker(char c)
 	{
-		JLabel j = new JLabel("\n" + Character.toUpperCase(c) + ":");
+		displayMarker("\n" + Character.toUpperCase(c) + ":");
+	}
+
+	private void displayMarker(String marker)
+	{
+		JLabel j = new JLabel(marker);
 		j.setFont(new Font(j.getFont().getFontName(), j.getFont().BOLD, j.getFont().getSize()));
 		termPanel.add(j, "wrap,push");
 	}
@@ -608,19 +621,18 @@ public class GlossaryPanel extends JPanel
 						closeWindow();
 					}
 				});
-				
+
 				specialCharacterButton.addActionListener(new ActionListener()
 				{
 					public void actionPerformed(ActionEvent e)
 					{
 						System.out.println(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner().getClass().getName());
 						Component focused = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
-						if(focused instanceof JTextArea)
+						if (focused instanceof JTextArea)
 						{
 							setFocusedToFocused(focused);
 							showSpecialCharacterSelect();
 						}
-
 
 					}
 				});
@@ -686,16 +698,20 @@ public class GlossaryPanel extends JPanel
 	}
 
 	/**
-	 * Show the SpecialCharacterChooser so the user can input a special character
+	 * Show the SpecialCharacterChooser so the user can input a special
+	 * character
 	 */
 	private void showSpecialCharacterSelect()
 	{
 		scc.setVisible(true);
 	}
-	
+
 	/**
-	 * This method is called to tell the SpecialCharacterChooser which component to append the selected special character to.
-	 * @param focused, the component that should be appended too.
+	 * This method is called to tell the SpecialCharacterChooser which component
+	 * to append the selected special character to.
+	 * 
+	 * @param focused
+	 *            , the component that should be appended too.
 	 */
 	private void setFocusedToFocused(Component focused)
 	{

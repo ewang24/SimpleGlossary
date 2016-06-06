@@ -1,10 +1,13 @@
 /**
 Evan Wang
+
+This is test code
 */
 
 package Controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.UIManager;
 
@@ -16,23 +19,26 @@ public class DataGenerator
 
 	public static void main(String[] args)
 	{
-		try
-		{
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch(Exception e)
-		{
-			
-		}
 		
-//		System.out.println(Integer.parseInt("00F0",16));
 		UnicodeModeler u = new UnicodeModeler();
-		SpecialCharacterChooser s = new SpecialCharacterChooser(u);
-		ArrayList<Integer> a = u.getAllCodes();
-		for(int _: a)
-		{
-			System.out.println(Character.getName(_));
-		}
+		String [] sa = {"Ökur","Sëki"};
+		Arrays.sort(sa,u.getUnicodeStringComparator());
+		for(String e : sa)
+			System.out.println(e);
+		
+//		String s = "Ökur";
+//		System.out.println(u.getBaseCharacterString(s));
+//		System.out.println(u.getBaseCharacterString("hi"));
+		
+
+//		System.out.println((char)-1);
+//		System.out.println(Integer.parseInt("00F0",16));
+//		SpecialCharacterChooser s = new SpecialCharacterChooser(u);
+//		ArrayList<Integer> a = u.getAllCodes();
+//		for(int _: a)
+//		{
+//			System.out.println(Character.getName(_));
+//		}
 		
 //		for(int i = 0; i < 3000; i++)
 //			System.out.println("entry"+i+":::"+i);
