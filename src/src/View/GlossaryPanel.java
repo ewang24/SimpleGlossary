@@ -70,7 +70,9 @@ public class GlossaryPanel extends JPanel
 	JScrollPane termDetailsScrollPane;
 	ControlPanel mainControlPanel;
 	JFileChooser glossaryOpener;
-	FileNameExtensionFilter filter;
+	FileNameExtensionFilter openSaveFilter;
+	JFileChooser glossaryExporter;
+	FileNameExtensionFilter exportFilter;
 
 	/**
 	 * MenuBar
@@ -83,6 +85,7 @@ public class GlossaryPanel extends JPanel
 	JMenuItem saveItem;
 	JMenuItem saveAsItem;
 	JMenuItem openItem;
+	JMenuItem exportItem;
 	JMenuItem quitItem;
 	JMenuItem undoItem;
 	JMenuItem redoItem;
@@ -127,7 +130,10 @@ public class GlossaryPanel extends JPanel
 		 * FileChooser
 		 */
 		glossaryOpener = new JFileChooser();
-		filter = new FileNameExtensionFilter("Glossary File", "gl");
+		openSaveFilter = new FileNameExtensionFilter("Glossary File", "gl");
+		
+		glossaryExporter = new JFileChooser();
+		exportFilter = new FileNameExtensionFilter("Text File","txt");
 
 
 		// MenuBar
@@ -139,6 +145,7 @@ public class GlossaryPanel extends JPanel
 		saveItem = new JMenuItem("Save");
 		saveAsItem = new JMenuItem("Save As");
 		openItem = new JMenuItem("Open");
+		exportItem = new JMenuItem("Export As Text");
 		quitItem = new JMenuItem("Quit");
 		undoItem = new JMenuItem("Undo");
 		redoItem = new JMenuItem("Redo");
@@ -167,6 +174,7 @@ public class GlossaryPanel extends JPanel
 		termDetailsArea.setEditable(false);
 		termDetailsArea.setText("");
 		termDetailsArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		termDetailsArea.setFont(glossaryFrame.getDefaultFont());
 		termDetailsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		termDetailsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		termDetailsScrollPane.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);		
@@ -198,6 +206,7 @@ public class GlossaryPanel extends JPanel
 		menuBar.add(aboutMenu);
 		fileMenu.add(newItem);
 		fileMenu.add(openItem);
+		fileMenu.add(exportItem);
 		fileMenu.add(saveItem);
 		fileMenu.add(saveAsItem);
 		fileMenu.add(quitItem);
@@ -213,7 +222,8 @@ public class GlossaryPanel extends JPanel
 		/**
 		 * Misc
 		 */
-		glossaryOpener.setFileFilter(filter);
+		glossaryOpener.setFileFilter(openSaveFilter);
+		glossaryExporter.setFileFilter(exportFilter);
 		
 		/**
 		 * Add all components
@@ -249,6 +259,15 @@ public class GlossaryPanel extends JPanel
 				showGlossaryOpenDialog();
 			}
 		});
+		
+		exportItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				showGlossaryExportDialog();
+			}
+		});
+
 
 		saveItem.addActionListener(new ActionListener()
 		{
@@ -492,6 +511,7 @@ public class GlossaryPanel extends JPanel
 		newTermButton.setBorderPainted(false);
 		newTermButton.setContentAreaFilled(false);
 		newTermButton.setFocusPainted(false);
+		System.out.println(newTermButton.getFont().getFontName());
 
 		/**
 		 * listener for right click (currently does nothing)
@@ -682,6 +702,7 @@ public class GlossaryPanel extends JPanel
 				/**
 				 * newKeyDetailsPane
 				 */
+				newKeyDetailsArea.setFont(glossaryFrame.getDefaultFont());
 				newKeyDetailsArea.setText("");
 				newKeyDetailsPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 				newKeyDetailsPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -689,10 +710,11 @@ public class GlossaryPanel extends JPanel
 				/**
 				 * newKeyArea
 				 */
-				newKeyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-				newKeyPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				newKeyArea.setFont(glossaryFrame.getDefaultFont());
 				newKeyArea.setText("");
 				newKeyArea.requestFocusInWindow();
+				newKeyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+				newKeyPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 				
 				/**
 				 * ControlPanel & components
@@ -841,6 +863,27 @@ public class GlossaryPanel extends JPanel
 				return;
 			}
 			controller.open(glossaryOpener.getSelectedFile().getAbsolutePath());
+		}
+	}
+	
+	/**
+	 * Show dialog for exporting a glossary, then give the path for glossary to controller if it exists. Does nothing if file does not exist
+	 */
+	private void showGlossaryExportDialog()
+	{
+		if (glossaryExporter.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+		{
+			if (glossaryExporter.getSelectedFile().exists())
+			{
+				JOptionPane.showMessageDialog(this, "File already exists");
+				return;
+			}
+			String exportString = glossaryExporter.getSelectedFile().getAbsolutePath();
+			if (!exportString.substring(exportString.length() - 4, exportString.length() - 1).equals(".txt"))
+			{
+				exportString += ".txt";
+			}
+			controller.exportAsText(exportString);
 		}
 	}
 	

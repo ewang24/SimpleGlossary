@@ -93,6 +93,26 @@ public class Glossary
 		
 		return toStringString;
 	}
+	
+	/**
+	 * @return the glossary in the form of an easily readable string. Doesn't include delimeters for saving the file for re-use
+	 */
+	public String toText()
+	{
+		
+		String toStringString="";
+		
+		Set<Entry<String,Term>> gs = glossary.entrySet();
+		Iterator<Entry<String, Term>> i = gs.iterator();
+		
+		while(i.hasNext())
+		{
+			Entry<String, Term> e = i.next();
+			toStringString+= e.getKey()+":\r\n\t"+e.getValue().getDefinition()+"\r\n\r\n";
+		}
+		
+		return toStringString;
+	}
 
 	public int getSize()
 	{

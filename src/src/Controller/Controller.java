@@ -30,7 +30,7 @@ public class Controller
 	private Glossary glossary;
 	private GlossaryFrame gf;
 	private File glossaryFileToUse;
-	private String fileName;
+	private String fileName = "untitled";
 	private final String AUTOLOAD_PATH = "C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\glossary.gl";
 	private boolean newFile = true;
 	UnicodeModeler unicodeModeler;
@@ -169,12 +169,42 @@ public class Controller
 		save();
 	}
 
+	/**
+	 * Clears the view and loads the file
+	 * @param location, the file to load
+	 */
 	public void open(String location)
 	{
 		clearEverything();
 		load(location);
 	}
 
+	/**
+	 * Export the glossary as a text file.
+	 * @param location, the location to save the file. 
+	 */
+	public void exportAsText(String location)
+	{
+		System.out.println(location);
+		String toString = glossary.toText();
+		try
+		{
+	
+			PrintWriter saveWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(location), "UTF-8"));
+
+			saveWriter.print(toString);
+			saveWriter.flush();
+			saveWriter.close();
+			glossary.clearDirtyList();
+			refreshTitle();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Creates a new glossary
 	 */
