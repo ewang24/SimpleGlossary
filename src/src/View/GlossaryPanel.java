@@ -50,9 +50,10 @@ public class GlossaryPanel extends JPanel
 	/**
 	 * References
 	 */
-	Controller controller;//Reference to controller object which controls the program
+	Controller controller;// Reference to controller object which controls the
+							// program
 	GlossaryFrame glossaryFrame;// Reference to parent
-	
+
 	/*
 	 * Data variables
 	 */
@@ -94,7 +95,7 @@ public class GlossaryPanel extends JPanel
 	JMenuItem pasteItem;
 	JMenuItem aboutItem;
 	JMenuItem helpItem;
-	
+
 	/*
 	 * finals
 	 */
@@ -116,7 +117,7 @@ public class GlossaryPanel extends JPanel
 		 */
 		buttonMap = new HashMap<String, JButton>();
 		scc = new SpecialCharacterChooser(controller.getUnicodeModeler());
-		
+
 		/**
 		 * Components
 		 */
@@ -131,10 +132,9 @@ public class GlossaryPanel extends JPanel
 		 */
 		glossaryOpener = new JFileChooser();
 		openSaveFilter = new FileNameExtensionFilter("Glossary File", "gl");
-		
-		glossaryExporter = new JFileChooser();
-		exportFilter = new FileNameExtensionFilter("Text File","txt");
 
+		glossaryExporter = new JFileChooser();
+		exportFilter = new FileNameExtensionFilter("Text File", "txt");
 
 		// MenuBar
 		menuBar = new JMenuBar();
@@ -145,7 +145,7 @@ public class GlossaryPanel extends JPanel
 		saveItem = new JMenuItem("Save");
 		saveAsItem = new JMenuItem("Save As");
 		openItem = new JMenuItem("Open");
-		exportItem = new JMenuItem("Export As Text");
+		exportItem = new JMenuItem("Export As Tex+t");
 		quitItem = new JMenuItem("Quit");
 		undoItem = new JMenuItem("Undo");
 		redoItem = new JMenuItem("Redo");
@@ -167,7 +167,7 @@ public class GlossaryPanel extends JPanel
 		 */
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.setBackground(new Color(255, 255, 255));
-		
+
 		/**
 		 * TermDetailsArea
 		 */
@@ -177,7 +177,7 @@ public class GlossaryPanel extends JPanel
 		termDetailsArea.setFont(glossaryFrame.getDefaultFont());
 		termDetailsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		termDetailsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		termDetailsScrollPane.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);		
+		termDetailsScrollPane.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
 
 		/**
 		 * TermPanel
@@ -187,17 +187,16 @@ public class GlossaryPanel extends JPanel
 		termScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		termScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		termScrollPane.getVerticalScrollBar().setUnitIncrement(TERM_SCROLL_INCREMENT);
-			//Instructions added at the beginning
-			termPanel.add(new JLabel("Welcome to SimpleGlossary!"),"wrap");
-			termPanel.add(new JLabel("Add terms to get started, or load an old glossary"),"wrap");
-		
+		// Instructions added at the beginning
+		termPanel.add(new JLabel("Welcome to SimpleGlossary!"), "wrap");
+		termPanel.add(new JLabel("Add terms to get started, or load an old glossary"), "wrap");
+
 		/**
 		 * MainControlPanel
 		 */
 		mainControlPanel.setMinimumSize(MAIN_CONTROL_PANEL_SIZE);
 		mainControlPanel.setMaximumSize(MAIN_CONTROL_PANEL_SIZE);
 
-		
 		/**
 		 * Menubar
 		 */
@@ -218,32 +217,33 @@ public class GlossaryPanel extends JPanel
 		aboutMenu.add(aboutItem);
 		aboutMenu.add(helpItem);
 		getGlossaryFrame().setJMenuBar(menuBar);
-		
+
 		/**
 		 * Misc
 		 */
 		glossaryOpener.setFileFilter(openSaveFilter);
 		glossaryExporter.setFileFilter(exportFilter);
-		
+
 		/**
 		 * Add all components
 		 */
 		this.add(termScrollPane);
 		this.add(termDetailsScrollPane);
 		this.add(mainControlPanel);
-		
+
 		this.revalidate();
 	}
 
 	/**
-	 * Set up the listeners for any clickable object that is the responsibility of GlossaryPanel
+	 * Set up the listeners for any clickable object that is the responsibility
+	 * of GlossaryPanel
 	 */
 	private void setupGlossaryPanelListeners()
 	{
 		/**
 		 * Menubar listeners
 		 */
-		
+
 		newItem.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -259,7 +259,7 @@ public class GlossaryPanel extends JPanel
 				showGlossaryOpenDialog();
 			}
 		});
-		
+
 		exportItem.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -267,7 +267,6 @@ public class GlossaryPanel extends JPanel
 				showGlossaryExportDialog();
 			}
 		});
-
 
 		saveItem.addActionListener(new ActionListener()
 		{
@@ -355,12 +354,10 @@ public class GlossaryPanel extends JPanel
 	}
 
 	/**
-	 * @author Evan Wang
-	 * Private class used to implement a panel that holds the main controls for the program.
-	 * Functionality outlined by the following:
-	 * 	-countLabel, number of entries
-	 * 	-newTerm, add a new term to the glossary
-	 * 	-removeTerm, remove term from glosssary
+	 * @author Evan Wang Private class used to implement a panel that holds the
+	 *         main controls for the program. Functionality outlined by the
+	 *         following: -countLabel, number of entries -newTerm, add a new
+	 *         term to the glossary -removeTerm, remove term from glosssary
 	 */
 	private class ControlPanel extends JPanel
 	{
@@ -386,10 +383,10 @@ public class GlossaryPanel extends JPanel
 		private void setupLayout()
 		{
 			this.setBackground(new Color(250, 255, 255));
-			
+
 			newTerm.setToolTipText("Add New Term");
 			removeTerm.setToolTipText("Remove Term");
-			
+
 			this.add(countLabel);
 			this.add(newTerm);
 			this.add(removeTerm);
@@ -416,7 +413,8 @@ public class GlossaryPanel extends JPanel
 		}
 
 		/**
-		 * Updates the label displaying the number of terms in the glossary by querying the controller to ask for the size
+		 * Updates the label displaying the number of terms in the glossary by
+		 * querying the controller to ask for the size
 		 */
 		public void updateSize()
 		{
@@ -425,30 +423,29 @@ public class GlossaryPanel extends JPanel
 	}
 
 	/**
-	 * Display all the terms in a glossary, interspacing letter headers to separate the sorted list.
-	 * Ex:
+	 * Display all the terms in a glossary, interspacing letter headers to
+	 * separate the sorted list. Ex:
 	 * 
-	 * A:<-letter header
-	 * 	animal
-	 * B:
-	 * 	bug
+	 * A:<-letter header animal B: bug
 	 * 
-	 * @param keys, the list of keys in the glossary
+	 * @param keys
+	 *            , the list of keys in the glossary
 	 */
 	public void displaySortedKeys(String[] keys)
 	{
 		boolean reachedEnd = false;
-		
+
 		int currLetter = 0;
 
-		//Check if we need to add an 'A' letter header
+		// Check if we need to add an 'A' letter header
 		if (alph[currLetter] == Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[0]).charAt(0)))
 			displayLetterMarker(alph[currLetter]);
 
-		//Display all keys
+		// Display all keys
 		for (int i = 0; i < keys.length; i++)
 		{
-			//Check if a new letter header needs to be updated and add it if so.
+			// Check if a new letter header needs to be updated and add it if
+			// so.
 			if (!reachedEnd && alph[currLetter] != Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[i]).charAt(0)))
 			{
 				while (!reachedEnd && alph[currLetter] != Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[i]).charAt(0)))
@@ -457,7 +454,10 @@ public class GlossaryPanel extends JPanel
 					if (currLetter >= alph.length)
 					{
 						reachedEnd = true;
-						displayMarker("Other");
+//						if(Character.isDigit(keys[i].charAt(0)))
+//							displayMarker("#");	
+//						else
+							displayMarker("Other");
 					}
 				}
 
@@ -476,6 +476,7 @@ public class GlossaryPanel extends JPanel
 
 	/**
 	 * Display a marker with one letter
+	 * 
 	 * @param c, the character to display
 	 */
 	private void displayLetterMarker(char c)
@@ -485,12 +486,13 @@ public class GlossaryPanel extends JPanel
 
 	/**
 	 * Display a marker to separate an alphabetically sorted list
+	 * 
 	 * @param marker, the text for the marker
 	 */
 	private void displayMarker(String marker)
-	{
+	{	
 		JLabel j = new JLabel(marker + ":");
-		j.setFont(new Font(j.getFont().getFontName(), j.getFont().BOLD, j.getFont().getSize()));
+		j.setFont(new Font(glossaryFrame.getDefaultFont().getFontName(), glossaryFrame.getDefaultFont().BOLD, glossaryFrame.getDefaultFont().getSize()));
 		termPanel.add(j, "wrap,push");
 	}
 
@@ -502,7 +504,7 @@ public class GlossaryPanel extends JPanel
 	private void displayKey(final String key)
 	{
 		JButton newTermButton = new JButton(key);
-		
+
 		/**
 		 * Format new button
 		 */
@@ -511,7 +513,7 @@ public class GlossaryPanel extends JPanel
 		newTermButton.setBorderPainted(false);
 		newTermButton.setContentAreaFilled(false);
 		newTermButton.setFocusPainted(false);
-		System.out.println(newTermButton.getFont().getFontName());
+		newTermButton.setFont(glossaryFrame.getDefaultFont());
 
 		/**
 		 * listener for right click (currently does nothing)
@@ -526,7 +528,7 @@ public class GlossaryPanel extends JPanel
 				}
 			}
 		});
-		
+
 		/*
 		 * listener for normal click
 		 */
@@ -544,7 +546,9 @@ public class GlossaryPanel extends JPanel
 	}
 
 	/**
-	 * @param key, the key to display the details for. The details are found by querying the controller and they are then displayed
+	 * @param key
+	 *            , the key to display the details for. The details are found by
+	 *            querying the controller and they are then displayed
 	 */
 	private void displayTermDefinition(String key)
 	{
@@ -574,7 +578,6 @@ public class GlossaryPanel extends JPanel
 		updateTermDisplay();
 	}
 
-	
 	/**
 	 * brings up the dialog to add a term to the glossary
 	 */
@@ -585,8 +588,11 @@ public class GlossaryPanel extends JPanel
 	}
 
 	/**
-	 * Add a new term to the display. Calls updateTermDisplay to update the display so it shows the new term.
-	 * @param key, the key to be displayed for the new term
+	 * Add a new term to the display. Calls updateTermDisplay to update the
+	 * display so it shows the new term.
+	 * 
+	 * @param key
+	 *            , the key to be displayed for the new term
 	 */
 	public void updateWithNewTerm(String key)
 	{
@@ -596,7 +602,8 @@ public class GlossaryPanel extends JPanel
 	}
 
 	/**
-	 * refreshes the term display by removing all terms from the view and adding them back in
+	 * refreshes the term display by removing all terms from the view and adding
+	 * them back in
 	 */
 	public void updateTermDisplay()
 	{
@@ -608,8 +615,8 @@ public class GlossaryPanel extends JPanel
 
 	/**
 	 * 
-	 * @author Evan Wang
-	 * Frame created when a user wants to add a new term to the glossary. Has a private panel inner class
+	 * @author Evan Wang Frame created when a user wants to add a new term to
+	 *         the glossary. Has a private panel inner class
 	 */
 	private class NewFrame extends JFrame
 	{
@@ -617,7 +624,7 @@ public class GlossaryPanel extends JPanel
 		 * 
 		 */
 		private static final long serialVersionUID = 6514094780344647846L;
-		
+
 		private GlossaryPanel gp;
 		private NewPanel newPanel;
 
@@ -651,10 +658,10 @@ public class GlossaryPanel extends JPanel
 			this.setVisible(false);
 			this.dispose();
 		}
-		
+
 		/**
-		 * @author Evan Wang
-		 * private inner class used to hold the components for adding a new term
+		 * @author Evan Wang private inner class used to hold the components for
+		 *         adding a new term
 		 */
 		private class NewPanel extends JPanel
 		{
@@ -686,7 +693,7 @@ public class GlossaryPanel extends JPanel
 				cancelButton = new JButton("Cancel");
 				specialCharacterButton = new JButton("\u03A0");
 				newKeyDetailsPane = new JScrollPane(newKeyDetailsArea);
-				
+
 				setupLayout();
 				setupListeners();
 			}
@@ -715,18 +722,18 @@ public class GlossaryPanel extends JPanel
 				newKeyArea.requestFocusInWindow();
 				newKeyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 				newKeyPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-				
+
 				/**
 				 * ControlPanel & components
 				 */
-					specialCharacterButton.setToolTipText("Insert Special Character");
-					specialCharacterButton.setFocusable(false);
-					submitButton.setFocusable(false);
-					cancelButton.setFocusable(false);
+				specialCharacterButton.setToolTipText("Insert Special Character");
+				specialCharacterButton.setFocusable(false);
+				submitButton.setFocusable(false);
+				cancelButton.setFocusable(false);
 				controlPanel.add(specialCharacterButton);
 				controlPanel.add(submitButton);
 				controlPanel.add(cancelButton);
-				
+
 				/**
 				 * Add all components
 				 */
@@ -738,7 +745,8 @@ public class GlossaryPanel extends JPanel
 			}
 
 			/**
-			 * Set up listeneres for all components that need one which are responsibilities of NewPanel
+			 * Set up listeneres for all components that need one which are
+			 * responsibilities of NewPanel
 			 */
 			private void setupListeners()
 			{
@@ -794,7 +802,9 @@ public class GlossaryPanel extends JPanel
 				specialCharacterButton.addActionListener(new ActionListener()
 				{
 					/**
-					 * Check to make sure that the component with focus is a JTextArea, since they are the only editable components in NewPanel 
+					 * Check to make sure that the component with focus is a
+					 * JTextArea, since they are the only editable components in
+					 * NewPanel
 					 */
 					public void actionPerformed(ActionEvent e)
 					{
@@ -818,7 +828,8 @@ public class GlossaryPanel extends JPanel
 			}
 
 			/**
-			 * submit the data to the controller. 
+			 * submit the data to the controller.
+			 * 
 			 * @return true if the submit suceeded.
 			 */
 			private boolean submitData()
@@ -851,7 +862,8 @@ public class GlossaryPanel extends JPanel
 	}
 
 	/**
-	 * Show dialog for opening a glossary, then give the path for glossary to controller if it exists. Does nothing if file does not exist
+	 * Show dialog for opening a glossary, then give the path for glossary to
+	 * controller if it exists. Does nothing if file does not exist
 	 */
 	private void showGlossaryOpenDialog()
 	{
@@ -865,9 +877,10 @@ public class GlossaryPanel extends JPanel
 			controller.open(glossaryOpener.getSelectedFile().getAbsolutePath());
 		}
 	}
-	
+
 	/**
-	 * Show dialog for exporting a glossary, then give the path for glossary to controller if it exists. Does nothing if file does not exist
+	 * Show dialog for exporting a glossary, then give the path for glossary to
+	 * controller if it exists. Does nothing if file does not exist
 	 */
 	private void showGlossaryExportDialog()
 	{
@@ -886,9 +899,10 @@ public class GlossaryPanel extends JPanel
 			controller.exportAsText(exportString);
 		}
 	}
-	
+
 	/**
-	 * Show dialog for saving a glossary, then give the path for glossary to controller if it exists. Does nothing if file already exists
+	 * Show dialog for saving a glossary, then give the path for glossary to
+	 * controller if it exists. Does nothing if file already exists
 	 */
 	private void showGlossarySaveAsDialog()
 	{
@@ -921,16 +935,16 @@ public class GlossaryPanel extends JPanel
 	 * This method is called to tell the SpecialCharacterChooser which component
 	 * to append the selected special character to.
 	 * 
-	 * @param focused
-	 *            , the component that should be appended too.
+	 * @param focused, the component that should be appended too.
 	 */
 	private void setFocusedToFocused(Component focused)
 	{
 		scc.setFocused(focused);
 	}
-	
+
 	/**
-	 * clear all components that need to be cleared so that a new glossary can be shown.
+	 * clear all components that need to be cleared so that a new glossary can
+	 * be shown.
 	 */
 	public void clearAllForOpen()
 	{

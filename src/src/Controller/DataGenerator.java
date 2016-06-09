@@ -19,12 +19,16 @@ public class DataGenerator
 
 	public static void main(String[] args)
 	{
-		
+//		"Ökur","Sëki",
 		UnicodeModeler u = new UnicodeModeler();
-		String [] sa = {"Ökur","Sëki"};
+		String [] sa = {"Ö","ë","$","2","@","1","!","#","%","^","&","*","(",")","0"};
 		Arrays.sort(sa,u.getUnicodeStringComparator());
 		for(String e : sa)
+		{
 			System.out.println(e);
+//			char h = e.charAt(0);
+//			System.out.println("Is letter: "+Character.isLetter(h)+" Is digit: "+Character.isDigit(h)+" Is Alphabetic "+Character.isAlphabetic(h)+" "+e);
+		}
 		
 //		String s = "Ökur";
 //		System.out.println(u.getBaseCharacterString(s));

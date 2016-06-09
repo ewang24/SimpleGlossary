@@ -173,50 +173,52 @@ public class UnicodeModeler
 	public String getBaseCharacterString(String character)
 	{
 		String n = Normalizer.normalize(character, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
-		System.out.println(Integer.toHexString((int) n.charAt(0)));
+		// System.out.println(Integer.toHexString((int) n.charAt(0)));
 		return n;
 	}
 
 	private class UnicodeStringComparator implements Comparator<String>
 	{
 
+		private boolean isLetter()
+		{
+			return true;
+		}
+
 		@Override
 		public int compare(String o1, String o2)
-		{	
+		{
+			if ((Character.isAlphabetic(o1.charAt(0)) && Character.isAlphabetic(o2.charAt(0))) || (Character.isLetter(o1.charAt(0)) && Character.isLetter(o2.charAt(0)))
+					|| (Character.isDigit(o1.charAt(0)) && Character.isDigit(o2.charAt(0))))
+			{
 				return getBaseCharacterString(o1).toLowerCase().compareTo(getBaseCharacterString(o2).toLowerCase());
+			}
+			else if ((Character.isLetter(o1.charAt(0)) || Character.isAlphabetic(o1.charAt(0))))
+			{
+				return -1;
+			}
+			else if (Character.isLetter(o1.charAt(0)) || Character.isAlphabetic(o1.charAt(0)))
+			{
+				return 1;
+			}
+			else if (Character.isDigit(o1.charAt(0)) && !(Character.isLetter(o2.charAt(0)) || Character.isAlphabetic(o2.charAt(0))))
+			{
+				return -1;
+			}
+			else if (Character.isDigit(o2.charAt(0)) && !(Character.isLetter(o1.charAt(0)) || Character.isAlphabetic(o1.charAt(0))))
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
 		}
-		
+
 	}
-	
+
 	public UnicodeStringComparator getUnicodeStringComparator()
 	{
 		return new UnicodeStringComparator();
 	}
-	
-	// private class namedArray<T>
-	// {
-	// T[] t;
-	// String name;
-	//
-	// public namedArray(int size, String name)
-	// {
-	// this.name = name;
-	// t = (T[]) new Object[size];
-	// }
-	//
-	// public T get(int index)
-	// {
-	// return t[index];
-	// }
-	//
-	// public void set(int index, T value)
-	// {
-	// t[index] = value;
-	// }
-	//
-	// public String getName()
-	// {
-	// return name;
-	// }
-	// }
 }
