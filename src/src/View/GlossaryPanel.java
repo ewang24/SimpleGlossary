@@ -23,6 +23,7 @@ import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -61,6 +62,8 @@ public class GlossaryPanel extends JPanel
 	int count = 0;
 	HashMap<String, JButton> buttonMap;
 	SpecialCharacterChooser scc;
+	private String selectedKey = "";
+	String[] currentKeys;
 
 	/*
 	 * Components
@@ -145,7 +148,7 @@ public class GlossaryPanel extends JPanel
 		saveItem = new JMenuItem("Save");
 		saveAsItem = new JMenuItem("Save As");
 		openItem = new JMenuItem("Open");
-		exportItem = new JMenuItem("Export As Tex+t");
+		exportItem = new JMenuItem("Export As Text");
 		quitItem = new JMenuItem("Quit");
 		undoItem = new JMenuItem("Undo");
 		redoItem = new JMenuItem("Redo");
@@ -433,42 +436,47 @@ public class GlossaryPanel extends JPanel
 	 */
 	public void displaySortedKeys(String[] keys)
 	{
-		boolean reachedEnd = false;
-
-		int currLetter = 0;
-
-		// Check if we need to add an 'A' letter header
-		if (alph[currLetter] == Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[0]).charAt(0)))
-			displayLetterMarker(alph[currLetter]);
-
-		// Display all keys
-		for (int i = 0; i < keys.length; i++)
+		if (keys.length != 0)
 		{
-			// Check if a new letter header needs to be updated and add it if
-			// so.
-			if (!reachedEnd && alph[currLetter] != Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[i]).charAt(0)))
+			currentKeys = keys;
+			boolean reachedEnd = false;
+
+			int currLetter = 0;
+
+			// Check if we need to add an 'A' letter header
+			if (alph[currLetter] == Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[0]).charAt(0)))
+				displayLetterMarker(alph[currLetter]);
+
+			// Display all keys
+			for (int i = 0; i < keys.length; i++)
 			{
-				while (!reachedEnd && alph[currLetter] != Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[i]).charAt(0)))
+				// Check if a new letter header needs to be updated and add it
+				// if
+				// so.
+				if (!reachedEnd && alph[currLetter] != Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[i]).charAt(0)))
 				{
-					currLetter++;
-					if (currLetter >= alph.length)
+					while (!reachedEnd && alph[currLetter] != Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[i]).charAt(0)))
 					{
-						reachedEnd = true;
-//						if(Character.isDigit(keys[i].charAt(0)))
-//							displayMarker("#");	
-//						else
+						currLetter++;
+						if (currLetter >= alph.length)
+						{
+							reachedEnd = true;
+							// if(Character.isDigit(keys[i].charAt(0)))
+							// displayMarker("#");
+							// else
 							displayMarker("Other");
+						}
 					}
+
+					if (!reachedEnd)
+						displayLetterMarker(alph[currLetter]);
 				}
 
-				if (!reachedEnd)
-					displayLetterMarker(alph[currLetter]);
+				displayKey(keys[i]);
 			}
 
-			displayKey(keys[i]);
+			displayTermDefinition(keys[0]);
 		}
-
-		displayTermDefinition(keys[0]);
 		mainControlPanel.updateSize();
 		this.repaint();
 		this.revalidate();
@@ -477,7 +485,8 @@ public class GlossaryPanel extends JPanel
 	/**
 	 * Display a marker with one letter
 	 * 
-	 * @param c, the character to display
+	 * @param c
+	 *            , the character to display
 	 */
 	private void displayLetterMarker(char c)
 	{
@@ -487,10 +496,11 @@ public class GlossaryPanel extends JPanel
 	/**
 	 * Display a marker to separate an alphabetically sorted list
 	 * 
-	 * @param marker, the text for the marker
+	 * @param marker
+	 *            , the text for the marker
 	 */
 	private void displayMarker(String marker)
-	{	
+	{
 		JLabel j = new JLabel(marker + ":");
 		j.setFont(new Font(glossaryFrame.getDefaultFont().getFontName(), glossaryFrame.getDefaultFont().BOLD, glossaryFrame.getDefaultFont().getSize()));
 		termPanel.add(j, "wrap,push");
@@ -499,7 +509,8 @@ public class GlossaryPanel extends JPanel
 	/**
 	 * Called to add a new button to the display. Each button represents one key
 	 * 
-	 * @param key to be added to display as button
+	 * @param key
+	 *            to be added to display as button
 	 */
 	private void displayKey(final String key)
 	{
@@ -552,6 +563,7 @@ public class GlossaryPanel extends JPanel
 	 */
 	private void displayTermDefinition(String key)
 	{
+		selectedKey = key;
 		termDetailsArea.setText(" " + key + ":\n\n\t" + controller.fetchTermForKey(key).getDefinition());
 		this.repaint();
 		this.revalidate();
@@ -566,16 +578,32 @@ public class GlossaryPanel extends JPanel
 	}
 
 	/**
-	 * Brings up the dialog to remove a term from the glossary
+	 * Brings up the dialog to remove a term from the glossary and refreshes the
+	 * termDetailsArea if the entry displayed was removed.
 	 */
 	private void removeTerm()
 	{
-		String r = JOptionPane.showInputDialog("What term do you want to remove?");
-		if (!controller.remove(r))
-		{
-			JOptionPane.showMessageDialog(null, "Term does not exist!");
-		}
-		updateTermDisplay();
+
+		RemoveFrame removeFrame = new RemoveFrame(this);
+		removeFrame.start();
+		// String r =
+		// JOptionPane.showInputDialog("What term do you want to remove?");
+		// if (!controller.remove(r))
+		// {
+		// JOptionPane.showMessageDialog(null, "Term does not exist!");
+		// return;
+		// }
+		// updateTermDisplay();
+		//
+		// if(controller.isEmpty())
+		// {
+		// termDetailsArea.setText("");
+		// }
+		// else if(r.equals(selectedKey))
+		// {
+		// displayTermDefinition(currentKeys[0]);
+		// }
+
 	}
 
 	/**
@@ -846,6 +874,167 @@ public class GlossaryPanel extends JPanel
 	}
 
 	/**
+	 * 
+	 * @author Evan Wang Frame created when a user wants to remove a term from the glossary. Has a private inner class
+	 *
+	 */
+	private class RemoveFrame extends JFrame
+	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5698864117592206163L;
+
+		GlossaryPanel gp;
+		RemovePanel removePanel;
+
+		public RemoveFrame(GlossaryPanel gp_)
+		{
+			gp = gp_;
+			removePanel = new RemovePanel();
+		}
+
+		private void start()
+		{
+			setupLayout();
+		}
+
+		private void setupLayout()
+		{
+			this.setTitle("Remove Term");
+			this.setLocationRelativeTo(gp);
+			this.setVisible(true);
+			this.setSize(new Dimension(300, 100));
+			this.setResizable(false);
+			this.setContentPane(removePanel);
+		}
+
+		private class RemovePanel extends JPanel
+		{
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 6656192500421094957L;
+
+			private JTextArea customRemoveArea;
+			private JComboBox<String> removeList;
+			private JButton submitButton;
+			private JButton cancelButton;
+			private JButton specialCharacterButton;
+
+			public RemovePanel()
+			{
+				customRemoveArea = new JTextArea("");
+				removeList = new JComboBox<String>();
+				specialCharacterButton = new JButton("\u03A0");
+				submitButton = new JButton("Remove");
+				cancelButton = new JButton("Cancel");
+				setupLayout();
+				setupListeners();
+			}
+
+			private void setupLayout()
+			{
+				this.setLayout(new MigLayout("fill, gap 7px 7px, insets 5"));
+				
+
+				specialCharacterButton.setFocusable(false);
+				customRemoveArea.setFont(glossaryFrame.getDefaultFont());
+				loadTerms();
+
+				this.add(removeList, "grow");
+				this.add(customRemoveArea, "grow");
+				this.add(specialCharacterButton, "wrap");
+				this.add(submitButton, "grow");
+				this.add(cancelButton, "grow");
+				
+				customRemoveArea.requestFocus();
+
+			}
+
+			private void setupListeners()
+			{
+				cancelButton.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent e)
+					{
+						closeWindow();
+					}
+				});
+
+				submitButton.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent e)
+					{
+						removeTerm();
+					}
+				});
+
+				specialCharacterButton.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent e)
+					{
+						Component focused = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+						if (focused instanceof JTextArea)
+						{
+							setFocusedToFocused(focused);
+							showSpecialCharacterSelect();
+						}
+					}
+				});
+			}
+
+			private void loadTerms()
+			{
+				removeList.addItem("Select a term");
+				
+				if (currentKeys != null && currentKeys.length > 0)
+				{
+					for (String e : currentKeys)
+					{
+						removeList.addItem(e);
+					}
+				}
+				
+				this.repaint();
+				this.revalidate();
+			}
+
+			private void removeTerm()
+			{
+				if (!customRemoveArea.getText().equals(""))
+				{
+					if(!controller.remove(customRemoveArea.getText()))
+						JOptionPane.showMessageDialog(this, "Term is not in glossary!");
+					else
+						return;
+				}
+				else if (removeList.getSelectedIndex() != 0)
+				{
+					if(!controller.remove(removeList.getSelectedItem().toString()))
+						JOptionPane.showMessageDialog(this, "Term is not in glossary!");
+					else
+						return;
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(this, "Must enter term to be removed!");
+					return;
+				}
+				
+				updateTermDisplay();
+				closeWindow();
+			}
+		}
+
+		public void closeWindow()
+		{
+			this.setVisible(false);
+			this.dispose();
+		}
+	}
+
+	/**
 	 * @return reference to GlossaryFrame, GlossaryPanel's parent
 	 */
 	private GlossaryFrame getGlossaryFrame()
@@ -935,7 +1124,8 @@ public class GlossaryPanel extends JPanel
 	 * This method is called to tell the SpecialCharacterChooser which component
 	 * to append the selected special character to.
 	 * 
-	 * @param focused, the component that should be appended too.
+	 * @param focused
+	 *            , the component that should be appended too.
 	 */
 	private void setFocusedToFocused(Component focused)
 	{

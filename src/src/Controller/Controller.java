@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.io.Writer;
 import java.util.Scanner;
 
@@ -138,7 +139,11 @@ public class Controller
 		{
 			// PrintWriter saveWriter = new PrintWriter(new BufferedWriter(new
 			// FileWriter(glossaryFileToUse, false)));
-
+			RandomAccessFile file = new RandomAccessFile(glossaryFileToUse,"rw");
+			file.setLength(0);
+			file.write(toString.getBytes(), 0, toString.length());
+			file.close();
+			
 			PrintWriter saveWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(glossaryFileToUse.getAbsolutePath()), "UTF-8"));
 
 			saveWriter.print(toString);
@@ -254,11 +259,12 @@ public class Controller
 	 */
 	public boolean remove(String key)
 	{
-		return !glossary.removeByKey(key).equals(null);
+		return glossary.removeByKey(key)!=(null);
 	}
 
 	public UnicodeModeler getUnicodeModeler()
 	{
 		return unicodeModeler;
 	}
+	
 }
