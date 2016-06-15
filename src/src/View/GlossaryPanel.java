@@ -477,6 +477,10 @@ public class GlossaryPanel extends JPanel
 
 			displayTermDefinition(keys[0]);
 		}
+		else
+		{
+			termDetailsArea.setText("");
+		}
 		mainControlPanel.updateSize();
 		this.repaint();
 		this.revalidate();
@@ -1005,16 +1009,19 @@ public class GlossaryPanel extends JPanel
 				if (!customRemoveArea.getText().equals(""))
 				{
 					if(!controller.remove(customRemoveArea.getText()))
+					{
 						JOptionPane.showMessageDialog(this, "Term is not in glossary!");
-					else
 						return;
+					}
 				}
 				else if (removeList.getSelectedIndex() != 0)
 				{
 					if(!controller.remove(removeList.getSelectedItem().toString()))
+					{
 						JOptionPane.showMessageDialog(this, "Term is not in glossary!");
-					else
 						return;
+					}
+					
 				}
 				else
 				{
@@ -1056,6 +1063,8 @@ public class GlossaryPanel extends JPanel
 	 */
 	private void showGlossaryOpenDialog()
 	{
+		if(!controller.closeable())
+			return;
 		if (glossaryOpener.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
 			if (!glossaryOpener.getSelectedFile().exists())

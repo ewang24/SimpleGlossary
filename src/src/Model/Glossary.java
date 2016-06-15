@@ -23,21 +23,24 @@ public class Glossary
 	}
 
 	/**
-	 * @param key to added
-	 * @param definition: mapped to by key
-	 * @return true if the entry was sucessfully added. False if the definition is already in the glossary.
+	 * @param key
+	 *            to added
+	 * @param definition
+	 *            : mapped to by key
+	 * @return true if the entry was sucessfully added. False if the definition
+	 *         is already in the glossary.
 	 */
 	public boolean addUnsavedTerm(String key, Term definition)
 	{
-		if(!glossary.containsKey(key))
+		if (!glossary.containsKey(key))
 		{
 			modifiedKeys.add(key);
-			addTerm(key,definition);
+			addTerm(key, definition);
 			return true;
 		}
 		return false;
 	}
-	
+
 	public void addTerm(String key, Term definition)
 	{
 		glossary.put(key, definition);
@@ -67,7 +70,7 @@ public class Glossary
 			newS[i] = (String) s[i];
 		}
 
-		java.util.Arrays.sort(newS,comparator);
+		java.util.Arrays.sort(newS, comparator);
 		return newS;
 	}
 
@@ -79,38 +82,39 @@ public class Glossary
 	@Override
 	public String toString()
 	{
-		
-		String toStringString="";
-		
-		Set<Entry<String,Term>> gs = glossary.entrySet();
+
+		String toStringString = "";
+
+		Set<Entry<String, Term>> gs = glossary.entrySet();
 		Iterator<Entry<String, Term>> i = gs.iterator();
-		
-		while(i.hasNext())
+
+		while (i.hasNext())
 		{
 			Entry<String, Term> e = i.next();
-			toStringString+= e.getKey()+":::"+e.getValue().getDefinition()+"\r\n";
+			toStringString += e.getKey() + ":::" + e.getValue().getDefinition() + "\r\n";
 		}
-		
+
 		return toStringString;
 	}
-	
+
 	/**
-	 * @return the glossary in the form of an easily readable string. Doesn't include delimeters for saving the file for re-use
+	 * @return the glossary in the form of an easily readable string. Doesn't
+	 *         include delimeters for saving the file for re-use
 	 */
 	public String toText()
 	{
-		
-		String toStringString="";
-		
-		Set<Entry<String,Term>> gs = glossary.entrySet();
+
+		String toStringString = "";
+
+		Set<Entry<String, Term>> gs = glossary.entrySet();
 		Iterator<Entry<String, Term>> i = gs.iterator();
-		
-		while(i.hasNext())
+
+		while (i.hasNext())
 		{
 			Entry<String, Term> e = i.next();
-			toStringString+= e.getKey()+":\r\n\t"+e.getValue().getDefinition()+"\r\n\r\n";
+			toStringString += e.getKey() + ":\r\n\t" + e.getValue().getDefinition() + "\r\n\r\n";
 		}
-		
+
 		return toStringString;
 	}
 
@@ -118,7 +122,7 @@ public class Glossary
 	{
 		return glossary.size();
 	}
-	
+
 	/**
 	 * @return true if the glossary is dirty (has unsaved data)
 	 */
@@ -126,7 +130,7 @@ public class Glossary
 	{
 		return !modifiedKeys.isEmpty();
 	}
-	
+
 	/**
 	 * @return true if all of the glossary's data has been saved.
 	 */
@@ -134,12 +138,12 @@ public class Glossary
 	{
 		return !isDirty();
 	}
-	
+
 	public void clearDirtyList()
 	{
 		modifiedKeys.clear();
 	}
-	
+
 	public void clearGlossary()
 	{
 		clearDirtyList();

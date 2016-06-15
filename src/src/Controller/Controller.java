@@ -18,10 +18,12 @@ import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.Writer;
 import java.util.Scanner;
+import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
 import Model.Glossary;
+import Model.Operation;
 import Model.Term;
 import Model.UnicodeModeler;
 import View.GlossaryFrame;
@@ -35,6 +37,7 @@ public class Controller
 	private final String AUTOLOAD_PATH = "C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\glossary.gl";
 	private boolean newFile = true;
 	UnicodeModeler unicodeModeler;
+	private Stack<Operation> operations;
 	
 	//Turn this to false and the program won't autoload the file at AUTOLOAD_PATH. Used for debug purposes
 	private boolean autoLoad = !true;
@@ -44,6 +47,7 @@ public class Controller
 		unicodeModeler = new UnicodeModeler();
 		glossary = new Glossary();
 		gf = new GlossaryFrame(this);
+		operations = new Stack<Operation>();
 
 		if (autoLoad)
 		{
@@ -101,17 +105,8 @@ public class Controller
 
 	public void exit()
 	{
-		if (glossary.isDirty())
-		{
-			if (JOptionPane.showConfirmDialog(null, "You have unsaved data.\nDo you really want to exit the program?", "Exit?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
-				System.exit(0);
-			return;
-		}
-		else
-		{
-			if (JOptionPane.showConfirmDialog(null, "Do you really want to exit the program?", "Exit?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
-				System.exit(0);
-		}
+		if (closeable())
+			System.exit(0);
 	}
 
 	/**
@@ -123,9 +118,10 @@ public class Controller
 	 */
 	public boolean newEntry(String key, Term term)
 	{
+		operations.push(new Operation(Operation.operationType.ADD,term));
 		boolean success = glossary.addUnsavedTerm(key, term);
 		if (success)
-			gf.setTitle("*" + fileName);
+			setTitleToUnsaved();
 		return success;
 	}
 
@@ -134,6 +130,11 @@ public class Controller
 	 */
 	public void save()
 	{
+		if(!newFile)
+		{
+			newFile = false;
+		}
+		
 		String toString = glossary.toString();
 		try
 		{
@@ -180,8 +181,11 @@ public class Controller
 	 */
 	public void open(String location)
 	{
-		clearEverything();
-		load(location);
+		if(closeable())
+		{
+			clearEverything();
+			load(location);
+		}
 	}
 
 	/**
@@ -215,16 +219,14 @@ public class Controller
 	 */
 	public void newGlossary()
 	{
-		if (glossary.isDirty())
+		if (closeable())
 		{
-			if (JOptionPane.showConfirmDialog(gf, "You have unsaved data.\nIs it okay to discard it?") != JOptionPane.YES_OPTION)
-				return;
+			newFile = true;
+			clearEverything();
+			fileName = "New Glossary";
+			refreshTitle();
 		}
 
-		newFile = true;
-		clearEverything();
-		fileName = "New Glossary";
-		refreshTitle();
 	}
 
 	private void clearEverything()
@@ -259,7 +261,15 @@ public class Controller
 	 */
 	public boolean remove(String key)
 	{
-		return glossary.removeByKey(key)!=(null);
+		if( glossary.removeByKey(key)!=(null))
+		{
+			operations.push(new Operation(Operation.operationType.REMOVE,new Term(key)));
+			System.out.println(operations.size());
+			setTitleToUnsaved();
+			return true;
+		}
+		else
+			return false;
 	}
 
 	public UnicodeModeler getUnicodeModeler()
@@ -267,4 +277,40 @@ public class Controller
 		return unicodeModeler;
 	}
 	
+	public boolean isDirty()
+	{
+		return !isClean();
+	}
+	
+	
+	public boolean isClean()
+	{
+		return operations.isEmpty();
+	}
+	
+	private void setTitleToUnsaved()
+	{
+		gf.setTitle("*" + fileName);
+	}
+	
+	/**
+	 * @return true if the user doensn't want to save
+	 */
+	private boolean confirmUnsaved()
+	{
+		return JOptionPane.showConfirmDialog(gf, "You have unsaved data.\nIs it okay to discard it?") == JOptionPane.YES_OPTION;
+	}
+	
+	public boolean closeable()
+	{
+		if(isClean())
+		{
+			return true;
+		}
+		else
+		{
+			return confirmUnsaved();
+		}
+			
+	}
 }
