@@ -177,6 +177,8 @@ public class GlossaryPanel extends JPanel
 		termDetailsArea.setEditable(false);
 		termDetailsArea.setText("");
 		termDetailsArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		termDetailsArea.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
+		termDetailsArea.setMaximumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
 		termDetailsArea.setFont(glossaryFrame.getDefaultFont());
 		termDetailsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		termDetailsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);

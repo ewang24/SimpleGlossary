@@ -195,7 +195,10 @@ public class Controller
 	public void exportAsText(String location)
 	{
 		System.out.println(location);
-		String toString = glossary.toText();
+		String toString = fileName+"\r\n"+"Number of Entries: "+glossarySize()+"\r\n"+glossary.toText();
+		
+		
+		
 		try
 		{
 	
