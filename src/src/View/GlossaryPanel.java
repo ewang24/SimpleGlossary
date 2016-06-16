@@ -373,12 +373,14 @@ public class GlossaryPanel extends JPanel
 
 		private JButton newTerm;
 		private JButton removeTerm;
+		private JButton editTerm;
 		private JLabel countLabel;
 
 		public ControlPanel()
 		{
 			newTerm = new JButton("+");
 			removeTerm = new JButton("-");
+			editTerm = new JButton("~");
 			countLabel = new JLabel("Entries: ");
 
 			setupLayout();
@@ -391,10 +393,15 @@ public class GlossaryPanel extends JPanel
 
 			newTerm.setToolTipText("Add New Term");
 			removeTerm.setToolTipText("Remove Term");
+			editTerm.setToolTipText("Edit Term");
+			
+			removeTerm.setEnabled(false);
+			editTerm.setEnabled(false);
 
 			this.add(countLabel);
 			this.add(newTerm);
 			this.add(removeTerm);
+			this.add(editTerm);
 		}
 
 		private void setupControlPanelListeners()
@@ -414,6 +421,14 @@ public class GlossaryPanel extends JPanel
 					removeTerm();
 				}
 			});
+			
+			editTerm.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e)
+				{
+					editTerm();
+				}
+			});
 
 		}
 
@@ -424,6 +439,16 @@ public class GlossaryPanel extends JPanel
 		public void updateSize()
 		{
 			countLabel.setText("Entries: " + getGlossarySize());
+		}
+		
+		public void enableEdit()
+		{
+			editTerm.setEnabled(true);
+		}
+		
+		public void enableRemove()
+		{
+			removeTerm.setEnabled(true);
 		}
 	}
 
@@ -452,9 +477,7 @@ public class GlossaryPanel extends JPanel
 			// Display all keys
 			for (int i = 0; i < keys.length; i++)
 			{
-				// Check if a new letter header needs to be updated and add it
-				// if
-				// so.
+				// Check if a new letter header needs to be updated and add it if so.
 				if (!reachedEnd && alph[currLetter] != Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[i]).charAt(0)))
 				{
 					while (!reachedEnd && alph[currLetter] != Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[i]).charAt(0)))
@@ -463,9 +486,6 @@ public class GlossaryPanel extends JPanel
 						if (currLetter >= alph.length)
 						{
 							reachedEnd = true;
-							// if(Character.isDigit(keys[i].charAt(0)))
-							// displayMarker("#");
-							// else
 							displayMarker("Other");
 						}
 					}
@@ -492,7 +512,7 @@ public class GlossaryPanel extends JPanel
 	 * Display a marker with one letter
 	 * 
 	 * @param c
-	 *            , the character to display
+	 *          the character to display
 	 */
 	private void displayLetterMarker(char c)
 	{
@@ -569,6 +589,8 @@ public class GlossaryPanel extends JPanel
 	 */
 	private void displayTermDefinition(String key)
 	{
+		mainControlPanel.enableEdit();
+		mainControlPanel.enableRemove();
 		selectedKey = key;
 		termDetailsArea.setText(" " + key + ":\n\n\t" + controller.fetchTermForKey(key).getDefinition());
 		this.repaint();
@@ -589,27 +611,8 @@ public class GlossaryPanel extends JPanel
 	 */
 	private void removeTerm()
 	{
-
 		RemoveFrame removeFrame = new RemoveFrame(this);
 		removeFrame.start();
-		// String r =
-		// JOptionPane.showInputDialog("What term do you want to remove?");
-		// if (!controller.remove(r))
-		// {
-		// JOptionPane.showMessageDialog(null, "Term does not exist!");
-		// return;
-		// }
-		// updateTermDisplay();
-		//
-		// if(controller.isEmpty())
-		// {
-		// termDetailsArea.setText("");
-		// }
-		// else if(r.equals(selectedKey))
-		// {
-		// displayTermDefinition(currentKeys[0]);
-		// }
-
 	}
 
 	/**
@@ -620,6 +623,15 @@ public class GlossaryPanel extends JPanel
 		NewFrame newFrame = new NewFrame(this);
 		newFrame.start();
 	}
+	
+	/**
+	 * brings up the dialog to edit a term in the glossary
+	 */
+	private void editTerm()
+	{
+		EditFrame editFrame = new EditFrame(this);
+		editFrame.start();
+	}
 
 	/**
 	 * Add a new term to the display. Calls updateTermDisplay to update the
@@ -628,7 +640,7 @@ public class GlossaryPanel extends JPanel
 	 * @param key
 	 *            , the key to be displayed for the new term
 	 */
-	public void updateWithNewTerm(String key)
+	public void updateWithTermToDisplay(String key)
 	{
 		updateTermDisplay();
 		displayTermDefinition(key);
@@ -681,7 +693,6 @@ public class GlossaryPanel extends JPanel
 			this.setLocationRelativeTo(gp);
 			this.setVisible(true);
 			this.setContentPane(newPanel);
-
 		}
 
 		/**
@@ -868,10 +879,10 @@ public class GlossaryPanel extends JPanel
 			 */
 			private boolean submitData()
 			{
-				String newKey = newKeyArea.getText().trim();
-				if (controller.newEntry(newKey, new Term(newKeyDetailsArea.getText())))
+				String newKey = newKeyArea.getText().trim().replace("\n", " ");
+				if (controller.newEntry(newKey, new Term(newKeyDetailsArea.getText().replace("\n", " "))))
 				{
-					updateWithNewTerm(newKey);
+					updateWithTermToDisplay(newKey);
 					return true;
 				}
 				return false;
@@ -1043,6 +1054,236 @@ public class GlossaryPanel extends JPanel
 		}
 	}
 
+	/**
+	 * @author Evan Wang Frame created when a user wants to edit a term in the glossary. Has a private inncer class.
+	 *
+	 */
+	private class EditFrame extends JFrame
+	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 6514094780344647846L;
+
+		private GlossaryPanel gp;
+		private EditPanel editPanel;
+
+		public EditFrame(GlossaryPanel gp)
+		{
+			this.gp = gp;
+			editPanel = new EditPanel();
+		}
+
+		public void start()
+		{
+			setupLayout();
+		}
+
+		private void setupLayout()
+		{
+			this.setSize(new Dimension(250, 200));
+			this.setResizable(false);
+			this.setTitle("Edit Term");
+			this.setLocationRelativeTo(gp);
+			this.setVisible(true);
+			this.setContentPane(editPanel);
+		}
+
+		/**
+		 * Hides the frame and frees up the memory it was using
+		 */
+		public void exitFrame()
+		{
+			this.setVisible(false);
+			this.dispose();
+		}
+
+		/**
+		 * @author Evan Wang private inner class used to hold the components for
+		 *         adding a new term
+		 */
+		private class EditPanel extends JPanel
+		{
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -8510517407098991637L;
+
+			private JTextArea editKeyArea;
+			private JTextArea editKeyDetailsArea;
+			private JLabel editKeyLabel;
+			private JLabel editKeyDetailsLabel;
+			private JScrollPane editKeyPane;
+			private JScrollPane editKeyDetailsPane;
+			private JPanel controlPanel;
+			private JButton submitButton;
+			private JButton cancelButton;
+			private JButton specialCharacterButton;
+
+			public EditPanel()
+			{
+				editKeyArea = new JTextArea();
+				editKeyDetailsArea = new JTextArea();
+				editKeyLabel = new JLabel("Edit key:");
+				editKeyDetailsLabel = new JLabel("Edit details:");
+				editKeyPane = new JScrollPane(editKeyArea);
+				controlPanel = new JPanel();
+				submitButton = new JButton("Update");
+				cancelButton = new JButton("Cancel");
+				specialCharacterButton = new JButton("\u03A0");
+				editKeyDetailsPane = new JScrollPane(editKeyDetailsArea);
+
+				setupLayout();
+				setupListeners();
+			}
+
+			private void setupLayout()
+			{
+				/**
+				 * EditPanel
+				 */
+				this.setBackground(LIGHT_GREY_COLOR);
+				this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+				/**
+				 * editKeyDetailsPane
+				 */
+				editKeyDetailsArea.setFont(glossaryFrame.getDefaultFont());
+				editKeyDetailsArea.setText(controller.fetchTermForKey(selectedKey).getDefinition());
+				editKeyDetailsPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+				editKeyDetailsPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+				/**
+				 * editKeyArea
+				 */
+				editKeyArea.setFont(glossaryFrame.getDefaultFont());
+				editKeyArea.setText(selectedKey);
+				editKeyArea.requestFocusInWindow();
+				editKeyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+				editKeyPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+				/**
+				 * ControlPanel & components
+				 */
+				specialCharacterButton.setToolTipText("Insert Special Character");
+				specialCharacterButton.setFocusable(false);
+				submitButton.setFocusable(false);
+				cancelButton.setFocusable(false);
+				controlPanel.add(specialCharacterButton);
+				controlPanel.add(submitButton);
+				controlPanel.add(cancelButton);
+
+				/**
+				 * Add all components
+				 */
+				this.add(editKeyLabel);
+				this.add(editKeyPane);
+				this.add(editKeyDetailsLabel);
+				this.add(editKeyDetailsPane);
+				this.add(controlPanel);
+			}
+
+			/**
+			 * Set up listeneres for all components that need one which are
+			 * responsibilities of NewPanel
+			 */
+			private void setupListeners()
+			{
+				submitButton.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent e)
+					{
+						if (editKeyArea.getText().contains(":::") || editKeyDetailsArea.getText().contains(":::"))
+						{
+							JOptionPane.showMessageDialog(editPanel, "Term cannot contain the sequence ':::'");
+							return;
+						}
+						if (editKeyArea.getText().equals("") || editKeyArea.getText() == null)
+						{
+							JOptionPane.showMessageDialog(editPanel, "Key cannot be blank");
+							return;
+						}
+						if (editKeyDetailsArea.getText().equals("") || editKeyDetailsArea.getText() == null)
+						{
+							JOptionPane.showMessageDialog(editPanel, "Definition cannot be blank");
+							return;
+						}
+						if (editKeyArea.getText().charAt(editKeyArea.getText().length() - 1) == ' ')
+						{
+							if (JOptionPane.showConfirmDialog(editPanel, "Trailing spaces on keys are removed.\nIs this okay?") != JOptionPane.YES_OPTION)
+							{
+								return;
+							}
+						}
+						if (editKeyArea.getText().charAt(0) == ' ')
+						{
+							if (JOptionPane.showConfirmDialog(editPanel, "Leading spaces on keys are removed.\nIs this okay?") != JOptionPane.YES_OPTION)
+							{
+								return;
+							}
+						}
+
+						if (submitData())
+							closeWindow();
+						else
+							JOptionPane.showMessageDialog(editPanel, "Key is already in glossary");
+					}
+				});
+
+				cancelButton.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent e)
+					{
+						closeWindow();
+					}
+				});
+
+				specialCharacterButton.addActionListener(new ActionListener()
+				{
+					/**
+					 * Check to make sure that the component with focus is a
+					 * JTextArea, since they are the only editable components in
+					 * NewPanel
+					 */
+					public void actionPerformed(ActionEvent e)
+					{
+						Component focused = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+						if (focused instanceof JTextArea)
+						{
+							setFocusedToFocused(focused);
+							showSpecialCharacterSelect();
+						}
+
+					}
+				});
+			}
+
+			/**
+			 * Close the NewPanel and free up its memory
+			 */
+			private void closeWindow()
+			{
+				exitFrame();
+			}
+
+			/**
+			 * submit the data to the controller.
+			 * 
+			 * @return true if the submit suceeded.
+			 */
+			private boolean submitData()
+			{
+				String newKey = editKeyArea.getText().trim().replace("\n", " ");
+				if (controller.editEntry(newKey, new Term(editKeyDetailsArea.getText().replace("\n", " ")),selectedKey))
+				{
+					updateWithTermToDisplay(newKey);
+					return true;
+				}
+				return false;
+			}
+		}
+	}
+		
 	/**
 	 * @return reference to GlossaryFrame, GlossaryPanel's parent
 	 */

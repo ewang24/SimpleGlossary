@@ -6,7 +6,7 @@ package Model;
 
 public class Operation
 {
-	public static enum operationType{ADD,REMOVE,ADDTEXT,REMOVETEXT};
+	public static enum operationType{ADD,REMOVE,EDIT,ADDTEXT,REMOVETEXT};
 	
 	private operationType operation;
 	private Object data;

@@ -82,6 +82,7 @@ public class Controller
 
 		for (int i = 0; i < termList.length; i++)
 		{
+			System.out.println(termList[i]);
 			glossary.addTerm(termList[i].substring(0, termList[i].indexOf(":::")), new Term(termList[i].substring(termList[i].indexOf(":::") + 3, termList[i].length())));
 		}
 
@@ -152,7 +153,7 @@ public class Controller
 			saveWriter.print(toString);
 			saveWriter.flush();
 			saveWriter.close();
-			glossary.clearDirtyList();
+			clearDirtyList();
 			refreshTitle();
 		}
 		catch (IOException e)
@@ -189,6 +190,7 @@ public class Controller
 		{
 			clearEverything();
 			load(location);
+			newFile = false;
 		}
 	}
 
@@ -271,7 +273,6 @@ public class Controller
 		if (glossary.removeByKey(key) != (null))
 		{
 			operations.push(new Operation(Operation.operationType.REMOVE, new Term(key)));
-			System.out.println(operations.size());
 			setTitleToUnsaved();
 			return true;
 		}
@@ -310,13 +311,23 @@ public class Controller
 	public boolean closeable()
 	{
 		if (isClean())
-		{
 			return true;
-		}
 		else
-		{
 			return confirmUnsaved();
-		}
-
+	}
+	
+	public boolean editEntry(String key, Term definition, String oldKey)
+	{
+		operations.push(new Operation(Operation.operationType.EDIT, key));
+		setTitleToUnsaved();
+		boolean s = (glossary.removeByKey(oldKey)!=null);
+		glossary.addTerm(key, definition);
+		return s&&(glossary.get(key)!=null);
+		
+	}
+	
+	private void clearDirtyList()
+	{
+		operations.clear();
 	}
 }
