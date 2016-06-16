@@ -6,6 +6,12 @@ This is test code
 
 package Controller;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -19,16 +25,39 @@ public class DataGenerator
 
 	public static void main(String[] args)
 	{
+		
+		System.out.println(Integer.parseInt("d1",16));
+//		PrintWriter saveWriter;
+//		try
+//		{
+//			File f = new File("Test.txt");
+////			if(!f.exists())
+////				f.mkdirs();
+//			
+//			System.out.println(f.getAbsolutePath());
+//			saveWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(f.getAbsolutePath()), "UTF-8"));
+//			saveWriter.print("Test");
+//			saveWriter.flush();
+//			saveWriter.close();
+//		}
+//		catch (Exception e)
+//		{
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+
+		
 //		"Ökur","Sëki",
-		UnicodeModeler u = new UnicodeModeler();
-		String [] sa = {"Ö","ë","$","2","@","1","!","#","%","^","&","*","(",")","0"};
-		Arrays.sort(sa,u.getUnicodeStringComparator());
-		for(String e : sa)
-		{
-			System.out.println(e);
-//			char h = e.charAt(0);
-//			System.out.println("Is letter: "+Character.isLetter(h)+" Is digit: "+Character.isDigit(h)+" Is Alphabetic "+Character.isAlphabetic(h)+" "+e);
-		}
+//		UnicodeModeler u = new UnicodeModeler();
+//		String [] sa = {"Ö","ë","$","2","@","1","!","#","%","^","&","*","(",")","0"};
+//		Arrays.sort(sa,u.getUnicodeStringComparator());
+//		for(String e : sa)
+//		{
+//			System.out.println(e);
+////			char h = e.charAt(0);
+////			System.out.println("Is letter: "+Character.isLetter(h)+" Is digit: "+Character.isDigit(h)+" Is Alphabetic "+Character.isAlphabetic(h)+" "+e);
+//		}
 		
 //		String s = "Ökur";
 //		System.out.println(u.getBaseCharacterString(s));

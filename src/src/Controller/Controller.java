@@ -35,11 +35,13 @@ public class Controller
 	private File glossaryFileToUse;
 	private String fileName = "untitled";
 	private final String AUTOLOAD_PATH = "C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\glossary.gl";
+	private final File CONFIG_FILE = new File("sgconfig~");
 	private boolean newFile = true;
 	UnicodeModeler unicodeModeler;
 	private Stack<Operation> operations;
-	
-	//Turn this to false and the program won't autoload the file at AUTOLOAD_PATH. Used for debug purposes
+
+	// Turn this to false and the program won't autoload the file at
+	// AUTOLOAD_PATH. Used for debug purposes
 	private boolean autoLoad = !true;
 
 	public Controller()
@@ -69,7 +71,7 @@ public class Controller
 			{
 				rawTermString += currentString + "\n";
 			}
-			 termReader.close();
+			termReader.close();
 		}
 		catch (Exception e)
 		{
@@ -118,7 +120,7 @@ public class Controller
 	 */
 	public boolean newEntry(String key, Term term)
 	{
-		operations.push(new Operation(Operation.operationType.ADD,term));
+		operations.push(new Operation(Operation.operationType.ADD, term));
 		boolean success = glossary.addUnsavedTerm(key, term);
 		if (success)
 			setTitleToUnsaved();
@@ -130,21 +132,21 @@ public class Controller
 	 */
 	public void save()
 	{
-		if(!newFile)
+		if (!newFile)
 		{
 			newFile = false;
 		}
-		
+
 		String toString = glossary.toString();
 		try
 		{
 			// PrintWriter saveWriter = new PrintWriter(new BufferedWriter(new
 			// FileWriter(glossaryFileToUse, false)));
-			RandomAccessFile file = new RandomAccessFile(glossaryFileToUse,"rw");
+			RandomAccessFile file = new RandomAccessFile(glossaryFileToUse, "rw");
 			file.setLength(0);
 			file.write(toString.getBytes(), 0, toString.length());
 			file.close();
-			
+
 			PrintWriter saveWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(glossaryFileToUse.getAbsolutePath()), "UTF-8"));
 
 			saveWriter.print(toString);
@@ -177,11 +179,13 @@ public class Controller
 
 	/**
 	 * Clears the view and loads the file
-	 * @param location, the file to load
+	 * 
+	 * @param location
+	 *            , the file to load
 	 */
 	public void open(String location)
 	{
-		if(closeable())
+		if (closeable())
 		{
 			clearEverything();
 			load(location);
@@ -190,18 +194,18 @@ public class Controller
 
 	/**
 	 * Export the glossary as a text file.
-	 * @param location, the location to save the file. 
+	 * 
+	 * @param location
+	 *            , the location to save the file.
 	 */
 	public void exportAsText(String location)
 	{
 		System.out.println(location);
-		String toString = fileName+"\r\n"+"Number of Entries: "+glossarySize()+"\r\n"+glossary.toText();
-		
-		
-		
+		String toString = fileName + "\r\n" + "Number of Entries: " + glossarySize() + "\r\n" + glossary.toText();
+
 		try
 		{
-	
+
 			PrintWriter saveWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(location), "UTF-8"));
 
 			saveWriter.print(toString);
@@ -216,7 +220,7 @@ public class Controller
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Creates a new glossary
 	 */
@@ -264,9 +268,9 @@ public class Controller
 	 */
 	public boolean remove(String key)
 	{
-		if( glossary.removeByKey(key)!=(null))
+		if (glossary.removeByKey(key) != (null))
 		{
-			operations.push(new Operation(Operation.operationType.REMOVE,new Term(key)));
+			operations.push(new Operation(Operation.operationType.REMOVE, new Term(key)));
 			System.out.println(operations.size());
 			setTitleToUnsaved();
 			return true;
@@ -279,23 +283,22 @@ public class Controller
 	{
 		return unicodeModeler;
 	}
-	
+
 	public boolean isDirty()
 	{
 		return !isClean();
 	}
-	
-	
+
 	public boolean isClean()
 	{
 		return operations.isEmpty();
 	}
-	
+
 	private void setTitleToUnsaved()
 	{
 		gf.setTitle("*" + fileName);
 	}
-	
+
 	/**
 	 * @return true if the user doensn't want to save
 	 */
@@ -303,10 +306,10 @@ public class Controller
 	{
 		return JOptionPane.showConfirmDialog(gf, "You have unsaved data.\nIs it okay to discard it?") == JOptionPane.YES_OPTION;
 	}
-	
+
 	public boolean closeable()
 	{
-		if(isClean())
+		if (isClean())
 		{
 			return true;
 		}
@@ -314,6 +317,6 @@ public class Controller
 		{
 			return confirmUnsaved();
 		}
-			
+
 	}
 }

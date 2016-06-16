@@ -1,6 +1,8 @@
 /**
 Evan Wang
-*/
+This class represents a GUI allowing a user to select a special unicode character and add it to the focused text component, if any (the focused component must be provided by whatever class is using this one).
+Relies on the class UnicodeModler
+ */
 
 package View;
 
@@ -15,7 +17,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -33,43 +39,57 @@ import Model.UnicodeModeler;
 
 public class SpecialCharacterChooser extends JFrame
 {
-	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1668531250025520362L;
-	
-	Component focused;
-	UnicodeModeler u;
-	CharacterPanel characterPanel;
-	Font font = new Font(null);
+
+	/**
+	 * Data
+	 */
+	private final String DEFAULT_FAVORITES = "0101\n0100\n00E4\n00C4\n00EA\n00CA\n00EB\n00CB\n00F6\n00D6\n00EF\n00CF\n00EE\n00CE\n01D0\n01CF\n00FC\n00DC\n0125\n0124\n00F1\n00D1";
+	private final String CONFIG_FILE_NAME = "sconfig~";
 	private boolean autoLoadFavorites = true;
-	final String AUTO_LOAD = "C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\src\\View\\Resources\\favorites";
-	ArrayList<Integer>favorites;
-	
+	ArrayList<Integer> favorites;
+
+	/**
+	 * Components
+	 */
+	CharacterPanel characterPanel;
+	Component focused;
+
+	UnicodeModeler u;
+
+	/**
+	 * Other
+	 */
+	final File AUTO_LOAD = new File(CONFIG_FILE_NAME);
+	Font font = new Font(null);
+
 	public SpecialCharacterChooser(UnicodeModeler u_)
 	{
 		this.setTitle("Insert Special Character");
 		u = u_;
 		favorites = new ArrayList<Integer>();
 		characterPanel = new CharacterPanel();
-		this.setSize(new Dimension(400,300));
-		this.setPreferredSize(new Dimension(400,300));
+		this.setSize(new Dimension(400, 300));
+		this.setPreferredSize(new Dimension(400, 300));
 		this.setVisible(false);
 		this.setResizable(false);
-		
+
 		this.setContentPane(characterPanel);
 	}
-	
+
 	private class CharacterPanel extends JPanel
 	{
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = -188562305204210806L;
-		
-		String selected = "";
-		
+
+		CharacterButton selectedCharacter;
+
 		JPanel favoritesPanel;
 		JPanel characterButtonPanel;
 		JScrollPane characterButtonPane;
@@ -80,7 +100,7 @@ public class SpecialCharacterChooser extends JFrame
 		JButton addToFavorites;
 		JButton removeFromFavorites;
 		JLabel current;
-		
+
 		public CharacterPanel()
 		{
 			favoritesPanel = new JPanel();
@@ -93,31 +113,44 @@ public class SpecialCharacterChooser extends JFrame
 			addToFavorites = new JButton("Favorite");
 			removeFromFavorites = new JButton("Un-favorite");
 			current = new JLabel();
-			
+
 			setupLayout();
 		}
-		
+
 		private void setupLayout()
 		{
-			this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
-			characterButtonPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-			characterButtonPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			favoritesPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-			favoritesPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-			controlPanel.setBackground(Color.WHITE);
-			controlPanel.setMaximumSize(new Dimension(400,30));
-			controlPanel.setMinimumSize(new Dimension(400,30));
-			GridLayout x = new GridLayout(0,7);
+			/**
+			 * CharacterPanel
+			 */
+			this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+			/**
+			 * characterButtonPanel
+			 */
+			GridLayout x = new GridLayout(0, 7);
 			characterButtonPanel.setLayout(x);
 			characterButtonPanel.setBackground(Color.WHITE);
-			characterButtonPane.setMaximumSize(new Dimension(400,300));
-//			characterButtonPanel.setMaximumSize(new Dimension(400,300));
-			favoritesPane.setMinimumSize(new Dimension(400,70));
+			characterButtonPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+			characterButtonPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			characterButtonPane.setMaximumSize(new Dimension(400, 300));
+			characterButtonPane.getVerticalScrollBar().setUnitIncrement(32);
+
+			/**
+			 * favoritesPanel
+			 */
 			favoritesPanel.setLayout(new MigLayout());
 			favoritesPanel.setBackground(Color.WHITE);
 			favoritesPanel.add(new JLabel("Favorites"), "wrap");
-			
-			
+			favoritesPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+			favoritesPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+			favoritesPane.setMinimumSize(new Dimension(400, 70));
+
+			/**
+			 * controlPanel
+			 */
+			controlPanel.setBackground(Color.WHITE);
+			controlPanel.setMaximumSize(new Dimension(400, 30));
+			controlPanel.setMinimumSize(new Dimension(400, 30));
 			submit.setEnabled(false);
 			addToFavorites.setEnabled(false);
 			removeFromFavorites.setEnabled(false);
@@ -126,44 +159,49 @@ public class SpecialCharacterChooser extends JFrame
 			controlPanel.add(removeFromFavorites);
 			controlPanel.add(submit);
 			controlPanel.add(cancel);
-			
-			characterButtonPane.getVerticalScrollBar().setUnitIncrement(32);
+
 			this.add(favoritesPane);
 			this.add(characterButtonPane);
 			this.add(controlPanel);
-			addCharacters();
-			if(autoLoadFavorites)
+
+			if (autoLoadFavorites)
 				loadFavorites(AUTO_LOAD);
+
+			addCharacters();
 			displayFavorites();
 			setupListeners();
 		}
-		
+
 		private void setupListeners()
 		{
 			addToFavorites.addActionListener(new ActionListener()
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-					
+					addToFavorites(selectedCharacter);
+					refreshFavorites();
+					swapAddRemove(selectedCharacter);
 				}
 			});
-			
+
 			removeFromFavorites.addActionListener(new ActionListener()
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-					
+					removeFromFavorites(selectedCharacter);
+					refreshFavorites();
+					swapAddRemove(selectedCharacter);
 				}
 			});
-			
+
 			submit.addActionListener(new ActionListener()
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-					append(selected);
+					append(selectedCharacter.getCharacterAsString());
 				}
 			});
-			
+
 			cancel.addActionListener(new ActionListener()
 			{
 				public void actionPerformed(ActionEvent e)
@@ -172,139 +210,208 @@ public class SpecialCharacterChooser extends JFrame
 				}
 			});
 		}
-		
-		private void loadFavorites(String location)
+
+		private void loadFavorites(File location)
 		{
-			File f = new File(location);
 			try
 			{
-				Scanner s = new Scanner(f);
-				while(s.hasNextLine())
+				Scanner s;
+				if (location.length() == 0)
+					s = new Scanner(DEFAULT_FAVORITES);
+				else
+					s = new Scanner(location);
+				while (s.hasNextLine())
 				{
-					favorites.add(Integer.parseInt(s.nextLine(),16));
+					favorites.add(Integer.parseInt(s.nextLine(), 16));
 				}
 				s.close();
 			}
-			catch (FileNotFoundException e)
+			catch (Exception e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
+
 		private void displayFavorites()
 		{
-			for(int e : favorites)
+			for (int e : favorites)
 			{
-				addButton(e,favoritesPanel);
+				addButton(e, favoritesPanel);
 			}
 		}
-		
+
 		private void addCharacters()
 		{
-			
 			ArrayList<Integer> characters = u.getAllCodes();
-			for(int e : characters)
+			for (int e : characters)
 			{
-				addButton(e,characterButtonPanel);
+				addButton(e, characterButtonPanel);
 			}
-			
+
 			characterButtonPanel.repaint();
 			characterButtonPanel.revalidate();
-			
 		}
-		
 
-		private void addButton(int e, JPanel container)
+		private void addButton(final int e, JPanel container)
 		{
 			final CharacterButton newCharacterButton = new CharacterButton(e);
-			newCharacterButton.setSize(new Dimension(50,50));
-			
-//			newCharacterButton.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			newCharacterButton.setSize(new Dimension(50, 50));
 			newCharacterButton.setContentAreaFilled(false);
-//			newCharacterButton.setFocusPainted(false);
 			container.add(newCharacterButton);
-			
+
+			if (favorites.contains(new Integer(e)))
+			{
+				newCharacterButton.addToFavorites();
+			}
+
 			newCharacterButton.addActionListener(new ActionListener()
 			{
-				public void actionPerformed(ActionEvent e)
+				public void actionPerformed(ActionEvent e_)
 				{
-					System.out.println(newCharacterButton.getCharacterAsString());
-					current.setText("Insert: "+newCharacterButton.getCharacterAsString());
-					selected = newCharacterButton.getCharacterAsString();
+					if (newCharacterButton.isFavorite)
+						removeFromFavorites.setEnabled(true);
+					else
+						addToFavorites.setEnabled(true);
 					submit.setEnabled(true);
+					current.setText("Insert: " + newCharacterButton.getCharacterAsString());
+					selectedCharacter = newCharacterButton;
+					swapAddRemove(selectedCharacter);
 				}
 			});
-			
+
 		}
+
+		private void swapAddRemove(CharacterButton cb)
+		{
+			addToFavorites.setEnabled(!cb.isFavorite());
+			removeFromFavorites.setEnabled(cb.isFavorite());
+			this.repaint();
+		}
+
+		private void refreshFavorites()
+		{
+			favoritesPanel.removeAll();
+			favoritesPanel.add(new JLabel("Favorites"), "wrap");
+			displayFavorites();
+			favoritesPanel.repaint();
+			favoritesPanel.revalidate();
+		}
+
+		private void addToFavorites(CharacterButton cb)
+		{
+			cb.addToFavorites();
+			favorites.add(cb.getCharacter());
+			saveFavorites();
+		}
+
+		private void removeFromFavorites(CharacterButton cb)
+		{
+			cb.removeFromFavorites();
+			favorites.remove(new Integer(cb.getCharacter()));
+			saveFavorites();
+		}
+
+		private void saveFavorites()
+		{
+			PrintWriter saveWriter;
+			try
+			{
+				saveWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(AUTO_LOAD.getAbsolutePath()), "UTF-8"));
+				saveWriter.print(favoritesString());
+				saveWriter.flush();
+				saveWriter.close();
+			}
+			catch (Exception e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		private String favoritesString()
+		{
+			String f = "";
+			for (int e : favorites)
+			{
+				f += Integer.toHexString(e) + "\r\n";
+			}
+			return f;
+		}
+
 	}
-	
-	
+
 	private class CharacterButton extends JButton
 	{
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = -1664556684449940432L;
-		
-		int character;
-		boolean isFavorite = false;
-		
+
+		private int character;
+		private boolean isFavorite = false;
+
 		/**
-		 * @param character the codepoint for the character in decimal
+		 * @param character
+		 *            the codepoint for the character in decimal
 		 */
 		public CharacterButton(int character)
 		{
 			super(new String(Character.toChars(character)));
 			this.character = character;
 		}
-		
+
 		public int getCharacter()
 		{
 			return character;
 		}
-		
+
 		public String getCharacterAsString()
 		{
 			return new String(Character.toChars(character));
 		}
-		
+
 		public void addToFavorites()
 		{
 			isFavorite = true;
 		}
-		
+
 		public void removeFromFavorites()
 		{
 			isFavorite = false;
 		}
+
+		public boolean isFavorite()
+		{
+			return isFavorite;
+		}
 	}
-	
+
 	public void closeWindow()
 	{
 		this.setVisible(false);
 		this.dispose();
 	}
-	
+
 	private void append(String character)
 	{
-		if(focused == null)
+		if (focused == null)
 		{
 			System.err.println("No focused component!!!");
 		}
-		if(focused instanceof JTextComponent)
-		{ 
+		if (focused instanceof JTextComponent)
+		{
 			JTextComponent jtc = (JTextComponent) focused;
-			if(jtc.isEditable())
+			if (jtc.isEditable())
 			{
-				jtc.setText(jtc.getText()+character);
+				jtc.setText(jtc.getText() + character);
 				closeWindow();
 			}
 		}
 		else
 			System.err.println("Focused component does not work with text!!!");
 	}
-	
+
 	public void setFocused(Component focused_)
 	{
 		focused = focused_;
