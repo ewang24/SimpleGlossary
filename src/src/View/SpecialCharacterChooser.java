@@ -32,6 +32,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
 import net.miginfocom.swing.MigLayout;
@@ -404,12 +406,22 @@ public class SpecialCharacterChooser extends JFrame
 			JTextComponent jtc = (JTextComponent) focused;
 			if (jtc.isEditable())
 			{
-				jtc.setText(jtc.getText() + character);
+//				jtc.setText(jtc.getText() + character);
+				Document d = jtc.getDocument();
+				try
+				{
+					d.insertString(jtc.getCaretPosition(), character, null);
+				}
+				catch (BadLocationException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				closeWindow();
 			}
 		}
 		else
-			System.err.println("Focused component does not work with text!!!");
+			System.err.println("Focused component does not support text (FAIL)!!!");
 	}
 
 	public void setFocused(Component focused_)

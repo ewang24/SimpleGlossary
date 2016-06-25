@@ -39,6 +39,8 @@ public class Controller
 	private boolean newFile = true;
 	UnicodeModeler unicodeModeler;
 	private Stack<Operation> operations;
+	
+	char[] alph = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
 
 	// Turn this to false and the program won't autoload the file at
 	// AUTOLOAD_PATH. Used for debug purposes
@@ -202,8 +204,42 @@ public class Controller
 	 */
 	public void exportAsText(String location)
 	{
+		boolean reachedEnd = false;
+
+		int currLetter = 0;
+		
 		System.out.println(location);
-		String toString = fileName + "\r\n" + "Number of Entries: " + glossarySize() + "\r\n" + glossary.toText();
+		String toString = fileName + "\r\n" + "Number of Entries: " + glossarySize() + "\r\n";
+		
+		String[] a = glossary.getKeys(unicodeModeler.getUnicodeStringComparator());
+		
+
+		// Check if we need to add an 'A' letter header
+		if (alph[currLetter] == Character.toLowerCase(unicodeModeler.getBaseCharacterString(a[0]).charAt(0)))
+			toString+="A\r\n";
+
+		
+		for(int i = 0; i < a.length; i ++)
+		{
+			
+			if (!reachedEnd && alph[currLetter] != Character.toLowerCase(unicodeModeler.getBaseCharacterString(a[i]).charAt(0)))
+			{
+				while (!reachedEnd && alph[currLetter] != Character.toLowerCase(unicodeModeler.getBaseCharacterString(a[i]).charAt(0)))
+				{
+					currLetter++;
+					if (currLetter >= alph.length)
+					{
+						reachedEnd = true;
+						toString+="\r\nOther:\r\n";
+					}
+				}
+
+				if (!reachedEnd)
+					toString+="\r\n"+Character.toUpperCase(alph[currLetter])+":\r\n";
+			}
+
+			toString += a[i]+":\r\n\t"+fetchTermForKey(a[i]).getDefinition()+"\r\n";
+		}
 
 		try
 		{

@@ -176,6 +176,7 @@ public class GlossaryPanel extends JPanel
 		 */
 		termDetailsArea.setEditable(false);
 		termDetailsArea.setText("");
+		termDetailsArea.setLineWrap(true);
 		termDetailsArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		termDetailsArea.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
 		termDetailsArea.setMaximumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
@@ -228,6 +229,7 @@ public class GlossaryPanel extends JPanel
 		 */
 		glossaryOpener.setFileFilter(openSaveFilter);
 		glossaryExporter.setFileFilter(exportFilter);
+		glossaryExporter.setDialogTitle("Export");
 
 		/**
 		 * Add all components
@@ -756,6 +758,7 @@ public class GlossaryPanel extends JPanel
 				 */
 				newKeyDetailsArea.setFont(glossaryFrame.getDefaultFont());
 				newKeyDetailsArea.setText("");
+				newKeyDetailsArea.setLineWrap(true);
 				newKeyDetailsPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 				newKeyDetailsPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -764,6 +767,7 @@ public class GlossaryPanel extends JPanel
 				 */
 				newKeyArea.setFont(glossaryFrame.getDefaultFont());
 				newKeyArea.setText("");
+				newKeyArea.setLineWrap(true);
 				newKeyArea.requestFocusInWindow();
 				newKeyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 				newKeyPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -1150,6 +1154,7 @@ public class GlossaryPanel extends JPanel
 				 */
 				editKeyDetailsArea.setFont(glossaryFrame.getDefaultFont());
 				editKeyDetailsArea.setText(controller.fetchTermForKey(selectedKey).getDefinition());
+				editKeyDetailsArea.setLineWrap(true);
 				editKeyDetailsPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 				editKeyDetailsPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -1158,6 +1163,7 @@ public class GlossaryPanel extends JPanel
 				 */
 				editKeyArea.setFont(glossaryFrame.getDefaultFont());
 				editKeyArea.setText(selectedKey);
+				editKeyArea.setLineWrap(true);
 				editKeyArea.requestFocusInWindow();
 				editKeyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 				editKeyPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -1308,6 +1314,8 @@ public class GlossaryPanel extends JPanel
 	{
 		if(!controller.closeable())
 			return;
+		
+		glossaryOpener.setDialogTitle("Open Glossary");
 		if (glossaryOpener.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
 			if (!glossaryOpener.getSelectedFile().exists())
@@ -1325,7 +1333,8 @@ public class GlossaryPanel extends JPanel
 	 */
 	private void showGlossaryExportDialog()
 	{
-		if (glossaryExporter.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+		
+		if (glossaryExporter.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
 			if (glossaryExporter.getSelectedFile().exists())
 			{
@@ -1347,6 +1356,7 @@ public class GlossaryPanel extends JPanel
 	 */
 	private void showGlossarySaveAsDialog()
 	{
+		glossaryOpener.setDialogTitle("Save Glossary");
 		if (glossaryOpener.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
 			if (glossaryOpener.getSelectedFile().exists())
