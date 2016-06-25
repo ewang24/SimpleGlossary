@@ -11,12 +11,12 @@ public class Term
 	private boolean isRemoved = false;
 	private String[] seeAlsoList;
 	
-	//, String[] seeAlsoList_, String section_
-	public Term(String definition)
+	
+	public Term(String definition, String[] seeAlsoList_, String section_)
 	{
 		this.definition = definition;
-//		seeAlsoList = seeAlsoList_;
-//		section = section_;
+		seeAlsoList = seeAlsoList_;
+		section = section_;
 	}
 	
 	public String getDefinition()
@@ -42,6 +42,16 @@ public class Term
 	public boolean isRemoved()
 	{
 		return isRemoved;
+	}
+	
+	public String[] getSeeAlsoList()
+	{
+		return this.seeAlsoList;
+	}
+	
+	public String getSection()
+	{
+		return this.section;
 	}
 	
 	

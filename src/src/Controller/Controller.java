@@ -121,7 +121,7 @@ public class Controller
 		for (int i = 0; i < termList.length; i++)
 		{
 			System.out.println(termList[i]);
-			glossary.addTerm(termList[i].substring(0, termList[i].indexOf(":::")), new Term(termList[i].substring(termList[i].indexOf(":::") + 3, termList[i].length())));
+			glossary.addTerm(termList[i].substring(0, termList[i].indexOf(":::")), new Term(termList[i].substring(termList[i].indexOf(":::") + 3, termList[i].length()),new String[0],null));
 		}
 
 		fileName = glossaryFileToUse.getName();
