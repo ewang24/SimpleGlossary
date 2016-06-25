@@ -18,6 +18,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
@@ -1315,6 +1316,7 @@ public class GlossaryPanel extends JPanel
 		if(!controller.closeable())
 			return;
 		
+		glossaryOpener.setCurrentDirectory(controller.lastDirectory());
 		glossaryOpener.setDialogTitle("Open Glossary");
 		if (glossaryOpener.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
@@ -1333,18 +1335,21 @@ public class GlossaryPanel extends JPanel
 	 */
 	private void showGlossaryExportDialog()
 	{
-		
+		glossaryExporter.setCurrentDirectory(controller.lastDirectory());
 		if (glossaryExporter.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
-			if (glossaryExporter.getSelectedFile().exists())
+			String exportString = glossaryExporter.getSelectedFile().getAbsolutePath();
+			if(!exportString.endsWith(".txt"))
+			{
+				exportString+=".txt";
+			}
+			
+			File exportFile = new File(exportString);
+			
+			if (exportFile.exists())
 			{
 				JOptionPane.showMessageDialog(this, "File already exists");
 				return;
-			}
-			String exportString = glossaryExporter.getSelectedFile().getAbsolutePath();
-			if (!exportString.substring(exportString.length() - 4, exportString.length() - 1).equals(".txt"))
-			{
-				exportString += ".txt";
 			}
 			controller.exportAsText(exportString);
 		}
@@ -1356,18 +1361,22 @@ public class GlossaryPanel extends JPanel
 	 */
 	private void showGlossarySaveAsDialog()
 	{
+		glossaryOpener.setCurrentDirectory(controller.lastDirectory());
 		glossaryOpener.setDialogTitle("Save Glossary");
 		if (glossaryOpener.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
-			if (glossaryOpener.getSelectedFile().exists())
+			String save = glossaryOpener.getSelectedFile().getAbsolutePath();
+			if(!save.endsWith(".gl"))
+			{
+				save+=".gl";
+			}
+			
+			File saveFile = new File(save);
+			
+			if (saveFile.exists())
 			{
 				if (JOptionPane.showConfirmDialog(this, "This file already exists.\nOverwrite?") != JOptionPane.YES_OPTION)
 					return;
-			}
-			String save = glossaryOpener.getSelectedFile().getAbsolutePath();
-			if (!save.substring(save.length() - 3, save.length() - 1).equals(".gl"))
-			{
-				save += ".gl";
 			}
 			controller.saveAs(save);
 		}

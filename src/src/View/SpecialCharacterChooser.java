@@ -51,7 +51,7 @@ public class SpecialCharacterChooser extends JFrame
 	 * Data
 	 */
 	private final String DEFAULT_FAVORITES = "0101\n0100\n00E4\n00C4\n00EA\n00CA\n00EB\n00CB\n00F6\n00D6\n00EF\n00CF\n00EE\n00CE\n01D0\n01CF\n00FC\n00DC\n0125\n0124\n00F1\n00D1";
-	private final String CONFIG_FILE_NAME = "sconfig~";
+	private final String CONFIG_FILE_NAME = "sys/sconfig~";
 	private boolean autoLoadFavorites = true;
 	ArrayList<Integer> favorites;
 

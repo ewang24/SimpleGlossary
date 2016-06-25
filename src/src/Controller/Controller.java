@@ -17,7 +17,10 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.swing.JOptionPane;
@@ -30,16 +33,35 @@ import View.GlossaryFrame;
 
 public class Controller
 {
+	/**
+	 * Models
+	 */
+	private Stack<Operation> operations;
+	UnicodeModeler unicodeModeler;
 	private Glossary glossary;
+
+	/**
+	 * Components
+	 */
 	private GlossaryFrame gf;
+
+	/**
+	 * Data
+	 */
 	private File glossaryFileToUse;
 	private String fileName = "untitled";
 	private final String AUTOLOAD_PATH = "C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\glossary.gl";
-	private final File CONFIG_FILE = new File("sgconfig~");
 	private boolean newFile = true;
-	UnicodeModeler unicodeModeler;
-	private Stack<Operation> operations;
-	
+
+	/**
+	 * Configuration information
+	 */
+	private final File SYS_DIRECTORY = new File("sys");
+	private final File SPECIAL_CHARACTER_CONFIG_FILE = new File("sys/sconfig~");
+	private final File SYS_CONFIG_FILE = new File("sys/gconfig~");
+	private final String LAST_USED_DIRECTORY = "0000";
+
+	private HashMap<String, String> configurationInformation = new HashMap<String, String>();
 	char[] alph = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
 
 	// Turn this to false and the program won't autoload the file at
@@ -52,6 +74,9 @@ public class Controller
 		glossary = new Glossary();
 		gf = new GlossaryFrame(this);
 		operations = new Stack<Operation>();
+
+		setupConfigurationInformation();
+		setupDirectories();
 
 		if (autoLoad)
 		{
@@ -111,7 +136,10 @@ public class Controller
 	public void exit()
 	{
 		if (closeable())
+		{
+			saveConfigurations();
 			System.exit(0);
+		}
 	}
 
 	/**
@@ -175,6 +203,7 @@ public class Controller
 	{
 		newFile = false;
 		glossaryFileToUse = new File(location);
+		this.updateLastUsedDirectory(location);
 		fileName = glossaryFileToUse.getName();
 		refreshTitle();
 		save();
@@ -190,6 +219,7 @@ public class Controller
 	{
 		if (closeable())
 		{
+			this.updateLastUsedDirectory(location);
 			clearEverything();
 			load(location);
 			newFile = false;
@@ -203,25 +233,23 @@ public class Controller
 	 *            , the location to save the file.
 	 */
 	public void exportAsText(String location)
-	{
+	{		
 		boolean reachedEnd = false;
 
 		int currLetter = 0;
-		
+
 		System.out.println(location);
 		String toString = fileName + "\r\n" + "Number of Entries: " + glossarySize() + "\r\n";
-		
+
 		String[] a = glossary.getKeys(unicodeModeler.getUnicodeStringComparator());
-		
 
 		// Check if we need to add an 'A' letter header
 		if (alph[currLetter] == Character.toLowerCase(unicodeModeler.getBaseCharacterString(a[0]).charAt(0)))
-			toString+="A\r\n";
+			toString += "A\r\n";
 
-		
-		for(int i = 0; i < a.length; i ++)
+		for (int i = 0; i < a.length; i++)
 		{
-			
+
 			if (!reachedEnd && alph[currLetter] != Character.toLowerCase(unicodeModeler.getBaseCharacterString(a[i]).charAt(0)))
 			{
 				while (!reachedEnd && alph[currLetter] != Character.toLowerCase(unicodeModeler.getBaseCharacterString(a[i]).charAt(0)))
@@ -230,15 +258,15 @@ public class Controller
 					if (currLetter >= alph.length)
 					{
 						reachedEnd = true;
-						toString+="\r\nOther:\r\n";
+						toString += "\r\nOther:\r\n";
 					}
 				}
 
 				if (!reachedEnd)
-					toString+="\r\n"+Character.toUpperCase(alph[currLetter])+":\r\n";
+					toString += "\r\n" + Character.toUpperCase(alph[currLetter]) + ":\r\n";
 			}
 
-			toString += a[i]+":\r\n\t"+fetchTermForKey(a[i]).getDefinition()+"\r\n";
+			toString += a[i] + ":\r\n\t" + fetchTermForKey(a[i]).getDefinition() + "\r\n";
 		}
 
 		try
@@ -249,13 +277,16 @@ public class Controller
 			saveWriter.print(toString);
 			saveWriter.flush();
 			saveWriter.close();
-			glossary.clearDirtyList();
-			refreshTitle();
+			
 		}
 		catch (IOException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally
+		{
+			this.updateLastUsedDirectory(location);
 		}
 	}
 
@@ -351,19 +382,92 @@ public class Controller
 		else
 			return confirmUnsaved();
 	}
-	
+
 	public boolean editEntry(String key, Term definition, String oldKey)
 	{
 		operations.push(new Operation(Operation.operationType.EDIT, key));
 		setTitleToUnsaved();
-		boolean s = (glossary.removeByKey(oldKey)!=null);
+		boolean s = (glossary.removeByKey(oldKey) != null);
 		glossary.addTerm(key, definition);
-		return s&&(glossary.get(key)!=null);
-		
+		return s && (glossary.get(key) != null);
+
 	}
-	
+
 	private void clearDirtyList()
 	{
 		operations.clear();
+	}
+
+	private void setupDirectories()
+	{
+
+		if (!SYS_DIRECTORY.exists())
+		{
+			SYS_DIRECTORY.mkdirs();
+		}
+
+		try
+		{
+			if (!SPECIAL_CHARACTER_CONFIG_FILE.exists())
+				SPECIAL_CHARACTER_CONFIG_FILE.createNewFile();
+			if (!SYS_CONFIG_FILE.exists())
+			{
+				SYS_CONFIG_FILE.createNewFile();
+				PrintWriter saveWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(SYS_CONFIG_FILE), "UTF-8"));
+				saveWriter.write(configurationInformation.get(LAST_USED_DIRECTORY));
+				saveWriter.close();
+
+			}
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Sets up the information used for configurations. Must be called before
+	 * setupDirectories
+	 */
+	private void setupConfigurationInformation()
+	{
+		configurationInformation.put(LAST_USED_DIRECTORY, "");
+	}
+
+	private void updateLastUsedDirectory(String dir)
+	{
+		configurationInformation.replace(LAST_USED_DIRECTORY, dir);
+	}
+
+	private void saveConfigurations()
+	{
+		try
+		{
+			PrintWriter saveWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(SYS_CONFIG_FILE), "UTF-8"));
+
+			Set<String> ks = configurationInformation.keySet();
+			Iterator<String> i = ks.iterator();
+			
+			while (i.hasNext())
+			{
+				saveWriter.write(configurationInformation.get(i.next()));
+			}
+
+			saveWriter.close();
+		}
+		catch (Exception e)
+		{
+
+		}
+	}
+	
+	public File lastDirectory()
+	{
+		if(configurationInformation.get(LAST_USED_DIRECTORY).equals(""))
+		{
+			return null;
+		}
+		return new File(configurationInformation.get(LAST_USED_DIRECTORY));
 	}
 }
