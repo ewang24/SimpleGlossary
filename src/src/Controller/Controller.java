@@ -24,15 +24,23 @@ import java.util.Set;
 import java.util.Stack;
 
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileSystemView;
 
 import Model.Glossary;
 import Model.Operation;
 import Model.Term;
 import Model.UnicodeModeler;
 import View.GlossaryFrame;
+import View.SpecialCharacterChooser;
 
 public class Controller
 {
+	//
+	//Version:
+		private final float VERSION_NUMBER = 0.2f;
+	//
+	//
+	
 	/**
 	 * Models
 	 */
@@ -75,8 +83,8 @@ public class Controller
 		gf = new GlossaryFrame(this);
 		operations = new Stack<Operation>();
 
-		setupConfigurationInformation();
 		setupDirectories();
+		setupConfigurationInformation();
 
 		if (autoLoad)
 		{
@@ -398,6 +406,9 @@ public class Controller
 		operations.clear();
 	}
 
+	/**
+	 * Creates config files if they do not exist and put in default configurations
+	 */
 	private void setupDirectories()
 	{
 
@@ -409,12 +420,17 @@ public class Controller
 		try
 		{
 			if (!SPECIAL_CHARACTER_CONFIG_FILE.exists())
+			{
 				SPECIAL_CHARACTER_CONFIG_FILE.createNewFile();
+				PrintWriter saveWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(SPECIAL_CHARACTER_CONFIG_FILE), "UTF-8"));
+				saveWriter.write(SpecialCharacterChooser.getDefaultFavorites());
+				saveWriter.close();
+			}
 			if (!SYS_CONFIG_FILE.exists())
 			{
 				SYS_CONFIG_FILE.createNewFile();
 				PrintWriter saveWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(SYS_CONFIG_FILE), "UTF-8"));
-				saveWriter.write(configurationInformation.get(LAST_USED_DIRECTORY));
+				saveWriter.write(LAST_USED_DIRECTORY+":::"+FileSystemView.getFileSystemView().getHomeDirectory()+"\r\n");
 				saveWriter.close();
 
 			}
@@ -427,12 +443,27 @@ public class Controller
 	}
 
 	/**
-	 * Sets up the information used for configurations. Must be called before
+	 * Reads information from config files. Must be called after
 	 * setupDirectories
 	 */
 	private void setupConfigurationInformation()
 	{
-		configurationInformation.put(LAST_USED_DIRECTORY, "");
+		try
+		{
+			Scanner s = new Scanner(SYS_CONFIG_FILE);
+			while(s.hasNextLine())
+			{
+				String[] a = s.nextLine().split(":::");
+				configurationInformation.put(a[0], a[1]);
+			}
+			s.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	private void updateLastUsedDirectory(String dir)
@@ -451,7 +482,8 @@ public class Controller
 			
 			while (i.hasNext())
 			{
-				saveWriter.write(configurationInformation.get(i.next()));
+				String key = i.next();
+				saveWriter.write(key+":::"+configurationInformation.get(key));
 			}
 
 			saveWriter.close();
@@ -469,5 +501,10 @@ public class Controller
 			return null;
 		}
 		return new File(configurationInformation.get(LAST_USED_DIRECTORY));
+	}
+
+	public float getVersion()
+	{
+		return VERSION_NUMBER;
 	}
 }
