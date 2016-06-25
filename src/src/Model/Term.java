@@ -7,12 +7,16 @@ package Model;
 public class Term
 {
 	String definition;
+	String section;
 	private boolean isRemoved = false;
+	private String[] seeAlsoList;
 	
-	
+	//, String[] seeAlsoList_, String section_
 	public Term(String definition)
 	{
 		this.definition = definition;
+//		seeAlsoList = seeAlsoList_;
+//		section = section_;
 	}
 	
 	public String getDefinition()
@@ -20,9 +24,9 @@ public class Term
 		return definition;
 	}
 	
-	public void setDefinition(String Definition)
+	public void setDefinition(String definition_)
 	{
-		this.definition = definition;
+		definition = definition_;
 	}
 	
 	public void setToRemoved()
@@ -39,5 +43,7 @@ public class Term
 	{
 		return isRemoved;
 	}
+	
+	
 }
 

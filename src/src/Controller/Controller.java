@@ -26,8 +26,11 @@ import java.util.Stack;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileSystemView;
 
+import Model.AddOperationData;
+import Model.EditOperationData;
 import Model.Glossary;
 import Model.Operation;
+import Model.RemoveOperationData;
 import Model.Term;
 import Model.UnicodeModeler;
 import View.GlossaryFrame;
@@ -159,7 +162,7 @@ public class Controller
 	 */
 	public boolean newEntry(String key, Term term)
 	{
-		operations.push(new Operation(Operation.operationType.ADD, term));
+		operations.push(new Operation(Operation.operationType.ADD, new AddOperationData()));
 		boolean success = glossary.addUnsavedTerm(key, term);
 		if (success)
 			setTitleToUnsaved();
@@ -347,7 +350,7 @@ public class Controller
 	{
 		if (glossary.removeByKey(key) != (null))
 		{
-			operations.push(new Operation(Operation.operationType.REMOVE, new Term(key)));
+			operations.push(new Operation(Operation.operationType.REMOVE, new RemoveOperationData(null,null)));
 			setTitleToUnsaved();
 			return true;
 		}
@@ -393,7 +396,7 @@ public class Controller
 
 	public boolean editEntry(String key, Term definition, String oldKey)
 	{
-		operations.push(new Operation(Operation.operationType.EDIT, key));
+		operations.push(new Operation(Operation.operationType.EDIT, new EditOperationData()));
 		setTitleToUnsaved();
 		boolean s = (glossary.removeByKey(oldKey) != null);
 		glossary.addTerm(key, definition);

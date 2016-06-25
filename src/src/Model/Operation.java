@@ -4,14 +4,16 @@ Evan Wang
 
 package Model;
 
+import Controller.Controller;
+
 public class Operation
 {
 	public static enum operationType{ADD,REMOVE,EDIT,ADDTEXT,REMOVETEXT};
 	
 	private operationType operation;
-	private Object data;
+	private OperationData data;
 	
-	public Operation(operationType operation_, Object data_)
+	public Operation(operationType operation_, OperationData data_)
 	{
 		operation = operation_;
 		data = data_;
@@ -22,7 +24,7 @@ public class Operation
 		return operation;
 	}
 
-	public Object getData()
+	public OperationData getData()
 	{
 		return data;
 	}
@@ -32,10 +34,14 @@ public class Operation
 		operation = operation_;
 	}
 
-	public void setData(Object data_)
+	public void setData(OperationData data_)
 	{
 		data = data_;
 	}
+	
+//	public abstract boolean undo(Controller controller);
+//	
+//	public abstract boolean redo(Controller controller);
 	
 	
 }
