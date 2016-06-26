@@ -1,5 +1,9 @@
 /**
 Evan Wang
+
+File structure:
+key:::Definition:::See also list (comma delimited):::Section
+
  */
 
 package Controller;
@@ -121,7 +125,9 @@ public class Controller
 		for (int i = 0; i < termList.length; i++)
 		{
 			System.out.println(termList[i]);
-			glossary.addTerm(termList[i].substring(0, termList[i].indexOf(":::")), new Term(termList[i].substring(termList[i].indexOf(":::") + 3, termList[i].length()),new String[0],null));
+			String[] t = termList[i].split(":::");
+//			glossary.addTerm(termList[i].substring(0, termList[i].indexOf(":::")), new Term(termList[i].substring(termList[i].indexOf(":::") + 3, termList[i].length()),new String[0],null));
+			glossary.addTerm(t[0], new Term(t[1],t[2].split(","),null));
 		}
 
 		fileName = glossaryFileToUse.getName();

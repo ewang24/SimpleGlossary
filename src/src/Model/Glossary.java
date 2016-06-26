@@ -93,7 +93,7 @@ public class Glossary
 		while (i.hasNext())
 		{
 			Entry<String, Term> e = i.next();
-			toStringString += e.getKey() + ":::" + e.getValue().getDefinition() + "\r\n";
+			toStringString += e.getKey() + ":::" + e.getValue().getDefinition() +":::"+ e.getValue().getSeeAlsoListString()+"\r\n";
 		}
 
 		return toStringString;

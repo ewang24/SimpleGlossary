@@ -173,8 +173,7 @@ public class GlossaryPanel extends JPanel
 		/**
 		 * GlossaryPanel
 		 */
-//		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		this.setLayout(new MigLayout("fill,ins 0,hidemode 3,debug","","[fill]0[fill]"));
+		this.setLayout(new MigLayout("fill,ins 0,hidemode 3,debug", "", "[fill]0[fill]"));
 		this.setBackground(new Color(255, 255, 255));
 
 		/**
@@ -184,12 +183,9 @@ public class GlossaryPanel extends JPanel
 		termDetailsArea.setText("");
 		termDetailsArea.setLineWrap(true);
 		termDetailsArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-//		termDetailsArea.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
-//		termDetailsArea.setMaximumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
 		termDetailsArea.setFont(glossaryFrame.getDefaultFont());
 		termDetailsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		termDetailsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-//		termDetailsScrollPane.setMinimumSize(TERM_DETAILS_AREA_MINIMUM_SIZE);
 
 		/**
 		 * TermPanel
@@ -199,7 +195,6 @@ public class GlossaryPanel extends JPanel
 		termScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		termScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		termScrollPane.getVerticalScrollBar().setUnitIncrement(TERM_SCROLL_INCREMENT);
-//		termScrollPane.setMinimumSize(new Dimension(0,100));
 		// Instructions added at the beginning
 		termPanel.add(new JLabel("Welcome to SimpleGlossary!"), "wrap");
 		termPanel.add(new JLabel("Add terms to get started, or load an old glossary"), "wrap");
@@ -207,20 +202,10 @@ public class GlossaryPanel extends JPanel
 		/**
 		 * SeeAlsoPanel
 		 */
-		seeAlsoPanel.setBackground(Color.blue);
-		seeAlsoPanel.setLayout(new MigLayout("fill","[grow]","[grow]"));
-//		seeAlsoPanel.setMinimumSize(new Dimension(300,0));
-//		seeAlsoPanel.setMaximumSize(new Dimension(300,55));
+		seeAlsoPanel.setBackground(Color.white);
+		seeAlsoPanel.setLayout(new MigLayout("fill", "[grow]", "[grow]"));
 		seeAlsoPanel.add(seeAlsoLabel);
 		seeAlsoPanel.setVisible(false);
-//		seeAlsoPanel.repaint();
-//		seeAlsoPanel.revalidate();
-		
-		/**
-		 * MainControlPanel
-		 */
-//		mainControlPanel.setMinimumSize(MAIN_CONTROL_PANEL_SIZE);
-//		mainControlPanel.setMaximumSize(MAIN_CONTROL_PANEL_SIZE);
 
 		/**
 		 * Menubar
@@ -253,10 +238,10 @@ public class GlossaryPanel extends JPanel
 		/**
 		 * Add all components
 		 */
-		this.add(termScrollPane,"h 50%, grow,wrap");
-		this.add(termDetailsScrollPane,"h 25%: 44%, push,grow,wrap");
-		this.add(seeAlsoPanel,"h 30!,grow,wrap");
-		this.add(mainControlPanel,"h 6%, center,grow");
+		this.add(termScrollPane, "h 50%, grow,wrap");
+		this.add(termDetailsScrollPane, "h 25%: 44%, push,grow,wrap");
+		this.add(seeAlsoPanel, "h 30!,grow,wrap");
+		this.add(mainControlPanel, "h 6%, center,grow");
 
 		this.revalidate();
 	}
@@ -416,7 +401,7 @@ public class GlossaryPanel extends JPanel
 			newTerm.setToolTipText("Add New Term");
 			removeTerm.setToolTipText("Remove Term");
 			editTerm.setToolTipText("Edit Term");
-			
+
 			removeTerm.setEnabled(false);
 			editTerm.setEnabled(false);
 
@@ -443,7 +428,7 @@ public class GlossaryPanel extends JPanel
 					removeTerm();
 				}
 			});
-			
+
 			editTerm.addActionListener(new ActionListener()
 			{
 				public void actionPerformed(ActionEvent e)
@@ -462,12 +447,12 @@ public class GlossaryPanel extends JPanel
 		{
 			countLabel.setText("Entries: " + getGlossarySize());
 		}
-		
+
 		public void enableEdit()
 		{
 			editTerm.setEnabled(true);
 		}
-		
+
 		public void enableRemove()
 		{
 			removeTerm.setEnabled(true);
@@ -499,7 +484,8 @@ public class GlossaryPanel extends JPanel
 			// Display all keys
 			for (int i = 0; i < keys.length; i++)
 			{
-				// Check if a new letter header needs to be updated and add it if so.
+				// Check if a new letter header needs to be updated and add it
+				// if so.
 				if (!reachedEnd && alph[currLetter] != Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[i]).charAt(0)))
 				{
 					while (!reachedEnd && alph[currLetter] != Character.toLowerCase(controller.getUnicodeModeler().getBaseCharacterString(keys[i]).charAt(0)))
@@ -519,7 +505,7 @@ public class GlossaryPanel extends JPanel
 				displayKey(keys[i]);
 			}
 
-			displayTermDefinition(keys[0]);
+			displayTermInformation(keys[0]);
 		}
 		else
 		{
@@ -534,7 +520,7 @@ public class GlossaryPanel extends JPanel
 	 * Display a marker with one letter
 	 * 
 	 * @param c
-	 *          the character to display
+	 *            the character to display
 	 */
 	private void displayLetterMarker(char c)
 	{
@@ -595,7 +581,7 @@ public class GlossaryPanel extends JPanel
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				displayTermDefinition(key);
+				displayTermInformation(key);
 			}
 		});
 
@@ -609,14 +595,60 @@ public class GlossaryPanel extends JPanel
 	 *            , the key to display the details for. The details are found by
 	 *            querying the controller and they are then displayed
 	 */
-	private void displayTermDefinition(String key)
+	private void displayTermInformation(String key)
 	{
+		Term t = controller.fetchTermForKey(key);
 		mainControlPanel.enableEdit();
 		mainControlPanel.enableRemove();
 		selectedKey = key;
-		termDetailsArea.setText(" " + key + ":\n\n\t" + controller.fetchTermForKey(key).getDefinition());
+		termDetailsArea.setText(" " + key + ":\n\n\t" + t.getDefinition());
+
+		displaySeeAlsoList(t.getSeeAlsoList());
+
 		this.repaint();
 		this.revalidate();
+	}
+
+	/**
+	 * Called by displayTermInformation
+	 * 
+	 * @param a
+	 *            the array of see also terms to display
+	 */
+	private void displaySeeAlsoList(String[] a)
+	{
+		if (a.length != 0)
+		{
+			seeAlsoPanel.removeAll();
+			seeAlsoPanel.add(seeAlsoLabel);
+			for (String e : a)
+			{
+				/**
+				 * Format new button
+				 */
+				final JButton newSeeAlsoButton = new JButton(e);
+				newSeeAlsoButton.setHorizontalAlignment(SwingConstants.LEFT);
+				newSeeAlsoButton.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+				newSeeAlsoButton.setBorderPainted(false);
+				newSeeAlsoButton.setContentAreaFilled(false);
+				newSeeAlsoButton.setFocusPainted(false);
+				newSeeAlsoButton.setFont(glossaryFrame.getDefaultFont());
+
+				seeAlsoPanel.add(newSeeAlsoButton);
+				newSeeAlsoButton.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent e_)
+					{
+						displayTermInformation(newSeeAlsoButton.getText());
+					}
+				});
+			}
+			seeAlsoPanel.setVisible(true);
+		}
+		else
+		{
+			seeAlsoPanel.setVisible(false);
+		}
 	}
 
 	/**
@@ -645,7 +677,7 @@ public class GlossaryPanel extends JPanel
 		NewFrame newFrame = new NewFrame(this);
 		newFrame.start();
 	}
-	
+
 	/**
 	 * brings up the dialog to edit a term in the glossary
 	 */
@@ -665,7 +697,7 @@ public class GlossaryPanel extends JPanel
 	public void updateWithTermToDisplay(String key)
 	{
 		updateTermDisplay();
-		displayTermDefinition(key);
+		displayTermInformation(key);
 
 	}
 
@@ -709,10 +741,10 @@ public class GlossaryPanel extends JPanel
 
 		private void setupLayout()
 		{
-			this.setSize(new Dimension(250, 230));
-			this.setResizable(false);	
+			this.setSize(new Dimension(250, 265));
+			this.setResizable(false);
 			this.setTitle("New Term");
-			this.setLocationRelativeTo(gp);	
+			this.setLocationRelativeTo(gp);
 			this.setVisible(true);
 			this.setContentPane(newPanel);
 		}
@@ -750,6 +782,8 @@ public class GlossaryPanel extends JPanel
 			private JButton submitButton;
 			private JButton cancelButton;
 			private JButton specialCharacterButton;
+			private JButton addSeeAlsoButton;
+			private JComboBox<String> seeAlsoBox;
 
 			public NewPanel()
 			{
@@ -766,9 +800,12 @@ public class GlossaryPanel extends JPanel
 				specialCharacterButton = new JButton("\u03A0");
 				newKeyDetailsPane = new JScrollPane(newKeyDetailsArea);
 				seeAlsoPane = new JScrollPane(seeAlsoArea);
+				addSeeAlsoButton = new JButton("Add");
+				seeAlsoBox = new JComboBox<String>();
 
 				setupLayout();
 				setupListeners();
+				updateSeeAlsoBox();
 			}
 
 			private void setupLayout()
@@ -777,8 +814,8 @@ public class GlossaryPanel extends JPanel
 				 * NewPanel
 				 */
 				this.setBackground(LIGHT_GREY_COLOR);
-				this.setLayout(new MigLayout());
-//				new BoxLayout(this, BoxLayout.Y_AXIS)
+				this.setLayout(new MigLayout("fill"));
+				// new BoxLayout(this, BoxLayout.Y_AXIS)
 
 				/**
 				 * newKeyDetailsPane
@@ -788,7 +825,7 @@ public class GlossaryPanel extends JPanel
 				newKeyDetailsArea.setLineWrap(true);
 				newKeyDetailsPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 				newKeyDetailsPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-				newKeyDetailsPane.setMinimumSize(new Dimension(0,35));
+				newKeyDetailsPane.setMinimumSize(new Dimension(0, 35));
 
 				/**
 				 * newKeyArea
@@ -799,7 +836,7 @@ public class GlossaryPanel extends JPanel
 				newKeyArea.requestFocusInWindow();
 				newKeyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 				newKeyPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-				newKeyPane.setMinimumSize(new Dimension(0,35));
+				newKeyPane.setMinimumSize(new Dimension(0, 35));
 				/**
 				 * seeAlsoArea
 				 */
@@ -808,8 +845,7 @@ public class GlossaryPanel extends JPanel
 				seeAlsoArea.setToolTipText("Separate Entries With Commas");
 				seeAlsoPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 				seeAlsoPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-				
-				
+
 				/**
 				 * ControlPanel & components
 				 */
@@ -817,20 +853,30 @@ public class GlossaryPanel extends JPanel
 				specialCharacterButton.setFocusable(false);
 				submitButton.setFocusable(false);
 				cancelButton.setFocusable(false);
+				controlPanel.setBackground(LIGHT_GREY_COLOR);
 				controlPanel.add(specialCharacterButton);
 				controlPanel.add(submitButton);
 				controlPanel.add(cancelButton);
 
+				if(controller.glossarySize()==0)
+				{
+					seeAlsoArea.setEditable(false);
+					addSeeAlsoButton.setEnabled(false);
+					seeAlsoBox.setEnabled(!true);
+				}
+				
 				/**
 				 * Add all components
 				 */
-				this.add(newKeyLabel,"wrap");
-				this.add(newKeyPane,"grow, wrap");
-				this.add(newKeyDetailsLabel,"wrap");
-				this.add(newKeyDetailsPane,"grow, wrap");
-				this.add(seeAlsoLabel,"wrap");
-				this.add(seeAlsoPane,"grow,wrap");
-				this.add(controlPanel,"grow");
+				this.add(newKeyLabel, "wrap");
+				this.add(newKeyPane, "grow, spanx 2, wrap");
+				this.add(newKeyDetailsLabel, "wrap");
+				this.add(newKeyDetailsPane, "grow, spanx 2, wrap");
+				this.add(seeAlsoLabel, "wrap");
+				this.add(addSeeAlsoButton, "w 60!");
+				this.add(seeAlsoPane, "grow,push,wrap");
+				this.add(seeAlsoBox, "grow, spanx 2, wrap");
+				this.add(controlPanel, "spanx 2, grow");
 			}
 
 			/**
@@ -876,7 +922,7 @@ public class GlossaryPanel extends JPanel
 						if (submitData())
 							closeWindow();
 						else
-							JOptionPane.showMessageDialog(newPanel, "Key is already in glossary");
+							return;
 					}
 				});
 
@@ -885,6 +931,14 @@ public class GlossaryPanel extends JPanel
 					public void actionPerformed(ActionEvent e)
 					{
 						closeWindow();
+					}
+				});
+				
+				addSeeAlsoButton.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent e)
+					{
+						addSeeAlsoTerm();
 					}
 				});
 
@@ -908,6 +962,32 @@ public class GlossaryPanel extends JPanel
 				});
 			}
 
+			private void updateSeeAlsoBox()
+			{
+				seeAlsoBox.removeAll();
+				seeAlsoBox.addItem("Select an item");
+				String[] keys = controller.getGlossaryKeys();
+				for (String e : keys)
+				{
+					seeAlsoBox.addItem(e);
+				}
+				this.repaint();
+				this.revalidate();
+			}
+			
+			private void addSeeAlsoTerm()
+			{
+				if(seeAlsoBox.getSelectedIndex()!=0)
+				{
+					if(!seeAlsoArea.getText().equals(""))
+					{
+						seeAlsoArea.append(",");
+					}
+					seeAlsoArea.append((String) seeAlsoBox.getSelectedItem());
+				}
+				return;
+			}
+
 			/**
 			 * Close the NewPanel and free up its memory
 			 */
@@ -924,21 +1004,35 @@ public class GlossaryPanel extends JPanel
 			private boolean submitData()
 			{
 				String newKey = newKeyArea.getText().trim().replace("\n", " ");
-				
-				String [] sal; 
-				if(!seeAlsoArea.getText().equals(""))
+
+				String[] sal;
+				if (!seeAlsoArea.getText().equals(""))
 				{
 					sal = seeAlsoArea.getText().split(",");
+					for (int i = 0; i < sal.length; i++)
+					{
+						sal[i]=sal[i].trim();
+						
+						if (controller.fetchTermForKey(sal[i]) == null)
+						{
+							JOptionPane.showMessageDialog(this, sal[i] + " is not in the glossary!");
+							return false;
+						}
+					}
 				}
 				else
 				{
 					sal = new String[0];
 				}
-				
-				if (controller.newEntry(newKey, new Term(newKeyDetailsArea.getText().replace("\n", " "),sal,null)))
+
+				if (controller.newEntry(newKey, new Term(newKeyDetailsArea.getText().replace("\n", " "), sal, null)))
 				{
 					updateWithTermToDisplay(newKey);
 					return true;
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(newPanel, "Key is already in glossary");
 				}
 				return false;
 			}
@@ -947,7 +1041,8 @@ public class GlossaryPanel extends JPanel
 
 	/**
 	 * 
-	 * @author Evan Wang Frame created when a user wants to remove a term from the glossary. Has a private inner class
+	 * @author Evan Wang Frame created when a user wants to remove a term from
+	 *         the glossary. Has a private inner class
 	 *
 	 */
 	private class RemoveFrame extends JFrame
@@ -1008,7 +1103,6 @@ public class GlossaryPanel extends JPanel
 			private void setupLayout()
 			{
 				this.setLayout(new MigLayout("fill, gap 7px 7px, insets 5"));
-				
 
 				specialCharacterButton.setFocusable(false);
 				customRemoveArea.setFont(glossaryFrame.getDefaultFont());
@@ -1019,7 +1113,7 @@ public class GlossaryPanel extends JPanel
 				this.add(specialCharacterButton, "wrap");
 				this.add(submitButton, "grow");
 				this.add(cancelButton, "grow");
-				
+
 				customRemoveArea.requestFocus();
 
 			}
@@ -1059,7 +1153,7 @@ public class GlossaryPanel extends JPanel
 			private void loadTerms()
 			{
 				removeList.addItem("Select a term");
-				
+
 				if (currentKeys != null && currentKeys.length > 0)
 				{
 					for (String e : currentKeys)
@@ -1067,7 +1161,7 @@ public class GlossaryPanel extends JPanel
 						removeList.addItem(e);
 					}
 				}
-				
+
 				this.repaint();
 				this.revalidate();
 			}
@@ -1076,7 +1170,7 @@ public class GlossaryPanel extends JPanel
 			{
 				if (!customRemoveArea.getText().equals(""))
 				{
-					if(!controller.remove(customRemoveArea.getText()))
+					if (!controller.remove(customRemoveArea.getText()))
 					{
 						JOptionPane.showMessageDialog(this, "Term is not in glossary!");
 						return;
@@ -1084,19 +1178,19 @@ public class GlossaryPanel extends JPanel
 				}
 				else if (removeList.getSelectedIndex() != 0)
 				{
-					if(!controller.remove(removeList.getSelectedItem().toString()))
+					if (!controller.remove(removeList.getSelectedItem().toString()))
 					{
 						JOptionPane.showMessageDialog(this, "Term is not in glossary!");
 						return;
 					}
-					
+
 				}
 				else
 				{
 					JOptionPane.showMessageDialog(this, "Must enter term to be removed!");
 					return;
 				}
-				
+
 				updateTermDisplay();
 				closeWindow();
 			}
@@ -1110,7 +1204,8 @@ public class GlossaryPanel extends JPanel
 	}
 
 	/**
-	 * @author Evan Wang Frame created when a user wants to edit a term in the glossary. Has a private inncer class.
+	 * @author Evan Wang Frame created when a user wants to edit a term in the
+	 *         glossary. Has a private inncer class.
 	 *
 	 */
 	private class EditFrame extends JFrame
@@ -1331,7 +1426,7 @@ public class GlossaryPanel extends JPanel
 			private boolean submitData()
 			{
 				String newKey = editKeyArea.getText().trim().replace("\n", " ");
-				if (controller.editEntry(newKey, new Term(editKeyDetailsArea.getText().replace("\n", " "),new String[0],null),selectedKey))
+				if (controller.editEntry(newKey, new Term(editKeyDetailsArea.getText().replace("\n", " "), new String[0], null), selectedKey))
 				{
 					updateWithTermToDisplay(newKey);
 					return true;
@@ -1340,7 +1435,7 @@ public class GlossaryPanel extends JPanel
 			}
 		}
 	}
-		
+
 	/**
 	 * @return reference to GlossaryFrame, GlossaryPanel's parent
 	 */
@@ -1363,9 +1458,9 @@ public class GlossaryPanel extends JPanel
 	 */
 	private void showGlossaryOpenDialog()
 	{
-		if(!controller.closeable())
+		if (!controller.closeable())
 			return;
-		
+
 		glossaryOpener.setCurrentDirectory(controller.lastDirectory());
 		glossaryOpener.setDialogTitle("Open Glossary");
 		if (glossaryOpener.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
@@ -1389,13 +1484,13 @@ public class GlossaryPanel extends JPanel
 		if (glossaryExporter.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
 			String exportString = glossaryExporter.getSelectedFile().getAbsolutePath();
-			if(!exportString.endsWith(".txt"))
+			if (!exportString.endsWith(".txt"))
 			{
-				exportString+=".txt";
+				exportString += ".txt";
 			}
-			
+
 			File exportFile = new File(exportString);
-			
+
 			if (exportFile.exists())
 			{
 				JOptionPane.showMessageDialog(this, "File already exists");
@@ -1416,13 +1511,13 @@ public class GlossaryPanel extends JPanel
 		if (glossaryOpener.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
 			String save = glossaryOpener.getSelectedFile().getAbsolutePath();
-			if(!save.endsWith(".gl"))
+			if (!save.endsWith(".gl"))
 			{
-				save+=".gl";
+				save += ".gl";
 			}
-			
+
 			File saveFile = new File(save);
-			
+
 			if (saveFile.exists())
 			{
 				if (JOptionPane.showConfirmDialog(this, "This file already exists.\nOverwrite?") != JOptionPane.YES_OPTION)

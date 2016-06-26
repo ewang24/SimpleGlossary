@@ -25,8 +25,14 @@ public class DataGenerator
 
 	public static void main(String[] args)
 	{
+		String[] s = ":::-:::-:::".split(":::");
+		System.out.println(s.length);
+		for(String i:s)
+		{
+			System.out.println(i);
+		}
 		
-		System.out.println(Integer.parseInt("d1",16));
+//		System.out.println(Integer.parseInt("d1",16));
 //		PrintWriter saveWriter;
 //		try
 //		{
