@@ -1,5 +1,9 @@
 /**
 Evan Wang
+
+File structure:
+key:::Definition:::See also list (comma delimited):::Section
+
  */
 
 package Controller;
@@ -22,6 +26,7 @@ import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.Stack;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileSystemView;
@@ -67,10 +72,15 @@ public class Controller
 	/**
 	 * Configuration information
 	 */
+	private static final String FILE_DELIMITER = ":::";
+	private static final String SEE_ALSO_DELIMITER = Pattern.quote("|");
+	
 	private final File SYS_DIRECTORY = new File("sys");
 	private final File SPECIAL_CHARACTER_CONFIG_FILE = new File("sys/sconfig~");
 	private final File SYS_CONFIG_FILE = new File("sys/gconfig~");
 	private final String LAST_USED_DIRECTORY = "0000";
+	
+
 
 	private HashMap<String, String> configurationInformation = new HashMap<String, String>();
 	char[] alph = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
@@ -120,13 +130,36 @@ public class Controller
 
 		for (int i = 0; i < termList.length; i++)
 		{
-			System.out.println(termList[i]);
-			glossary.addTerm(termList[i].substring(0, termList[i].indexOf(":::")), new Term(termList[i].substring(termList[i].indexOf(":::") + 3, termList[i].length())));
+			/**
+			 * Each entry in termList is one term with the following file structure:
+			 * termList[i] = key:::definition:::seeAlsoList:::Section
+			 * t is the array version of this string, so t[0] is the key, t[1] is the definition, t[2] is the seeAlsoList (as a string) and t[3] is the section. We add all of these things into a new term.
+			 */
+			
+			String[] t = termList[i].split(FILE_DELIMITER);
+			System.out.println(t[2]);
+			
+			
+			glossary.addTerm(t[0], new Term(t[1],parseSeeAlsoList(t[2]),null));
 		}
 
 		fileName = glossaryFileToUse.getName();
 		gf.setTitle(fileName);
 		gf.displayGlossaryKeys();
+	}
+	
+	private String[] parseSeeAlsoList(String toParse)
+	{
+		String [] t = toParse.split(SEE_ALSO_DELIMITER);
+		
+		for(String e: t)
+		{
+			System.out.println(e);
+		}
+		
+		if(t[0].equals(" "))
+			t = new String[0];
+		return t;
 	}
 
 	public String[] getGlossaryKeys()
@@ -433,7 +466,7 @@ public class Controller
 			{
 				SYS_CONFIG_FILE.createNewFile();
 				PrintWriter saveWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(SYS_CONFIG_FILE), "UTF-8"));
-				saveWriter.write(LAST_USED_DIRECTORY+":::"+FileSystemView.getFileSystemView().getHomeDirectory()+"\r\n");
+				saveWriter.write(LAST_USED_DIRECTORY+FILE_DELIMITER+FileSystemView.getFileSystemView().getHomeDirectory()+"\r\n");
 				saveWriter.close();
 
 			}
@@ -456,7 +489,7 @@ public class Controller
 			Scanner s = new Scanner(SYS_CONFIG_FILE);
 			while(s.hasNextLine())
 			{
-				String[] a = s.nextLine().split(":::");
+				String[] a = s.nextLine().split(FILE_DELIMITER);
 				configurationInformation.put(a[0], a[1]);
 			}
 			s.close();
@@ -486,7 +519,7 @@ public class Controller
 			while (i.hasNext())
 			{
 				String key = i.next();
-				saveWriter.write(key+":::"+configurationInformation.get(key));
+				saveWriter.write(key+FILE_DELIMITER+configurationInformation.get(key));
 			}
 
 			saveWriter.close();
@@ -509,5 +542,20 @@ public class Controller
 	public float getVersion()
 	{
 		return VERSION_NUMBER;
+	}
+	
+	public static String getFileDelimiter()
+	{
+		return FILE_DELIMITER;
+	}
+	
+	public static String getFileSeeAlsoDelimiter()
+	{
+		return SEE_ALSO_DELIMITER;
+	}
+	
+	public String[] getSeeAlsoListForKey(String key)
+	{
+		return glossary.get(key).getSeeAlsoList();
 	}
 }

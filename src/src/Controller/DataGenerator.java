@@ -25,8 +25,17 @@ public class DataGenerator
 
 	public static void main(String[] args)
 	{
+//		System.out.println(" ".trim().equals("") ? true : false);
+		System.out.println("|");
 		
-		System.out.println(Integer.parseInt("d1",16));
+//		String[] s = ":::-:::-:::".split(":::");
+//		System.out.println(s.length);
+//		for(String i:s)
+//		{
+//			System.out.println(i);
+//		}
+		
+//		System.out.println(Integer.parseInt("d1",16));
 //		PrintWriter saveWriter;
 //		try
 //		{

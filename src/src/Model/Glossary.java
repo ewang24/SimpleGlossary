@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import Controller.Controller;
+
 public class Glossary
 {
 	HashMap<String, Term> glossary;
@@ -93,7 +95,7 @@ public class Glossary
 		while (i.hasNext())
 		{
 			Entry<String, Term> e = i.next();
-			toStringString += e.getKey() + ":::" + e.getValue().getDefinition() + "\r\n";
+			toStringString += e.getKey() + Controller.getFileDelimiter() + e.getValue().getDefinition() +Controller.getFileDelimiter()+ e.getValue().getSeeAlsoListString()+"\r\n";
 		}
 
 		return toStringString;
