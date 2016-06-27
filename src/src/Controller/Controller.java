@@ -72,7 +72,7 @@ public class Controller
 	 * Configuration information
 	 */
 	private static final String FILE_DELIMITER = ":::";
-	private static final String SEE_ALSO_DELIMITER = "|";
+	private static final String SEE_ALSO_DELIMITER = "\\|";
 	
 	private final File SYS_DIRECTORY = new File("sys");
 	private final File SPECIAL_CHARACTER_CONFIG_FILE = new File("sys/sconfig~");
@@ -134,9 +134,10 @@ public class Controller
 			 * termList[i] = key:::definition:::seeAlsoList:::Section
 			 * t is the array version of this string, so t[0] is the key, t[1] is the definition, t[2] is the seeAlsoList (as a string) and t[3] is the section. We add all of these things into a new term.
 			 */
-			System.out.println(termList[i]);
 			
 			String[] t = termList[i].split(FILE_DELIMITER);
+			System.out.println(t[2]);
+			
 			
 			glossary.addTerm(t[0], new Term(t[1],parseSeeAlsoList(t[2]),null));
 		}
@@ -148,10 +149,16 @@ public class Controller
 	
 	private String[] parseSeeAlsoList(String toParse)
 	{
-		String [] t2 = toParse.split(SEE_ALSO_DELIMITER);
-		if(t2[0].equals(" "))
-			t2 = new String[0];
-		return t2;
+		String [] t = toParse.split(SEE_ALSO_DELIMITER);
+		
+		for(String e: t)
+		{
+			System.out.println(e);
+		}
+		
+		if(t[0].equals(" "))
+			t = new String[0];
+		return t;
 	}
 
 	public String[] getGlossaryKeys()

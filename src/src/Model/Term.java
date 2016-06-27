@@ -4,6 +4,8 @@ Evan Wang
 
 package Model;
 
+import Controller.Controller;
+
 public class Term
 {
 	String definition;
@@ -64,7 +66,7 @@ public class Term
 			
 			for (int i = 0; i < seeAlsoList.length - 1; i++)
 			{
-				s += seeAlsoList[i] + ",";
+				s += seeAlsoList[i] + Controller.getFileSeeAlsoDelimiter();
 			}
 
 			return s + seeAlsoList[seeAlsoList.length - 1];

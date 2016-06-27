@@ -242,8 +242,8 @@ public class GlossaryPanel extends JPanel
 		/**
 		 * Add all components
 		 */
-		this.add(termScrollPane, "h 50%, grow,wrap");
-		this.add(termDetailsScrollPane, "h 25%: 44%, push,grow,wrap");
+		this.add(termScrollPane, "h 50%:n:n, push,grow,wrap");
+		this.add(termDetailsScrollPane, "h 25%:44% ,grow,wrap");
 		this.add(seeAlsoPanel, "h 30!,grow,wrap");
 		this.add(mainControlPanel, "h 6%, center,grow");
 
