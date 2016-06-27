@@ -25,7 +25,8 @@ public class DataGenerator
 
 	public static void main(String[] args)
 	{
-		System.out.println(" ".trim().equals("") ? true : false);
+//		System.out.println(" ".trim().equals("") ? true : false);
+		System.out.println("|");
 		
 //		String[] s = ":::-:::-:::".split(":::");
 //		System.out.println(s.length);

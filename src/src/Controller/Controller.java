@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.Stack;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileSystemView;
@@ -72,7 +73,7 @@ public class Controller
 	 * Configuration information
 	 */
 	private static final String FILE_DELIMITER = ":::";
-	private static final String SEE_ALSO_DELIMITER = "\\|";
+	private static final String SEE_ALSO_DELIMITER = Pattern.quote("|");
 	
 	private final File SYS_DIRECTORY = new File("sys");
 	private final File SPECIAL_CHARACTER_CONFIG_FILE = new File("sys/sconfig~");

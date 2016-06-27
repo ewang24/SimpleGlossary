@@ -999,13 +999,8 @@ public class GlossaryPanel extends JPanel
 				newSeeAlsoTermPanel.removeAll();
 				for(String e : seeAlsoList)
 				{
-//					ImageIcon icon = new ImageIcon("Resources/redX.png");
-//			        JButton button = new JButton();
-//			        TextIcon text = new TextIcon(button, "Maybe");
-//			        CompoundIcon compound = new CompoundIcon(CompoundIcon.Axis.X_AXIS, button.getIconTextGap(), icon, text);
 					
 					final TermButton newSeeAlsoTerm = new TermButton(e,e);
-//					newSeeAlsoTerm.setIcon(icon);
 					newSeeAlsoTerm.setFocusable(false);
 					newSeeAlsoTerm.setHorizontalAlignment(SwingConstants.LEFT);
 					newSeeAlsoTerm.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
@@ -1276,7 +1271,7 @@ public class GlossaryPanel extends JPanel
 
 		private void setupLayout()
 		{
-			this.setSize(new Dimension(250, 265));
+			this.setSize(new Dimension(250, 275));
 			this.setResizable(false);
 			this.setTitle("Edit Term");
 			this.setLocationRelativeTo(gp);
@@ -1343,6 +1338,7 @@ public class GlossaryPanel extends JPanel
 				
 				updateSeeAlsoBox();
 				loadSeeAlsoList();
+				refreshSeeAlsoTerms();
 				setupLayout();
 				setupListeners();
 			}
@@ -1419,7 +1415,7 @@ public class GlossaryPanel extends JPanel
 				this.add(editKeyDetailsPane,"wrap,spanx 2, h 35, grow");
 				this.add(seeAlsoLabel,"wrap");
 				this.add(addSeeAlsoButton, "w 60!");
-				this.add(seeAlsoPane, "grow,push,wrap");
+				this.add(seeAlsoPane, "grow, h 42!, push, wrap");
 				this.add(seeAlsoBox, "grow, spanx 2, wrap");
 				this.add(controlPanel,"spanx 2, grow");
 			}
@@ -1466,7 +1462,7 @@ public class GlossaryPanel extends JPanel
 				for(String e : seeAlsoList)
 				{
 					
-					final TermButton newSeeAlsoTerm = new TermButton("X "+e,e);
+					final TermButton newSeeAlsoTerm = new TermButton(e,e);
 					newSeeAlsoTerm.setFocusable(false);
 					newSeeAlsoTerm.setHorizontalAlignment(SwingConstants.LEFT);
 					newSeeAlsoTerm.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
@@ -1485,6 +1481,7 @@ public class GlossaryPanel extends JPanel
 					});
 					newSeeAlsoTermPanel.add(newSeeAlsoTerm);
 				}
+				
 				newSeeAlsoTermPanel.repaint();
 				newSeeAlsoTermPanel.revalidate();
 			}
