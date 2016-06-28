@@ -16,12 +16,14 @@ import Controller.Controller;
 public class Glossary
 {
 	HashMap<String, Term> glossary;
+	HashMap<String, ArrayList<Term>> sectionMap;
 	ArrayList<String> modifiedKeys;
 	UnicodeModeler u;
 
 	public Glossary()
 	{
 		glossary = new HashMap<String, Term>();
+		sectionMap = new HashMap<String, ArrayList<Term>>();
 		modifiedKeys = new ArrayList<String>();
 		u = new UnicodeModeler();
 	}
@@ -45,9 +47,45 @@ public class Glossary
 		return false;
 	}
 
-	public void addTerm(String key, Term definition)
+	public void addTerm(String key, Term term)
 	{
-		glossary.put(key, definition);
+		glossary.put(key, term);
+		addTermToSections(term);
+
+	}
+
+	private void addTermToSections(Term term)
+	{
+		for (String e : term.getSectionList())
+		{
+			if (!sectionMap.containsKey(e))
+			{
+				sectionMap.put(e, new ArrayList<Term>());
+			}
+
+			sectionMap.get(e).add(term);
+		}
+	}
+
+	/**
+	 * @param section
+	 *            the section to remove
+	 * @return true if the section was sucesfully removed, false otherwise.
+	 */
+	public boolean removeSection(String section)
+	{
+		return sectionMap.remove(section) != null;
+	}
+
+	/**
+	 * @param section
+	 *            the section desired
+	 * @return all of the terms within specified section, null if the section
+	 *         does not exist.
+	 */
+	public ArrayList<Term> getSection(String section)
+	{
+		return sectionMap.containsKey(section) ? sectionMap.get(section) : null;
 	}
 
 	/**
@@ -55,9 +93,32 @@ public class Glossary
 	 *            to be removed
 	 * @return the term removed
 	 */
-	public Term removeByKey(String key)
+	public boolean removeByKey(String key)
 	{
-		return glossary.remove(key);
+		//Must remove from sectionMap first.
+		return removeFromAllSections(key) && glossary.remove(key) != null;
+	}
+
+	private boolean removeFromAllSections(String key)
+	{
+		boolean success = true;
+		Term tbr = glossary.get(key);
+		for (String e : tbr.getSectionList())
+		{
+			success = removeFromSection(key, e) && success;
+		}
+		return success;
+
+	}
+
+	public boolean removeFromSection(String key, String section)
+	{
+		if (sectionMap.containsKey(section))
+		{
+			Term t = glossary.get(key);
+			return sectionMap.get(section).remove(t);
+		}
+		return false;
 	}
 
 	public Term get(String key)
@@ -95,7 +156,7 @@ public class Glossary
 		while (i.hasNext())
 		{
 			Entry<String, Term> e = i.next();
-			toStringString += e.getKey() + Controller.getFileDelimiter() + e.getValue().getDefinition() +Controller.getFileDelimiter()+ e.getValue().getSeeAlsoListString()+"\r\n";
+			toStringString += e.getKey() + Controller.getFileDelimiter() + e.getValue().getDefinition() + Controller.getFileDelimiter() + e.getValue().getSeeAlsoListString() + "\r\n";
 		}
 
 		return toStringString;
@@ -121,10 +182,11 @@ public class Glossary
 
 		return toStringString;
 	}
-	
+
 	/**
-	 * @return the glossary in the form of an easily readable string, sorted alphabetically. Doesn't
-	 *         include delimeters for saving the file for re-use
+	 * @return the glossary in the form of an easily readable string, sorted
+	 *         alphabetically. Doesn't include delimeters for saving the file
+	 *         for re-use
 	 */
 	public String toSortedText()
 	{

@@ -57,7 +57,7 @@ public class GlossaryFrame extends JFrame
 		 * puts a check on the close operation
 		 */
 		this.addWindowListener(new WindowAdapter() 
-		{
+		{	
 		    @Override
 		    public void windowClosing(WindowEvent windowEvent) 
 		    {

@@ -9,11 +9,11 @@ import Controller.Controller;
 public class Term
 {
 	String definition;
-	String section;
+	String[] section;
 	private boolean isRemoved = false;
 	private String[] seeAlsoList;
 
-	public Term(String definition, String[] seeAlsoList_, String section_)
+	public Term(String definition, String[] seeAlsoList_, String[] section_)
 	{
 		this.definition = definition;
 		seeAlsoList = seeAlsoList_;
@@ -50,9 +50,19 @@ public class Term
 		return this.seeAlsoList;
 	}
 	
+	public String[] getSectionList()
+	{
+		return section;
+	}
+	
 	public void setSeeAlsoList(String [] seeAlsoList_)
 	{
 		seeAlsoList = seeAlsoList_;
+	}
+	
+	public void setSectionList(String [] sectionList_)
+	{
+		section = sectionList_;
 	}
 
 	public String getSeeAlsoListString()
@@ -72,10 +82,23 @@ public class Term
 			return s + seeAlsoList[seeAlsoList.length - 1];
 		}
 	}
-
-	public String getSection()
+	
+	public String getSectionListString()
 	{
-		return this.section;
+
+		if (section.length == 0)
+			return " ";
+		else
+		{
+			String s = "";
+			
+			for (int i = 0; i < section.length - 1; i++)
+			{
+				s += section[i] + Controller.getFileSeeAlsoDelimiter();
+			}
+
+			return s + section[section.length - 1];
+		}
 	}
 
 }

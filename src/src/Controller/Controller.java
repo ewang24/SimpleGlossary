@@ -381,7 +381,7 @@ public class Controller
 	 */
 	public boolean remove(String key)
 	{
-		if (glossary.removeByKey(key) != (null))
+		if (glossary.removeByKey(key))
 		{
 			operations.push(new Operation(Operation.operationType.REMOVE, new RemoveOperationData(null,null)));
 			setTitleToUnsaved();
@@ -431,7 +431,7 @@ public class Controller
 	{
 		operations.push(new Operation(Operation.operationType.EDIT, new EditOperationData()));
 		setTitleToUnsaved();
-		boolean s = (glossary.removeByKey(oldKey) != null);
+		boolean s = (glossary.removeByKey(oldKey));
 		glossary.addTerm(key, definition);
 		return s && (glossary.get(key) != null);
 
