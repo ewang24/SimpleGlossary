@@ -39,8 +39,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import Controller.Controller;
@@ -75,6 +78,7 @@ public class GlossaryPanel extends JPanel
 	/**
 	 * Components
 	 */
+	JTabbedPane termTabbedPane;
 	JPanel termPanel;
 	JTextArea termDetailsArea;
 	JScrollPane termScrollPane;
@@ -134,10 +138,11 @@ public class GlossaryPanel extends JPanel
 		/**
 		 * Components
 		 */
+		termTabbedPane = new JTabbedPane();
 		mainControlPanel = new ControlPanel();
 		termDetailsArea = new JTextArea();
 		termPanel = new JPanel();
-		termScrollPane = new JScrollPane(termPanel);
+		termScrollPane = new JScrollPane(termTabbedPane);
 		termDetailsScrollPane = new JScrollPane(termDetailsArea);
 		seeAlsoPanel = new JPanel();
 		seeAlsoLabel = new JLabel("See Also:");
@@ -198,6 +203,7 @@ public class GlossaryPanel extends JPanel
 		/**
 		 * TermPanel
 		 */
+		termTabbedPane.add(Controller.getDefaultSectionName(), termPanel);
 		termPanel.setLayout(new MigLayout("fillx"));
 		termPanel.setBackground(LIGHT_GREY_COLOR);
 		termScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -381,16 +387,12 @@ public class GlossaryPanel extends JPanel
 				JOptionPane.showMessageDialog(null, "Help");
 			}
 		});
-	}
-
-	/**
-	 * Add a new section to the glossary
-	 */
-	private void addSection()
-	{
-		String s = JOptionPane.showInputDialog(this, "Enter new section name:");
-		if (!controller.addSection(s))
-			JOptionPane.showMessageDialog(this, "Section already exists");
+		
+		termTabbedPane.addChangeListener(new ChangeListener(){
+			public void stateChanged(ChangeEvent e) {
+				changeSection();
+	        }
+		});
 	}
 
 	/**
@@ -486,6 +488,35 @@ public class GlossaryPanel extends JPanel
 			removeTerm.setEnabled(true);
 		}
 	}
+	
+
+	public void changeSection()
+	{
+        changeSection(termTabbedPane.getTitleAt(termTabbedPane.getSelectedIndex()));	
+	}
+	
+	private void changeSection(String newSection)
+	{
+		String[] s = controller.getSection(newSection);
+		displaySortedKeys(s);
+	}
+	
+	/**
+	 * Add a new section to the glossary
+	 */
+	private void addSection()
+	{
+		String s = JOptionPane.showInputDialog(this, "Enter new section name:").trim();
+		if (!controller.addSection(s))
+		{
+			JOptionPane.showMessageDialog(this, "Section already exists");
+			return;
+		}
+		
+		termTabbedPane.add(s, null);
+	}
+	
+
 
 	/**
 	 * Display all the terms in a glossary, interspacing letter headers to

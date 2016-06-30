@@ -115,9 +115,20 @@ public class Glossary
 	 * @return all of the terms within specified section, null if the section
 	 *         does not exist.
 	 */
-	public ArrayList<Term> getSection(String section)
+	public boolean hasSection(String section)
 	{
-		return sectionMap.containsKey(section) ? sectionMap.get(section) : null;
+		return sectionMap.containsKey(section);
+	}
+	
+	public String[] getSortedSection(Comparator comparator, String section)
+	{	
+		if(hasSection(section))
+		{
+		String [] a = new String[0];
+		java.util.Arrays.sort(sectionMap.get(section).toArray(a),comparator);
+		return a;
+		}
+		return null;
 	}
 
 	/**

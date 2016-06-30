@@ -64,6 +64,7 @@ public class Controller
 	/**
 	 * Data
 	 */
+	private final static String DEFAULT_SECTION = "All";
 	private File glossaryFileToUse;
 	private String fileName = "untitled";
 	private final String AUTOLOAD_PATH = "C:\\Users\\Evan\\Documents\\GitHub\\SimpleGlossary\\src\\glossary.gl";
@@ -576,6 +577,16 @@ public class Controller
 	
 	public boolean hasSection(String section)
 	{
-		return glossary.getSection(section)!=null;
+		return glossary.hasSection(section);
+	}
+	
+	public static String getDefaultSectionName()
+	{
+		return DEFAULT_SECTION;
+	}
+	
+	public String[] getSection(String section)
+	{
+		return glossary.getSortedSection(unicodeModeler.getUnicodeStringComparator(), section);
 	}
 }
