@@ -77,6 +77,38 @@ public class Glossary
 		return sectionMap.remove(section) != null;
 	}
 
+	public boolean addSection(String newSection)
+	{
+		if (sectionMap.containsKey(newSection))
+			return false;
+
+		sectionMap.put(newSection, new ArrayList<Term>());
+		return sectionMap.containsKey(newSection);
+
+	}
+
+	/**
+	 * @return number of sections in the glossary
+	 */
+	public int getNumberOfSections()
+	{
+		return sectionMap.size();
+	}
+
+	public String[] getAllSections()
+	{
+		Set<String> s = sectionMap.keySet();
+		String[] a = new String[s.size()];
+		Iterator<String> i = s.iterator();
+		int ii = 0;
+		while (i.hasNext())
+		{
+			a[ii] = i.next();
+			ii++;
+		}
+		return a;
+	}
+
 	/**
 	 * @param section
 	 *            the section desired
@@ -95,7 +127,7 @@ public class Glossary
 	 */
 	public boolean removeByKey(String key)
 	{
-		//Must remove from sectionMap first.
+		// Must remove from sectionMap first.
 		return removeFromAllSections(key) && glossary.remove(key) != null;
 	}
 

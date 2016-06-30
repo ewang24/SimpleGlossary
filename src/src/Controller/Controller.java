@@ -558,4 +558,24 @@ public class Controller
 	{
 		return glossary.get(key).getSeeAlsoList();
 	}
+	
+	public boolean addSection(String newSection)
+	{
+		return glossary.addSection(newSection);
+	}
+	
+	public int numberOfSections()
+	{
+		return glossary.getNumberOfSections();
+	}
+	
+	public String[] getAllSections()
+	{
+		return glossary.getAllSections();
+	}
+	
+	public boolean hasSection(String section)
+	{
+		return glossary.getSection(section)!=null;
+	}
 }

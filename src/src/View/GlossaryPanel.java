@@ -105,6 +105,7 @@ public class GlossaryPanel extends JPanel
 	JMenuItem cutItem;
 	JMenuItem copyItem;
 	JMenuItem pasteItem;
+	JMenuItem addSectionItem;
 	JMenuItem aboutItem;
 	JMenuItem helpItem;
 
@@ -166,6 +167,7 @@ public class GlossaryPanel extends JPanel
 		cutItem = new JMenuItem("Cut");
 		copyItem = new JMenuItem("Copy");
 		pasteItem = new JMenuItem("Paste");
+		addSectionItem = new JMenuItem("Add Section");
 		aboutItem = new JMenuItem("About");
 		helpItem = new JMenuItem("Help");
 		// MenuBar
@@ -230,6 +232,8 @@ public class GlossaryPanel extends JPanel
 		editMenu.add(cutItem);
 		editMenu.add(copyItem);
 		editMenu.add(pasteItem);
+		editMenu.addSeparator();
+		editMenu.add(addSectionItem);
 		aboutMenu.add(aboutItem);
 		aboutMenu.add(helpItem);
 		getGlossaryFrame().setJMenuBar(menuBar);
@@ -354,6 +358,14 @@ public class GlossaryPanel extends JPanel
 			}
 		});
 
+		addSectionItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				addSection();
+			}
+		});
+
 		aboutItem.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -369,6 +381,16 @@ public class GlossaryPanel extends JPanel
 				JOptionPane.showMessageDialog(null, "Help");
 			}
 		});
+	}
+
+	/**
+	 * Add a new section to the glossary
+	 */
+	private void addSection()
+	{
+		String s = JOptionPane.showInputDialog(this, "Enter new section name:");
+		if (!controller.addSection(s))
+			JOptionPane.showMessageDialog(this, "Section already exists");
 	}
 
 	/**
@@ -797,7 +819,7 @@ public class GlossaryPanel extends JPanel
 			private JButton addSeeAlsoButton;
 			private JComboBox<String> seeAlsoBox;
 			private JSeparator addSeparator;
-			
+
 			private JLabel newSectionLabel;
 			private JPanel newSectionPanel;
 			private JScrollPane newSectionPane;
@@ -822,7 +844,7 @@ public class GlossaryPanel extends JPanel
 				addSeeAlsoButton = new JButton("Add");
 				seeAlsoBox = new JComboBox<String>();
 				addSeparator = new JSeparator(JSeparator.HORIZONTAL);
-				
+
 				newSectionLabel = new JLabel("Section:");
 				newSectionPanel = new JPanel();
 				newSectionPane = new JScrollPane(newSectionPanel);
@@ -832,6 +854,7 @@ public class GlossaryPanel extends JPanel
 				setupLayout();
 				setupListeners();
 				updateSeeAlsoBox();
+				updateSectionBox();
 			}
 
 			private void setupLayout()
@@ -867,7 +890,7 @@ public class GlossaryPanel extends JPanel
 				newSeeAlsoTermPanel.setBackground(Color.white);
 				seeAlsoPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 				seeAlsoPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-				
+
 				/**
 				 * newSectionArea
 				 */
@@ -875,7 +898,6 @@ public class GlossaryPanel extends JPanel
 				newSectionPanel.setBackground(Color.white);
 				newSectionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 				newSectionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-				
 
 				/**
 				 * ControlPanel & components
@@ -896,6 +918,13 @@ public class GlossaryPanel extends JPanel
 					seeAlsoBox.setEnabled(!true);
 				}
 
+				if (controller.numberOfSections() == 0)
+				{
+					this.newSectionPanel.setEnabled(false);
+					this.addSectionButton.setEnabled(false);
+					this.sectionBox.setEnabled(false);
+				}
+
 				/**
 				 * Add all components
 				 */
@@ -903,17 +932,17 @@ public class GlossaryPanel extends JPanel
 				this.add(newKeyPane, "grow, spanx 2, h 35, wrap");
 				this.add(newKeyDetailsLabel, "wrap");
 				this.add(newKeyDetailsPane, "grow, spanx 2, h 35, wrap");
-				this.add(new JSeparator(JSeparator.HORIZONTAL),"grow, spanx 2, wrap");
+				this.add(new JSeparator(JSeparator.HORIZONTAL), "grow, spanx 2, wrap");
 				this.add(seeAlsoLabel, "wrap");
 				this.add(addSeeAlsoButton, "w 60!");
 				this.add(seeAlsoPane, "h 42!, grow,push,wrap");
 				this.add(seeAlsoBox, "grow, spanx 2, wrap");
-				this.add(new JSeparator(JSeparator.HORIZONTAL),"grow, spanx 2, wrap");
+				this.add(new JSeparator(JSeparator.HORIZONTAL), "grow, spanx 2, wrap");
 				this.add(newSectionLabel, "wrap");
 				this.add(addSectionButton, "w 60!");
 				this.add(newSectionPane, "h 42!, grow,push,wrap");
 				this.add(sectionBox, "grow, spanx 2, wrap");
-				this.add(new JSeparator(JSeparator.HORIZONTAL),"grow, spanx 2, wrap");
+				this.add(new JSeparator(JSeparator.HORIZONTAL), "grow, spanx 2, wrap");
 				this.add(controlPanel, "spanx 2, grow");
 			}
 
@@ -928,7 +957,7 @@ public class GlossaryPanel extends JPanel
 					public void actionPerformed(ActionEvent e)
 					{
 						if (newKeyArea.getText().contains(Controller.getFileDelimiter()) || newKeyDetailsArea.getText().contains(Controller.getFileDelimiter())
-								|| newKeyDetailsArea.getText().contains(Controller.getFileSeeAlsoDelimiter())|| newKeyArea.getText().contains(Controller.getFileSeeAlsoDelimiter()))
+								|| newKeyDetailsArea.getText().contains(Controller.getFileSeeAlsoDelimiter()) || newKeyArea.getText().contains(Controller.getFileSeeAlsoDelimiter()))
 						{
 							JOptionPane.showMessageDialog(newPanel, "Term cannot contain the sequence '" + Controller.getFileDelimiter() + "' or '" + Controller.getFileSeeAlsoDelimiter() + "'");
 							return;
@@ -999,7 +1028,7 @@ public class GlossaryPanel extends JPanel
 
 					}
 				});
-				
+
 				addSectionButton.addActionListener(new ActionListener()
 				{
 					public void actionPerformed(ActionEvent e)
@@ -1009,19 +1038,67 @@ public class GlossaryPanel extends JPanel
 				});
 			}
 
-			//Stopped here. Need to implement refreshSectionList & refreshSectionList and then also make sure to change the submit function.
+			// Stopped here. Need to implement refreshSectionList &
+			// refreshSectionList and then also make sure to change the submit
+			// function.
 			private void addSection()
 			{
 				if (sectionBox.getSelectedIndex() != 0)
 				{
 
 					sectionList.add((String) sectionBox.getSelectedItem());
-//					refreshSeeAlsoTerms();
+					refreshSections();
 
 				}
 				return;
 			}
-			
+
+			/**
+			 * 
+			 */
+			private void refreshSections()
+			{
+				this.newSectionPanel.removeAll();
+				for (String e : sectionList)
+				{
+
+					final TermButton newSection = new TermButton(e, e);
+					newSection.setFocusable(false);
+					newSection.setHorizontalAlignment(SwingConstants.LEFT);
+					newSection.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+					newSection.setBorderPainted(false);
+					newSection.setContentAreaFilled(false);
+					newSection.setFocusPainted(false);
+					newSection.setFont(glossaryFrame.getDefaultFont());
+
+					System.out.println(newSection.getSize());
+					newSection.addActionListener(new ActionListener()
+					{
+						public void actionPerformed(ActionEvent e)
+						{
+							System.out.println(sectionList.remove(newSection.getStoredText()) ? "Term removed" : "Term not found");
+							refreshSections();
+						}
+					});
+					newSectionPanel.add(newSection);
+				}
+				newSectionPanel.repaint();
+				newSectionPanel.revalidate();
+			}
+
+			private void updateSectionBox()
+			{
+				sectionBox.removeAll();
+				sectionBox.addItem("Select an item");
+				String[] keys = controller.getAllSections();
+				for (String e : keys)
+				{
+					sectionBox.addItem(e);
+				}
+				this.repaint();
+				this.revalidate();
+			}
+
 			private void updateSeeAlsoBox()
 			{
 				seeAlsoBox.removeAll();
@@ -1096,6 +1173,25 @@ public class GlossaryPanel extends JPanel
 			{
 				String newKey = newKeyArea.getText().trim().replace("\n", " ");
 
+				String[] sal = getSeeAlsoTerms();
+				String[] sl = getSections();
+				if (sal == null || sl == null)
+					return false;
+
+				if (controller.newEntry(newKey, new Term(newKeyDetailsArea.getText().replace("\n", " "), sal, sl)))
+				{
+					updateWithTermToDisplay(newKey);
+					return true;
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(newPanel, "Key is already in glossary");
+				}
+				return false;
+			}
+
+			private String[] getSeeAlsoTerms()
+			{
 				String[] sal = new String[seeAlsoList.size()];
 				if (seeAlsoList.size() != 0)
 				{
@@ -1108,25 +1204,40 @@ public class GlossaryPanel extends JPanel
 						if (controller.fetchTermForKey(s) == null)
 						{
 							JOptionPane.showMessageDialog(this, s + " is not in the glossary!");
-							return false;
+							return null;
 						}
 						else
 							sal[i] = s;
 						i++;
 					}
 				}
-
-				if (controller.newEntry(newKey, new Term(newKeyDetailsArea.getText().replace("\n", " "), sal, null)))
-				{
-					updateWithTermToDisplay(newKey);
-					return true;
-				}
-				else
-				{
-					JOptionPane.showMessageDialog(newPanel, "Key is already in glossary");
-				}
-				return false;
+				return sal;
 			}
+
+			private String[] getSections()
+			{
+				String[] sal = new String[sectionList.size()];
+				if (sectionList.size() != 0)
+				{
+					int i = 0;
+					Iterator<String> sali = sectionList.iterator();
+					while (sali.hasNext())
+					{
+
+						String s = sali.next();
+						if (!controller.hasSection(s))
+						{
+							JOptionPane.showMessageDialog(this, "Section " + s + " is not in the glossary!");
+							return null;
+						}
+						else
+							sal[i] = s;
+						i++;
+					}
+				}
+				return sal;
+			}
+
 		}
 	}
 
