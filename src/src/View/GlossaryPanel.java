@@ -204,6 +204,8 @@ public class GlossaryPanel extends JPanel
 		 * TermPanel
 		 */
 		termTabbedPane.add(Controller.getDefaultSectionName(), termPanel);
+		termTabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		termTabbedPane.setFocusable(false);
 		termPanel.setLayout(new MigLayout("fillx"));
 		termPanel.setBackground(LIGHT_GREY_COLOR);
 		termScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -387,11 +389,13 @@ public class GlossaryPanel extends JPanel
 				JOptionPane.showMessageDialog(null, "Help");
 			}
 		});
-		
-		termTabbedPane.addChangeListener(new ChangeListener(){
-			public void stateChanged(ChangeEvent e) {
+
+		termTabbedPane.addChangeListener(new ChangeListener()
+		{
+			public void stateChanged(ChangeEvent e)
+			{
 				changeSection();
-	        }
+			}
 		});
 	}
 
@@ -488,19 +492,17 @@ public class GlossaryPanel extends JPanel
 			removeTerm.setEnabled(true);
 		}
 	}
-	
 
 	public void changeSection()
 	{
-        changeSection(termTabbedPane.getTitleAt(termTabbedPane.getSelectedIndex()));	
+		changeSection(termTabbedPane.getTitleAt(termTabbedPane.getSelectedIndex()));
 	}
-	
+
 	private void changeSection(String newSection)
 	{
-		String[] s = controller.getSection(newSection);
-		displaySortedKeys(s);
+		updateTermDisplay(newSection);
 	}
-	
+
 	/**
 	 * Add a new section to the glossary
 	 */
@@ -512,11 +514,9 @@ public class GlossaryPanel extends JPanel
 			JOptionPane.showMessageDialog(this, "Section already exists");
 			return;
 		}
-		
+
 		termTabbedPane.add(s, null);
 	}
-	
-
 
 	/**
 	 * Display all the terms in a glossary, interspacing letter headers to
@@ -755,19 +755,46 @@ public class GlossaryPanel extends JPanel
 	 */
 	public void updateWithTermToDisplay(String key)
 	{
+		if (!termIsInCurrentSection(key))
+		{
+			termTabbedPane.setSelectedIndex(0);
+		}
 		updateTermDisplay();
 		displayTermInformation(key);
 
 	}
 
+	private boolean termIsInCurrentSection(String key)
+	{
+		String currentSection = getCurrentSection();
+		for (String sectionInTerm : controller.fetchTermForKey(key).getSectionList())
+		{
+			if (sectionInTerm.equals(currentSection))
+				return true;
+		}
+		return false;
+	}
+
 	/**
 	 * refreshes the term display by removing all terms from the view and adding
-	 * them back in
+	 * them back in. Displays the keys from the default section.
 	 */
 	public void updateTermDisplay()
 	{
+		updateTermDisplay(Controller.getDefaultSectionName());
+	}
+
+	/**
+	 * refreshes the term display by removing all terms from the view and adding
+	 * them back in.
+	 * 
+	 * @param section
+	 *            to display keys from
+	 */
+	public void updateTermDisplay(String section)
+	{
 		termPanel.removeAll();
-		displaySortedKeys(controller.getGlossaryKeys());
+		displaySortedKeys(controller.getGlossaryKeysSection(section));
 		termPanel.repaint();
 		termPanel.revalidate();
 	}
@@ -1938,5 +1965,10 @@ public class GlossaryPanel extends JPanel
 		termPanel.removeAll();
 		termDetailsArea.setText("");
 		mainControlPanel.updateSizeLabel();
+	}
+
+	private String getCurrentSection()
+	{
+		return this.termTabbedPane.getTitleAt(termTabbedPane.getSelectedIndex());
 	}
 }

@@ -16,14 +16,14 @@ import Controller.Controller;
 public class Glossary
 {
 	HashMap<String, Term> glossary;
-	HashMap<String, ArrayList<Term>> sectionMap;
+	HashMap<String, ArrayList<String>> sectionMap;
 	ArrayList<String> modifiedKeys;
 	UnicodeModeler u;
 
 	public Glossary()
 	{
 		glossary = new HashMap<String, Term>();
-		sectionMap = new HashMap<String, ArrayList<Term>>();
+		sectionMap = new HashMap<String, ArrayList<String>>();
 		modifiedKeys = new ArrayList<String>();
 		u = new UnicodeModeler();
 	}
@@ -50,20 +50,24 @@ public class Glossary
 	public void addTerm(String key, Term term)
 	{
 		glossary.put(key, term);
-		addTermToSections(term);
+		addTermToSections(key);
 
 	}
 
-	private void addTermToSections(Term term)
+	/**
+	 * Add an entry that's already in the glossary into a section. Must be called after the entry to be added to a section has already been added to the glossary.
+	 * @param key
+	 */
+	private void addTermToSections(String key)
 	{
-		for (String e : term.getSectionList())
+		for (String e : get(key).getSectionList())
 		{
 			if (!sectionMap.containsKey(e))
 			{
-				sectionMap.put(e, new ArrayList<Term>());
+				sectionMap.put(e, new ArrayList<String>());
 			}
 
-			sectionMap.get(e).add(term);
+			sectionMap.get(e).add(key);
 		}
 	}
 
@@ -82,7 +86,7 @@ public class Glossary
 		if (sectionMap.containsKey(newSection))
 			return false;
 
-		sectionMap.put(newSection, new ArrayList<Term>());
+		sectionMap.put(newSection, new ArrayList<String>());
 		return sectionMap.containsKey(newSection);
 
 	}
@@ -119,16 +123,35 @@ public class Glossary
 	{
 		return sectionMap.containsKey(section);
 	}
-	
+
+	/**
+	 * @param comparator
+	 *            the comparator to sort the entries
+	 * @param section
+	 *            the section to get all entries from
+	 * @return a sorted list of all of the keys from one section.
+	 */
 	public String[] getSortedSection(Comparator comparator, String section)
-	{	
-		if(hasSection(section))
+	{
+		
+		if(section.equals(Controller.getDefaultSectionName()))
 		{
-		String [] a = new String[0];
-		java.util.Arrays.sort(sectionMap.get(section).toArray(a),comparator);
-		return a;
+			return getKeys(comparator);
 		}
-		return null;
+		if (hasSection(section))
+		{
+			String[] a = new String[sectionMap.get(section).size()];
+			int i = 0;
+			for (String t : sectionMap.get(section))
+			{
+				 a[i]=t;
+				i++;
+			}
+
+			java.util.Arrays.sort(a,comparator);
+			return a;
+		}
+		return new String[0];
 	}
 
 	/**

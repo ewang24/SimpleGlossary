@@ -585,7 +585,7 @@ public class Controller
 		return DEFAULT_SECTION;
 	}
 	
-	public String[] getSection(String section)
+	public String[] getGlossaryKeysSection(String section)
 	{
 		return glossary.getSortedSection(unicodeModeler.getUnicodeStringComparator(), section);
 	}
