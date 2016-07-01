@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import javax.swing.UIManager;
 
@@ -25,8 +26,9 @@ public class DataGenerator
 
 	public static void main(String[] args)
 	{
+		System.out.println(Pattern.quote("|"));
 //		System.out.println(" ".trim().equals("") ? true : false);
-		System.out.println( true&& false &&false );
+//		System.out.println( true&& false &&false );
 		
 //		String[] s = ":::-:::-:::".split(":::");
 //		System.out.println(s.length);

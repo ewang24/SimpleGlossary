@@ -280,11 +280,11 @@ public class Glossary
 	public String getSectionString()
 	{
 		String sectionString = "";
-		Set<String> s = glossary.keySet();
+		Set<String> s = sectionMap.keySet();
 		Iterator<String> i = s.iterator();
 		while(i.hasNext())
 		{
-			sectionString+= i.next()+",";
+			sectionString+= i.next()+Controller.getFileSeeAlsoDelimiter();
 		}
 		return sectionString.substring(0, sectionString.length()-1)+"\r\n";
 				

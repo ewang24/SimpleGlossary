@@ -535,7 +535,7 @@ public class GlossaryPanel extends JPanel
 	 * A:<-letter header animal B: bug
 	 * 
 	 * @param keys
-	 *            , the list of keys in the glossary
+	 *            the list of keys in the glossary
 	 */
 	public void displaySortedKeys(String[] keys)
 	{
@@ -1293,6 +1293,7 @@ public class GlossaryPanel extends JPanel
 					{
 
 						String s = sali.next();
+						System.out.println(s);
 						if (!controller.hasSection(s))
 						{
 							JOptionPane.showMessageDialog(this, "Section " + s + " is not in the glossary!");

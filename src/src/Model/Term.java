@@ -97,6 +97,7 @@ public class Term
 				s += section[i] + Controller.getFileSeeAlsoDelimiter();
 			}
 
+			System.out.println(s);
 			return s + section[section.length - 1];
 		}
 	}
