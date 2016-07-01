@@ -157,21 +157,24 @@ public class Glossary
 	/**
 	 * @param key
 	 *            to be removed
-	 * @return the term removed
+	 * @return true if the term was removed sucesfully
 	 */
 	public boolean removeByKey(String key)
 	{
 		// Must remove from sectionMap first.
-		return removeFromAllSections(key) && glossary.remove(key) != null;
+		
+		boolean b = removeFromAllSections(key);
+		System.out.println(b);
+		return b && glossary.remove(key) != null;
 	}
 
 	private boolean removeFromAllSections(String key)
 	{
 		boolean success = true;
 		Term tbr = glossary.get(key);
-		for (String e : tbr.getSectionList())
+		for (String currentSection : tbr.getSectionList())
 		{
-			success = removeFromSection(key, e) && success;
+			success = removeFromSection(key, currentSection) && success;
 		}
 		return success;
 
@@ -181,8 +184,7 @@ public class Glossary
 	{
 		if (sectionMap.containsKey(section))
 		{
-			Term t = glossary.get(key);
-			return sectionMap.get(section).remove(t);
+			return sectionMap.get(section).remove(key);
 		}
 		return false;
 	}
