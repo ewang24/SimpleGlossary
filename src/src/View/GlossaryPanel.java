@@ -509,6 +509,16 @@ public class GlossaryPanel extends JPanel
 	private void addSection()
 	{
 		String s = JOptionPane.showInputDialog(this, "Enter new section name:").trim();
+		if (!parseStringForNoSpecialCharacters(s))
+		{
+			JOptionPane.showMessageDialog(this, "Section name cannot contain " + Controller.getFileDelimiter() + " or " + Controller.getFileSeeAlsoDelimiter());
+			return;
+		}
+		if (s.equalsIgnoreCase("all"))
+		{
+			JOptionPane.showMessageDialog(this, "Section name cannot be 'All'");
+			return;
+		}
 		if (!controller.addSection(s))
 		{
 			JOptionPane.showMessageDialog(this, "Section already exists");
@@ -1544,7 +1554,7 @@ public class GlossaryPanel extends JPanel
 			private JScrollPane newSectionPane;
 			private JButton addSectionButton;
 			private JComboBox<String> sectionBox;
-			
+
 			private Set<String> seeAlsoList = new HashSet<String>();
 			Set<String> sectionList = new HashSet<String>();
 
@@ -1571,7 +1581,7 @@ public class GlossaryPanel extends JPanel
 				newSectionPane = new JScrollPane(newSectionPanel);
 				addSectionButton = new JButton("Add");
 				sectionBox = new JComboBox<String>();
-				
+
 				updateSeeAlsoBox();
 				loadSeeAlsoList();
 				loadSectionList();
@@ -1590,11 +1600,11 @@ public class GlossaryPanel extends JPanel
 					seeAlsoList.add(e);
 				}
 			}
-			
+
 			private void loadSectionList()
 			{
 				String[] s = controller.fetchTermForKey(selectedKey).getSectionList();
-				for(String e : s)
+				for (String e : s)
 				{
 					sectionList.add(e);
 				}
@@ -1646,7 +1656,7 @@ public class GlossaryPanel extends JPanel
 				newSeeAlsoTermPanel.setBackground(Color.white);
 				seeAlsoPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 				seeAlsoPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-				
+
 				/**
 				 * newSectionPanel
 				 */
@@ -1654,8 +1664,6 @@ public class GlossaryPanel extends JPanel
 				newSectionPanel.setBackground(Color.white);
 				newSectionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 				newSectionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-				
-				
 
 				if (controller.isEmpty())
 				{
@@ -1670,7 +1678,7 @@ public class GlossaryPanel extends JPanel
 					this.addSectionButton.setEnabled(false);
 					this.sectionBox.setEnabled(false);
 				}
-				
+
 				/**
 				 * Add all components
 				 */
@@ -1750,7 +1758,6 @@ public class GlossaryPanel extends JPanel
 				this.revalidate();
 			}
 
-			
 			private void updateSeeAlsoBox()
 			{
 				seeAlsoBox.removeAll();
@@ -1816,7 +1823,7 @@ public class GlossaryPanel extends JPanel
 				newSeeAlsoTermPanel.repaint();
 				newSeeAlsoTermPanel.revalidate();
 			}
-			
+
 			private void refreshSectionTerms()
 			{
 				newSectionPanel.removeAll();
@@ -1933,7 +1940,7 @@ public class GlossaryPanel extends JPanel
 						addSeeAlsoTerm();
 					}
 				});
-				
+
 				addSectionButton.addActionListener(new ActionListener()
 				{
 					public void actionPerformed(ActionEvent e)
@@ -1960,9 +1967,8 @@ public class GlossaryPanel extends JPanel
 			{
 				String[] sal = getSeeAlsoTerms();
 				String[] sl = getSections();
-				if(sal==null||sl==null)
+				if (sal == null || sl == null)
 					return false;
-				
 
 				String newKey = editKeyArea.getText().trim().replace("\n", " ");
 				if (controller.editEntry(newKey, new Term(editKeyDetailsArea.getText().replace("\n", " "), sal, sl), selectedKey))
@@ -1972,7 +1978,7 @@ public class GlossaryPanel extends JPanel
 				}
 				return false;
 			}
-			
+
 			private String[] getSeeAlsoTerms()
 			{
 				String[] sal = new String[seeAlsoList.size()];
@@ -2150,5 +2156,10 @@ public class GlossaryPanel extends JPanel
 	private String getCurrentSection()
 	{
 		return this.termTabbedPane.getTitleAt(termTabbedPane.getSelectedIndex());
+	}
+
+	private boolean parseStringForNoSpecialCharacters(String toParse)
+	{
+		return !(toParse.contains(Controller.getFileDelimiter()) || toParse.contains(Controller.getFileSeeAlsoDelimiter()));
 	}
 }

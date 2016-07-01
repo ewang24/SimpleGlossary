@@ -225,6 +225,8 @@ public class Controller
 
 			PrintWriter saveWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(glossaryFileToUse.getAbsolutePath()), "UTF-8"));
 
+			saveWriter.print("v2\r\n");
+			saveWriter.print(glossary.getSectionString());
 			saveWriter.print(toString);
 			saveWriter.flush();
 			saveWriter.close();

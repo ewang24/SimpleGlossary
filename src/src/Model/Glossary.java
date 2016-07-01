@@ -55,7 +55,10 @@ public class Glossary
 	}
 
 	/**
-	 * Add an entry that's already in the glossary into a section. Must be called after the entry to be added to a section has already been added to the glossary.
+	 * Add an entry that's already in the glossary into a section. Must be
+	 * called after the entry to be added to a section has already been added to
+	 * the glossary.
+	 * 
 	 * @param key
 	 */
 	private void addTermToSections(String key)
@@ -133,8 +136,8 @@ public class Glossary
 	 */
 	public String[] getSortedSection(Comparator comparator, String section)
 	{
-		
-		if(section.equals(Controller.getDefaultSectionName()))
+
+		if (section.equals(Controller.getDefaultSectionName()))
 		{
 			return getKeys(comparator);
 		}
@@ -144,11 +147,11 @@ public class Glossary
 			int i = 0;
 			for (String t : sectionMap.get(section))
 			{
-				 a[i]=t;
+				a[i] = t;
 				i++;
 			}
 
-			java.util.Arrays.sort(a,comparator);
+			java.util.Arrays.sort(a, comparator);
 			return a;
 		}
 		return new String[0];
@@ -162,7 +165,7 @@ public class Glossary
 	public boolean removeByKey(String key)
 	{
 		// Must remove from sectionMap first.
-		
+
 		boolean b = removeFromAllSections(key);
 		System.out.println(b);
 		return b && glossary.remove(key) != null;
@@ -224,7 +227,8 @@ public class Glossary
 		while (i.hasNext())
 		{
 			Entry<String, Term> e = i.next();
-			toStringString += e.getKey() + Controller.getFileDelimiter() + e.getValue().getDefinition() + Controller.getFileDelimiter() + e.getValue().getSeeAlsoListString() + "\r\n";
+			toStringString += e.getKey() + Controller.getFileDelimiter() + e.getValue().getDefinition() + Controller.getFileDelimiter() + e.getValue().getSeeAlsoListString()
+					+ Controller.getFileDelimiter() + e.getValue().getSectionListString() + "\r\n";
 		}
 
 		return toStringString;
@@ -271,6 +275,19 @@ public class Glossary
 		}
 
 		return toStringString;
+	}
+	
+	public String getSectionString()
+	{
+		String sectionString = "";
+		Set<String> s = glossary.keySet();
+		Iterator<String> i = s.iterator();
+		while(i.hasNext())
+		{
+			sectionString+= i.next()+",";
+		}
+		return sectionString.substring(0, sectionString.length()-1)+"\r\n";
+				
 	}
 
 	public int getSize()
