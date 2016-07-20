@@ -44,11 +44,11 @@ import View.SpecialCharacterChooser;
 public class Controller
 {
 	//
-	//Version:
-		private final float VERSION_NUMBER = 0.2f;
+	// Version:
+	private final float VERSION_NUMBER = 0.2f;
 	//
 	//
-	
+
 	/**
 	 * Models
 	 */
@@ -75,13 +75,11 @@ public class Controller
 	 */
 	private static final String FILE_DELIMITER = ":::";
 	private static final String SEE_ALSO_DELIMITER = ";;;";
-	
+
 	private final File SYS_DIRECTORY = new File("sys");
 	private final File SPECIAL_CHARACTER_CONFIG_FILE = new File("sys/sconfig~");
 	private final File SYS_CONFIG_FILE = new File("sys/gconfig~");
 	private final String LAST_USED_DIRECTORY = "0000";
-	
-
 
 	private HashMap<String, String> configurationInformation = new HashMap<String, String>();
 	char[] alph = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
@@ -128,26 +126,27 @@ public class Controller
 		}
 
 		String[] termList = rawTermString.split("\n");
-		if(!termList[0].equals("v2"))
+		if (!termList[0].equals("v2"))
 		{
 			System.err.println("Invalid File");
 			return;
 		}
-		String [] sectionList = termList[1].split(SEE_ALSO_DELIMITER);
+		String[] sectionList = termList[1].split(SEE_ALSO_DELIMITER);
 
 		for (int i = 2; i < termList.length; i++)
 		{
 			/**
-			 * Each entry in termList is one term with the following file structure:
-			 * termList[i] = key:::definition:::seeAlsoList:::Section
-			 * t is the array version of this string, so t[0] is the key, t[1] is the definition, t[2] is the seeAlsoList (as a string) and t[3] is the section. We add all of these things into a new term.
+			 * Each entry in termList is one term with the following file
+			 * structure: termList[i] = key:::definition:::seeAlsoList:::Section
+			 * t is the array version of this string, so t[0] is the key, t[1]
+			 * is the definition, t[2] is the seeAlsoList (as a string) and t[3]
+			 * is the section. We add all of these things into a new term.
 			 */
-			
+
 			String[] t = termList[i].split(FILE_DELIMITER);
-//			System.out.println(t[2]);
-			
-			
-			glossary.addTerm(t[0], new Term(t[1],parseSeeAlsoList(t[2]),parseSectionList(t[3])));
+			// System.out.println(t[2]);
+
+			glossary.addTerm(t[0], new Term(t[1], parseSeeAlsoList(t[2]), parseSectionList(t[3])));
 		}
 
 		fileName = glossaryFileToUse.getName();
@@ -155,33 +154,33 @@ public class Controller
 		gf.displayGlossaryKeys();
 		gf.displaySections(sectionList);
 	}
-	
+
 	private String[] parseSeeAlsoList(String toParse)
 	{
-		String [] t = toParse.split(SEE_ALSO_DELIMITER);
-		
-		for(String e: t)
+		String[] t = toParse.split(SEE_ALSO_DELIMITER);
+
+		for (String e : t)
 		{
 			System.out.println(e);
 		}
-		
-		if(t[0].equals(" "))
+
+		if (t[0].equals(" "))
 			t = new String[0];
 		return t;
 	}
-	
+
 	private String[] parseSectionList(String toParse)
 	{
-		String [] t = toParse.split(SEE_ALSO_DELIMITER);
-		
-		for(String e: t)
+		String[] t = toParse.split(SEE_ALSO_DELIMITER);
+
+		for (String e : t)
 		{
 			System.out.println(e);
 		}
-		
-		if(t[0].equals(" "))
+
+		if (t[0].equals(" "))
 			t = new String[0];
-		return t;	
+		return t;
 	}
 
 	public String[] getGlossaryKeys()
@@ -301,7 +300,7 @@ public class Controller
 	 *            , the location to save the file.
 	 */
 	public void exportAsText(String location)
-	{		
+	{
 		boolean reachedEnd = false;
 
 		int currLetter = 0;
@@ -345,7 +344,7 @@ public class Controller
 			saveWriter.print(toString);
 			saveWriter.flush();
 			saveWriter.close();
-			
+
 		}
 		catch (IOException e)
 		{
@@ -407,7 +406,7 @@ public class Controller
 	{
 		if (glossary.removeByKey(key))
 		{
-			operations.push(new Operation(Operation.operationType.REMOVE, new RemoveOperationData(null,null)));
+			operations.push(new Operation(Operation.operationType.REMOVE, new RemoveOperationData(null, null)));
 			setTitleToUnsaved();
 			return true;
 		}
@@ -467,7 +466,8 @@ public class Controller
 	}
 
 	/**
-	 * Creates config files if they do not exist and put in default configurations
+	 * Creates config files if they do not exist and put in default
+	 * configurations
 	 */
 	private void setupDirectories()
 	{
@@ -490,7 +490,7 @@ public class Controller
 			{
 				SYS_CONFIG_FILE.createNewFile();
 				PrintWriter saveWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(SYS_CONFIG_FILE), "UTF-8"));
-				saveWriter.write(LAST_USED_DIRECTORY+FILE_DELIMITER+FileSystemView.getFileSystemView().getHomeDirectory()+"\r\n");
+				saveWriter.write(LAST_USED_DIRECTORY + FILE_DELIMITER + FileSystemView.getFileSystemView().getHomeDirectory() + "\r\n");
 				saveWriter.close();
 
 			}
@@ -511,7 +511,7 @@ public class Controller
 		try
 		{
 			Scanner s = new Scanner(SYS_CONFIG_FILE);
-			while(s.hasNextLine())
+			while (s.hasNextLine())
 			{
 				String[] a = s.nextLine().split(FILE_DELIMITER);
 				configurationInformation.put(a[0], a[1]);
@@ -523,7 +523,7 @@ public class Controller
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	private void updateLastUsedDirectory(String dir)
@@ -539,11 +539,11 @@ public class Controller
 
 			Set<String> ks = configurationInformation.keySet();
 			Iterator<String> i = ks.iterator();
-			
+
 			while (i.hasNext())
 			{
 				String key = i.next();
-				saveWriter.write(key+FILE_DELIMITER+configurationInformation.get(key));
+				saveWriter.write(key + FILE_DELIMITER + configurationInformation.get(key));
 			}
 
 			saveWriter.close();
@@ -553,10 +553,10 @@ public class Controller
 
 		}
 	}
-	
+
 	public File lastDirectory()
 	{
-		if(configurationInformation.get(LAST_USED_DIRECTORY).equals(""))
+		if (configurationInformation.get(LAST_USED_DIRECTORY).equals(""))
 		{
 			return null;
 		}
@@ -567,47 +567,52 @@ public class Controller
 	{
 		return VERSION_NUMBER;
 	}
-	
+
 	public static String getFileDelimiter()
 	{
 		return FILE_DELIMITER;
 	}
-	
+
 	public static String getFileSeeAlsoDelimiter()
 	{
 		return SEE_ALSO_DELIMITER;
 	}
-	
+
 	public String[] getSeeAlsoListForKey(String key)
 	{
 		return glossary.get(key).getSeeAlsoList();
 	}
-	
+
 	public boolean addSection(String newSection)
 	{
 		return glossary.addSection(newSection);
 	}
-	
+
+	public boolean removeSection(String oldSection)
+	{
+		return glossary.removeSection(oldSection);
+	}
+
 	public int numberOfSections()
 	{
 		return glossary.getNumberOfSections();
 	}
-	
+
 	public String[] getAllSections()
 	{
 		return glossary.getAllSections();
 	}
-	
+
 	public boolean hasSection(String section)
 	{
 		return glossary.hasSection(section);
 	}
-	
+
 	public static String getDefaultSectionName()
 	{
 		return DEFAULT_SECTION;
 	}
-	
+
 	public String[] getGlossaryKeysSection(String section)
 	{
 		return glossary.getSortedSection(unicodeModeler.getUnicodeStringComparator(), section);

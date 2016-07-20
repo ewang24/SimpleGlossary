@@ -110,6 +110,7 @@ public class GlossaryPanel extends JPanel
 	JMenuItem copyItem;
 	JMenuItem pasteItem;
 	JMenuItem addSectionItem;
+	JMenuItem removeSectionItem;
 	JMenuItem aboutItem;
 	JMenuItem helpItem;
 
@@ -173,6 +174,7 @@ public class GlossaryPanel extends JPanel
 		copyItem = new JMenuItem("Copy");
 		pasteItem = new JMenuItem("Paste");
 		addSectionItem = new JMenuItem("Add Section");
+		removeSectionItem = new JMenuItem("Remove Section");
 		aboutItem = new JMenuItem("About");
 		helpItem = new JMenuItem("Help");
 		// MenuBar
@@ -243,9 +245,18 @@ public class GlossaryPanel extends JPanel
 		editMenu.add(pasteItem);
 		editMenu.addSeparator();
 		editMenu.add(addSectionItem);
+		editMenu.add(removeSectionItem);
 		aboutMenu.add(aboutItem);
 		aboutMenu.add(helpItem);
 		getGlossaryFrame().setJMenuBar(menuBar);
+		
+		//
+		undoItem.setEnabled(false);
+		redoItem.setEnabled(false);
+		cutItem.setEnabled(false);
+		copyItem.setEnabled(false);
+		pasteItem.setEnabled(false);
+		removeSectionItem.setEnabled(false);
 
 		/**
 		 * Misc
@@ -387,6 +398,14 @@ public class GlossaryPanel extends JPanel
 			public void actionPerformed(ActionEvent e)
 			{
 				addSection();
+			}
+		});
+		
+		removeSectionItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				removeSection();
 			}
 		});
 
@@ -542,6 +561,33 @@ public class GlossaryPanel extends JPanel
 		}
 
 		termTabbedPane.add(s, null);
+		removeSectionItem.setEnabled(true);
+	}
+	
+	/**
+	 * Remove a section from the glossary
+	 */
+	private void removeSection()
+	{
+		JComboBox<String> j = new JComboBox<String>();
+		
+		for(String i:controller.getAllSections())
+		{
+			j.addItem(i);
+		}
+		
+		JOptionPane.showMessageDialog(this,j, "Select Item to remove", JOptionPane.QUESTION_MESSAGE);
+		
+		String remove = (String) j.getSelectedItem();
+		
+		if(!controller.removeSection(remove))
+		{
+			JOptionPane.showMessageDialog(null, "Remove failed.");
+			return;
+		}
+		
+		resetTabbedPane();		
+		
 	}
 
 	/**
