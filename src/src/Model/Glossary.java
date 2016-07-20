@@ -286,7 +286,7 @@ public class Glossary
 		{
 			sectionString+= i.next()+Controller.getFileSeeAlsoDelimiter();
 		}
-		return sectionString.substring(0, sectionString.length()-1)+"\r\n";
+		return sectionString.substring(0, sectionString.length()-3)+"\r\n";
 				
 	}
 

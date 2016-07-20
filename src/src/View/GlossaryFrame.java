@@ -76,6 +76,10 @@ public class GlossaryFrame extends JFrame
 		glossaryPanel.displaySortedKeys(controller.getGlossaryKeys());
 	}
 	
+	public void displaySections(String [] s)
+	{
+		glossaryPanel.loadSections(s);
+	}
 	public void clearAllForOpen()
 	{
 		glossaryPanel.clearAllForOpen();

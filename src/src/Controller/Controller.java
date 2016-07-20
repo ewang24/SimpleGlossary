@@ -74,7 +74,7 @@ public class Controller
 	 * Configuration information
 	 */
 	private static final String FILE_DELIMITER = ":::";
-	private static final String SEE_ALSO_DELIMITER = Pattern.quote("|");
+	private static final String SEE_ALSO_DELIMITER = ";;;";
 	
 	private final File SYS_DIRECTORY = new File("sys");
 	private final File SPECIAL_CHARACTER_CONFIG_FILE = new File("sys/sconfig~");
@@ -128,8 +128,14 @@ public class Controller
 		}
 
 		String[] termList = rawTermString.split("\n");
+		if(!termList[0].equals("v2"))
+		{
+			System.err.println("Invalid File");
+			return;
+		}
+		String [] sectionList = termList[1].split(SEE_ALSO_DELIMITER);
 
-		for (int i = 0; i < termList.length; i++)
+		for (int i = 2; i < termList.length; i++)
 		{
 			/**
 			 * Each entry in termList is one term with the following file structure:
@@ -138,15 +144,16 @@ public class Controller
 			 */
 			
 			String[] t = termList[i].split(FILE_DELIMITER);
-			System.out.println(t[2]);
+//			System.out.println(t[2]);
 			
 			
-			glossary.addTerm(t[0], new Term(t[1],parseSeeAlsoList(t[2]),null));
+			glossary.addTerm(t[0], new Term(t[1],parseSeeAlsoList(t[2]),parseSectionList(t[3])));
 		}
 
 		fileName = glossaryFileToUse.getName();
 		gf.setTitle(fileName);
 		gf.displayGlossaryKeys();
+		gf.displaySections(sectionList);
 	}
 	
 	private String[] parseSeeAlsoList(String toParse)
@@ -161,6 +168,20 @@ public class Controller
 		if(t[0].equals(" "))
 			t = new String[0];
 		return t;
+	}
+	
+	private String[] parseSectionList(String toParse)
+	{
+		String [] t = toParse.split(SEE_ALSO_DELIMITER);
+		
+		for(String e: t)
+		{
+			System.out.println(e);
+		}
+		
+		if(t[0].equals(" "))
+			t = new String[0];
+		return t;	
 	}
 
 	public String[] getGlossaryKeys()

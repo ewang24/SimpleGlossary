@@ -179,6 +179,7 @@ public class GlossaryPanel extends JPanel
 
 		setupGlossaryPanelLayout();
 		setupGlossaryPanelListeners();
+//		loadSections();
 	}
 
 	private void setupGlossaryPanelLayout()
@@ -264,6 +265,21 @@ public class GlossaryPanel extends JPanel
 		this.revalidate();
 	}
 
+	/**
+	 * Loads the sections of the glossary.
+	 */
+	public void loadSections(String [] s)
+	{
+		
+		for(String e : s)
+		{
+			System.out.println(e);
+			termTabbedPane.add(e, null);
+		}
+		this.repaint();
+		this.revalidate();
+	}
+	
 	/**
 	 * Set up the listeners for any clickable object that is the responsibility
 	 * of GlossaryPanel
@@ -2149,9 +2165,21 @@ public class GlossaryPanel extends JPanel
 	 */
 	public void clearAllForOpen()
 	{
-		termPanel.removeAll();
+		resetTabbedPane();
 		termDetailsArea.setText("");
 		mainControlPanel.updateSizeLabel();
+	}
+	
+	private void resetTabbedPane()
+	{
+		int i = termTabbedPane.getTabCount()-1;
+		while(i>0)
+		{
+			termTabbedPane.removeTabAt(i);
+			i--;
+		}
+		
+		termTabbedPane.setSelectedIndex(0);
 	}
 
 	private String getCurrentSection()
