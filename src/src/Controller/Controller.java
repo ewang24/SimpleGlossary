@@ -290,6 +290,8 @@ public class Controller
 			clearEverything();
 			load(location);
 			newFile = false;
+			clearDirtyList();
+			
 		}
 	}
 
@@ -556,9 +558,9 @@ public class Controller
 
 	public File lastDirectory()
 	{
-		if (configurationInformation.get(LAST_USED_DIRECTORY).equals(""))
+		if (configurationInformation.get(LAST_USED_DIRECTORY) == null || configurationInformation.get(LAST_USED_DIRECTORY).equals(""))
 		{
-			return null;
+			return new File("C:\\");
 		}
 		return new File(configurationInformation.get(LAST_USED_DIRECTORY));
 	}

@@ -287,7 +287,6 @@ public class Glossary
 			sectionString+= i.next()+Controller.getFileSeeAlsoDelimiter();
 		}
 		return sectionString.substring(0, sectionString.length()-3)+"\r\n";
-				
 	}
 
 	public int getSize()
@@ -320,5 +319,6 @@ public class Glossary
 	{
 		clearDirtyList();
 		glossary.clear();
+		sectionMap.clear();
 	}
 }

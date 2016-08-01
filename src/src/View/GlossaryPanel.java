@@ -2226,6 +2226,7 @@ public class GlossaryPanel extends JPanel
 		}
 		
 		termTabbedPane.setSelectedIndex(0);
+		termPanel.removeAll();
 	}
 
 	private String getCurrentSection()
