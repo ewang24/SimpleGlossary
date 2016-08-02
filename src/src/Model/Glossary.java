@@ -286,6 +286,12 @@ public class Glossary
 		{
 			sectionString+= i.next()+Controller.getFileSeeAlsoDelimiter();
 		}
+		
+		if(sectionString.length() == 0)
+		{
+			sectionString += Controller.getFileSeeAlsoDelimiter();
+		}
+		
 		return sectionString.substring(0, sectionString.length()-3)+"\r\n";
 	}
 

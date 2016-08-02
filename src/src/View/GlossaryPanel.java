@@ -2118,7 +2118,7 @@ public class GlossaryPanel extends JPanel
 		if (!controller.closeable())
 			return;
 
-		glossaryOpener.setCurrentDirectory(controller.lastDirectory());
+		glossaryOpener.setCurrentDirectory(controller.getLastDirectory());
 		glossaryOpener.setDialogTitle("Open Glossary");
 		if (glossaryOpener.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
@@ -2137,7 +2137,7 @@ public class GlossaryPanel extends JPanel
 	 */
 	private void showGlossaryExportDialog()
 	{
-		glossaryExporter.setCurrentDirectory(controller.lastDirectory());
+		glossaryExporter.setCurrentDirectory(controller.getLastDirectory());
 		if (glossaryExporter.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
 			String exportString = glossaryExporter.getSelectedFile().getAbsolutePath();
@@ -2163,7 +2163,7 @@ public class GlossaryPanel extends JPanel
 	 */
 	private void showGlossarySaveAsDialog()
 	{
-		glossaryOpener.setCurrentDirectory(controller.lastDirectory());
+		glossaryOpener.setCurrentDirectory(controller.getLastDirectory());
 		glossaryOpener.setDialogTitle("Save Glossary");
 		if (glossaryOpener.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 		{

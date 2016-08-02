@@ -284,6 +284,8 @@ public class Controller
 	 */
 	public void open(String location)
 	{
+		System.out.println(configurationInformation.get(LAST_USED_DIRECTORY));
+		
 		if (closeable())
 		{
 			this.updateLastUsedDirectory(location);
@@ -556,11 +558,11 @@ public class Controller
 		}
 	}
 
-	public File lastDirectory()
+	public File getLastDirectory()
 	{
 		if (configurationInformation.get(LAST_USED_DIRECTORY) == null || configurationInformation.get(LAST_USED_DIRECTORY).equals(""))
 		{
-			return new File("C:\\");
+			configurationInformation.put(LAST_USED_DIRECTORY, FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath());
 		}
 		return new File(configurationInformation.get(LAST_USED_DIRECTORY));
 	}
