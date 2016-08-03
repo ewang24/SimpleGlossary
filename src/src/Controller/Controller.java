@@ -130,8 +130,14 @@ public class Controller
 		{
 			System.err.println("Invalid File");
 			return;
-		}
+		} 
+		
 		String[] sectionList = termList[1].split(SEE_ALSO_DELIMITER);
+
+		for(String e:sectionList)
+		{
+			glossary.addSection(e);
+		}
 
 		for (int i = 2; i < termList.length; i++)
 		{
@@ -152,7 +158,10 @@ public class Controller
 		fileName = glossaryFileToUse.getName();
 		gf.setTitle(fileName);
 		gf.displayGlossaryKeys();
-		gf.displaySections(sectionList);
+		if(!sectionList[0].equals(" "))
+		{
+			gf.displaySections(sectionList);
+		}
 	}
 
 	private String[] parseSeeAlsoList(String toParse)
@@ -296,6 +305,13 @@ public class Controller
 			
 		}
 	}
+	
+	private String parseFileName(String fileName)
+	{
+		if(fileName.endsWith(".gl"))
+			return fileName.substring(0, fileName.length()-3);
+		return fileName;
+	}
 
 	/**
 	 * Export the glossary as a text file.
@@ -310,7 +326,7 @@ public class Controller
 		int currLetter = 0;
 
 		System.out.println(location);
-		String toString = fileName + "\r\n" + "Number of Entries: " + glossarySize() + "\r\n";
+		String toString = parseFileName(fileName) + "\r\n" + "Number of Entries: " + glossarySize() + "\r\n";
 
 		String[] a = glossary.getKeys(unicodeModeler.getUnicodeStringComparator());
 
@@ -336,8 +352,13 @@ public class Controller
 				if (!reachedEnd)
 					toString += "\r\n" + Character.toUpperCase(alph[currLetter]) + ":\r\n";
 			}
-
-			toString += a[i] + ":\r\n\t" + fetchTermForKey(a[i]).getDefinition() + "\r\n";
+			Term termToSave= fetchTermForKey(a[i]);
+			toString += a[i] + ":\r\n\t" + termToSave.getDefinition() + "\r\n";
+			if(termToSave.getSeeAlsoList().length!=0)
+			{
+				toString+="\tSee Also: "+termToSave.getSeeAlsoListStringToPrint()+"\r\n";
+			}
+			
 		}
 
 		try
@@ -370,6 +391,7 @@ public class Controller
 		{
 			newFile = true;
 			clearEverything();
+			this.clearDirtyList();
 			fileName = "New Glossary";
 			refreshTitle();
 		}
@@ -589,11 +611,15 @@ public class Controller
 
 	public boolean addSection(String newSection)
 	{
+		operations.push(new Operation(null, null));
+		setTitleToUnsaved();
 		return glossary.addSection(newSection);
 	}
 
 	public boolean removeSection(String oldSection)
 	{
+		operations.push(new Operation(null, null));
+		setTitleToUnsaved();
 		return glossary.removeSection(oldSection);
 	}
 
@@ -621,4 +647,5 @@ public class Controller
 	{
 		return glossary.getSortedSection(unicodeModeler.getUnicodeStringComparator(), section);
 	}
+	
 }

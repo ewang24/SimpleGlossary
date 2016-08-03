@@ -81,6 +81,14 @@ public class Glossary
 	 */
 	public boolean removeSection(String section)
 	{
+		
+		String[] s = getSectionEntries(section);
+		
+		for(String e:s)
+		{
+			glossary.get(e).setSectionList(new String[0]);
+		}
+		
 		return sectionMap.remove(section) != null;
 	}
 
@@ -156,6 +164,27 @@ public class Glossary
 		}
 		return new String[0];
 	}
+	
+	public String[] getSectionEntries(String section)
+	{
+		if (section.equals(Controller.getDefaultSectionName()))
+		{
+			return getKeys();
+		}
+		if (hasSection(section))
+		{
+			String[] a = new String[sectionMap.get(section).size()];
+			int i = 0;
+			for (String t : sectionMap.get(section))
+			{
+				a[i] = t;
+				i++;
+			}
+
+			return a;
+		}
+		return new String[0];
+	}
 
 	/**
 	 * @param key
@@ -209,6 +238,17 @@ public class Glossary
 		java.util.Arrays.sort(newS, comparator);
 		return newS;
 	}
+	
+	public String[] getKeys()
+	{
+		Object[] s = glossary.keySet().toArray();
+		String[] newS = new String[s.length];
+		for (int i = 0; i < s.length; i++)
+		{
+			newS[i] = (String) s[i];
+		}
+		return newS;
+	}
 
 	public Term[] getValues()
 	{
@@ -227,7 +267,7 @@ public class Glossary
 		while (i.hasNext())
 		{
 			Entry<String, Term> e = i.next();
-			toStringString += e.getKey() + Controller.getFileDelimiter() + e.getValue().getDefinition() + Controller.getFileDelimiter() + e.getValue().getSeeAlsoListString()
+			toStringString += e.getKey() + Controller.getFileDelimiter() + e.getValue().getDefinition() + Controller.getFileDelimiter() + e.getValue().getSeeAlsoListStringWithFileDelimiter()
 					+ Controller.getFileDelimiter() + e.getValue().getSectionListString() + "\r\n";
 		}
 

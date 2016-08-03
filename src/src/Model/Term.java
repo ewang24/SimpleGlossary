@@ -65,7 +65,7 @@ public class Term
 		section = sectionList_;
 	}
 
-	public String getSeeAlsoListString()
+	public String getSeeAlsoListStringWithFileDelimiter()
 	{
 
 		if (seeAlsoList.length == 0)
@@ -77,6 +77,24 @@ public class Term
 			for (int i = 0; i < seeAlsoList.length - 1; i++)
 			{
 				s += seeAlsoList[i] + Controller.getFileSeeAlsoDelimiter();
+			}
+
+			return s + seeAlsoList[seeAlsoList.length - 1];
+		}
+	}
+	
+	public String getSeeAlsoListStringToPrint()
+	{
+
+		if (seeAlsoList.length == 0)
+			return " ";
+		else
+		{
+			String s = "";
+			
+			for (int i = 0; i < seeAlsoList.length - 1; i++)
+			{
+				s += seeAlsoList[i] + ", ";
 			}
 
 			return s + seeAlsoList[seeAlsoList.length - 1];

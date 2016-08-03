@@ -26,7 +26,7 @@ public class DataGenerator
 
 	public static void main(String[] args)
 	{
-		System.out.println(Pattern.quote("|"));
+		System.out.println("   ".trim().length());
 //		System.out.println(" ".trim().equals("") ? true : false);
 //		System.out.println( true&& false &&false );
 		
