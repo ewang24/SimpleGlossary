@@ -26,7 +26,8 @@ public class DataGenerator
 
 	public static void main(String[] args)
 	{
-		System.out.println("   ".trim().length());
+		System.out.println("v2".equals("v2"));
+//		System.out.println("   ".trim().length());
 //		System.out.println(" ".trim().equals("") ? true : false);
 //		System.out.println( true&& false &&false );
 		
