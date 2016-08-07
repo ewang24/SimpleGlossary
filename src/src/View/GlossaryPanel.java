@@ -418,7 +418,7 @@ public class GlossaryPanel extends JPanel
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				JOptionPane.showMessageDialog(null, "About:\nThis is a glossary program\nGitHub.com\\ewang24\nThank you for your support!");
+				JOptionPane.showMessageDialog(null, "About:\nThis is a glossary program\nGitHub.com\\ewang24\nThank you for your support!\nv0.3");
 			}
 		});
 

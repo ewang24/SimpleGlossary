@@ -125,20 +125,25 @@ public class Controller
 			e.printStackTrace();
 		}
 
+		System.out.println(rawTermString);
 		String[] termList = rawTermString.split("\n");
 		if (!termList[0].equals("v2"))
 		{
-			System.err.println("Invalid File");
+			System.err.println(termList[0]);
 			return;
-		} 
-		
-		String[] sectionList = termList[1].split(SEE_ALSO_DELIMITER);
-
-		for(String e:sectionList)
-		{
-			glossary.addSection(e);
 		}
+		System.out.println(termList[1]);
+		String[] sectionList = termList[1].split(SEE_ALSO_DELIMITER);
+		System.out.println(sectionList[0].equals(""));
+		if (!sectionList[0].equals(""))
+		{
 
+			for (String e : sectionList)
+			{
+				glossary.addSection(e);
+			}
+		}
+		
 		for (int i = 2; i < termList.length; i++)
 		{
 			/**
@@ -158,10 +163,7 @@ public class Controller
 		fileName = glossaryFileToUse.getName();
 		gf.setTitle(fileName);
 		gf.displayGlossaryKeys();
-		if(!sectionList[0].equals(" "))
-		{
-			gf.displaySections(sectionList);
-		}
+		gf.displaySections(glossary.getAllSections());
 	}
 
 	private String[] parseSeeAlsoList(String toParse)
@@ -294,7 +296,7 @@ public class Controller
 	public void open(String location)
 	{
 		System.out.println(configurationInformation.get(LAST_USED_DIRECTORY));
-		
+
 		if (closeable())
 		{
 			this.updateLastUsedDirectory(location);
@@ -302,14 +304,14 @@ public class Controller
 			load(location);
 			newFile = false;
 			clearDirtyList();
-			
+
 		}
 	}
-	
+
 	private String parseFileName(String fileName)
 	{
-		if(fileName.endsWith(".gl"))
-			return fileName.substring(0, fileName.length()-3);
+		if (fileName.endsWith(".gl"))
+			return fileName.substring(0, fileName.length() - 3);
 		return fileName;
 	}
 
@@ -352,13 +354,13 @@ public class Controller
 				if (!reachedEnd)
 					toString += "\r\n" + Character.toUpperCase(alph[currLetter]) + ":\r\n";
 			}
-			Term termToSave= fetchTermForKey(a[i]);
+			Term termToSave = fetchTermForKey(a[i]);
 			toString += a[i] + ":\r\n\t" + termToSave.getDefinition() + "\r\n";
-			if(termToSave.getSeeAlsoList().length!=0)
+			if (termToSave.getSeeAlsoList().length != 0)
 			{
-				toString+="\tSee Also: "+termToSave.getSeeAlsoListStringToPrint()+"\r\n";
+				toString += "\tSee Also: " + termToSave.getSeeAlsoListStringToPrint() + "\r\n";
 			}
-			
+
 		}
 
 		try
@@ -647,5 +649,5 @@ public class Controller
 	{
 		return glossary.getSortedSection(unicodeModeler.getUnicodeStringComparator(), section);
 	}
-	
+
 }
