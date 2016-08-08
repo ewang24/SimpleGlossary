@@ -859,11 +859,11 @@ public class GlossaryPanel extends JPanel
 
 	/**
 	 * refreshes the term display by removing all terms from the view and adding
-	 * them back in. Displays the keys from the default section.
+	 * them back in. Displays the keys selected section.
 	 */
 	public void updateTermDisplay()
 	{
-		updateTermDisplay(Controller.getDefaultSectionName());
+		updateTermDisplay(termTabbedPane.getTitleAt(termTabbedPane.getSelectedIndex()));
 	}
 
 	/**
@@ -1178,9 +1178,6 @@ public class GlossaryPanel extends JPanel
 				});
 			}
 
-			// Stopped here. Need to implement refreshSectionList &
-			// refreshSectionList and then also make sure to change the submit
-			// function.
 			private void addSection()
 			{
 				if (sectionBox.getSelectedIndex() != 0)
@@ -1321,7 +1318,8 @@ public class GlossaryPanel extends JPanel
 				if (controller.newEntry(newKey, new Term(newKeyDetailsArea.getText().replace("\n", " "), sal, sl)))
 				{
 					updateWithTermToDisplay(newKey);
-					goToAllTab();
+					if(!controller.sectionHasKey(newKey, termTabbedPane.getTitleAt(termTabbedPane.getSelectedIndex())))
+						goToAllTab();
 					return true;
 				}
 				else
@@ -1498,9 +1496,10 @@ public class GlossaryPanel extends JPanel
 			{
 				removeList.addItem("Select a term");
 
-				if (currentKeys != null && currentKeys.length > 0)
+				String [] s = controller.getGlossaryKeys();
+				if (s != null && s.length > 0)
 				{
-					for (String e : currentKeys)
+					for (String e : s)
 					{
 						removeList.addItem(e);
 					}
@@ -1512,6 +1511,8 @@ public class GlossaryPanel extends JPanel
 
 			private void removeTerm()
 			{
+				String selected = removeList.getSelectedItem().toString();
+				boolean b = false;
 				if (!customRemoveArea.getText().equals(""))
 				{
 					if (!controller.remove(customRemoveArea.getText()))
@@ -1522,7 +1523,8 @@ public class GlossaryPanel extends JPanel
 				}
 				else if (removeList.getSelectedIndex() != 0)
 				{
-					if (!controller.remove(removeList.getSelectedItem().toString()))
+					b = controller.sectionHasKey(selected, termTabbedPane.getTitleAt(termTabbedPane.getSelectedIndex()));
+					if (!controller.remove(selected))
 					{
 						JOptionPane.showMessageDialog(this, "Term is not in glossary!");
 						return;
@@ -1534,8 +1536,13 @@ public class GlossaryPanel extends JPanel
 					JOptionPane.showMessageDialog(this, "Must enter term to be removed!");
 					return;
 				}
-
-				goToAllTab();
+				
+				System.out.println(termTabbedPane.getTitleAt(termTabbedPane.getSelectedIndex())+" "+selected);
+				System.out.println("b:" + b);
+				if(!b)
+				{
+					goToAllTab();					
+				}
 				updateTermDisplay();
 				closeWindow();
 			}
@@ -2273,5 +2280,10 @@ public class GlossaryPanel extends JPanel
 	private void goToAllTab()
 	{
 		termTabbedPane.setSelectedIndex(0);
+	}
+	
+	private void goToCurrentTab()
+	{
+		termTabbedPane.setSelectedIndex(termTabbedPane.getSelectedIndex());
 	}
 }

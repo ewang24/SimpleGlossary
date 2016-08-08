@@ -135,6 +135,14 @@ public class Glossary
 		return sectionMap.containsKey(section);
 	}
 
+	public boolean isInSection(String key, String section)
+	{
+		if(sectionMap.get(section)==null)
+			return false;
+		else
+			return sectionMap.get(section).contains(key);
+	}
+	
 	/**
 	 * @param comparator
 	 *            the comparator to sort the entries

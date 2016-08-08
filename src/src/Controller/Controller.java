@@ -650,4 +650,10 @@ public class Controller
 		return glossary.getSortedSection(unicodeModeler.getUnicodeStringComparator(), section);
 	}
 
+	
+	public boolean sectionHasKey(String key, String section)
+	{
+		return glossary.isInSection(key, section);
+	}
+	
 }
